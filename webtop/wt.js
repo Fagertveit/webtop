@@ -110,12 +110,7 @@ var WT = {
 				var handle = document.createElement("div");
 				
 				handle.setAttribute("onmousedown", "WT.event.resize(this.parentNode, event)");
-				handle.style.width = 16 + "px";
-				handle.style.height = 16 + "px";
-				handle.style.backgroundColor = "#ccc";
-				handle.style.position = "absolute";
-				handle.style.bottom = 0 + "px";
-				handle.style.right = 0 + "px";
+				handle.setAttribute("class", "handle");
 				
 				return handle;
 			},
