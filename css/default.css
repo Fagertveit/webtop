@@ -1,0 +1,33 @@
+.desktop {
+background-color: #eee;
+border: 1px solid #aaa;
+overflow: hidden;
+position: absolute;
+top: 50%;
+left: 50%;
+}
+
+.portal {
+position: absolute;
+border-top-left-radius: 3px;
+border-top-right-radius: 3px;
+border: 1px solid #666;
+overflow: hidden;
+background-color: #fff;
+}
+
+.portal>.title {
+width: 100%;
+height: 18px;
+background-color: #aaf;
+border-bottom: 1px solid #aaa;
+}
+
+.portal>.foot {
+width: 100%;
+height: 16px;
+background-color: #eee;
+border-top: 1px solid #aaa;
+position: absolute;
+bottom: 0px;
+}

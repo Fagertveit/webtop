@@ -11,19 +11,11 @@ var WT = {
 			init : function() {
 				var container = document.createElement("div");
 				container.setAttribute("id", "desk-cont");
-				container.style.position = "absolute";
-				container.style.top = "50%";
-				container.style.left = "50%";
+				container.setAttribute("class", "desktop");
 				container.style.marginTop = "-" + (this.height / 2) + "px";
 				container.style.marginLeft = "-" + (this.width / 2) + "px";
 				container.style.width = this.width + "px";
 				container.style.height = this.height + "px";
-				container.style.borderWidth = "1px";
-				container.style.borderStyle = "solid";
-				container.style.borderColor = "#000";
-				container.style.backgroundColor = "rgb(" + this.background[0]
-						+ ", " + this.background[1] + ", " + this.background[2]
-						+ ")";
 
 				document.body.appendChild(container);
 			},
@@ -55,34 +47,77 @@ var WT = {
 				
 				container = document.createElement("div");
 				container.setAttribute("id", "window-" + this.id);
-				container.style.position = "absolute";
+				container.setAttribute("class", "portal");
 				container.style.top = "100px";
 				container.style.left = "10px";
 				container.style.width = this.width + "px";
 				container.style.height = this.height + "px";
-				container.style.borderTopLeftRadius = "3px";
-				container.style.borderTopRightRadius = "3px";
-				container.style.borderStyle = "solid";
-				container.style.borderWidth = "1px";
-				container.style.borderColor = "#000";
-				container.style.backgroundColor = "#fff";
 				
 				container.appendChild(this.generateTitle());
+				container.appendChild(this.generateFoot());
+				container.appendChild(this.generateHandle());
 				
 				parentElem.appendChild(container);
 			},
 		
 			generateTitle : function() {
 				var title = document.createElement("div");
+				
+				var text = document.createElement("div");
+				var close = document.createElement("div");
+				var max = document.createElement("div");
+				var min = document.createElement("div");
+				
 				title.setAttribute("id", "title-" + this.id);
-				title.style.width = this.width + "px";
-				title.style.height = "18px";
-				title.style.backgroundColor = "#aaf";
-				title.style.borderBottomStyle = "solid";
-				title.style.borderBottomWidth = "1px";
-				title.style.borderBottomColor = "#000";
+				title.setAttribute("onmousedown", "WT.event.move(this.parentNode, event)");
+				title.setAttribute("class", "title");
+				
+				text.innerHTML = "Untitled";
+				text.style.position = "absolute";
+				text.style.left = 4 + "px";
+				text.style.top = 2 + "px";
+				//text.style.fontWeight = "bold";
+				text.style.fontSize = 12 + "px";
+				text.style.color = "#000";
+
+				close.style.width = 13 + "px";
+				close.style.height = 13 + "px";
+				close.style.position = "absolute";
+				close.style.right = 2 + "px";
+				close.style.top = 2 + "px";
+				close.style.borderStyle = "solid";
+				close.style.borderWidth = "1px";
+				close.style.borderColor = "#a00";
+				close.style.borderRadius = "3px";
+				close.style.backgroundColor = "#d00";
+				
+				
+				title.appendChild(text);
+				title.appendChild(close);
 				
 				return title;
+			},
+			
+			generateFoot : function() {
+				var foot = document.createElement("div");
+				
+				foot.setAttribute("class", "foot");
+				
+				return foot;
+			},
+			
+			generateHandle : function() {
+				var handle = document.createElement("div");
+				
+				handle.setAttribute("onmousedown", "WT.event.resize(this.parentNode, event)");
+				handle.style.width = 16 + "px";
+				handle.style.height = 16 + "px";
+				handle.style.backgroundColor = "#ccc";
+				handle.style.position = "absolute";
+				handle.style.bottom = 0 + "px";
+				handle.style.right = 0 + "px";
+				
+				return handle;
 			},
 			
 			initEventHandler : function() {

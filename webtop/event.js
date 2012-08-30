@@ -1,98 +1,80 @@
 WT.event = {
-	MOUSEX : 0,
-	MOUSEY : 0,
-	MB_DOWN : false,
-	MB_CLICK : false,
-	COOLDOWN : 0,
-
-	KEYS : new Array(256),
-
-	STOP_DEFAULT_KEY_EVENT : true,
-	STOP_DEFAULT_MOUSE_EVENT : false,
-
-	initKeys : function() {
-		for ( var i = 0; i < CGL.event.KEYS.length; i++) {
-			CGL.event.KEYS[i] = false;
-		}
-	},
-
-	initMouseHandler : function() {
-		window.addEventListener("mousemove", CGL.event.handleMouseMovement, false);
-		window.addEventListener("mousedown", CGL.event.handleMouseDown, false);
-		window.addEventListener("mouseup", CGL.event.handleMouseUp, false);
-		window.addEventListener("click", CGL.event.handleMouseClick, false);
-	},
-
-	initKeyHandler : function() {
-		window.addEventListener("keydown", CGL.event.handleKeyDown, false);
-		window.addEventListener("keyup", CGL.event.handleKeyUp, false);
-	},
-
-	initEventHandler : function() {
-		WT.event.initMouseHandler();
-		WT.event.initKeyHandler();
-	},
-
-	handleMouseMovement : function(e) {
-		CGL.event.getCursorPosition(e);
-	},
-
-	handleMouseDown : function(e) {
-		if (WT.event.STOP_DEFAULT_MOUSE_EVENT) {
+	move : function(element, event) {
+		var startX = event.clientX;
+		var startY = event.clientY;
+		
+		var origX = element.offsetLeft;
+		var origY = element.offsetTop;
+		
+		var deltaX = startX - origX;
+		var deltaY = startY - origY;
+		
+		document.addEventListener("mousemove", moveHandler, true);
+		document.addEventListener("mouseup", upHandler, true);
+		
+		event.stopPropagation();
+		event.preventDefault();
+		
+		function moveHandler(e) {
+			element.style.left = (e.clientX - deltaX) + "px";
+			element.style.top = (e.clientY - deltaY) + "px";
 			e.stopPropagation();
-			e.preventDefault();
 		}
-		WT.event.MB_DOWN = true;
-	},
-
-	handleMouseUp : function(e) {
-		if (WT.event.STOP_DEFAULT_MOUSE_EVENT) {
+		
+		function upHandler(e) {
+			document.removeEventListener("mouseup", upHandler, true);
+			document.removeEventListener("mousemove", moveHandler, true);
 			e.stopPropagation();
-			e.preventDefault();
 		}
-		WT.event.MB_DOWN = false;
 	},
 
-	handleMouseClick : function(e) {
-		if (WT.event.STOP_DEFAULT_MOUSE_EVENT) {
+	resize : function(element, event) {
+		var startX = event.clientX;
+		var startY = event.clientY;
+		
+		var origX = element.offsetLeft;
+		var origY = element.offsetTop;
+		
+		var deltaX = startX - origX;
+		var deltaY = startY - origY;
+		
+		var startWidth = element.style.width;
+		var startWidth = Number(startWidth.substr(0, startWidth.length - 2));
+		var startHeight = element.style.height;
+		var startHeight = Number(startHeight.substr(0, startHeight.length - 2));
+		
+		console.log("Resize starting!");
+		
+		document.addEventListener("mousemove", moveHandler, true);
+		document.addEventListener("mouseup", upHandler, true);
+		
+		event.stopPropagation();
+		event.preventDefault();
+		
+		function moveHandler(e) {
+			width = e.clientX - deltaX - origX + startWidth;
+			height = e.clientY - deltaY - origY + startHeight;
+			if(width > 70) {
+				element.style.width = width + "px";
+			} else {
+				element.style.width = 70 + "px";
+			}
+			
+			if(height > 70) {
+				element.style.height = height + "px";
+			} else {
+				element.style.height = 70 + "px";
+			}
+			
 			e.stopPropagation();
-			e.preventDefault();
+			//console.log("Width: " + (e.clientX - startWidth));
 		}
-		WT.event.MB_CLICK = true;
-	},
-
-	handleKeyDown : function(e) {
-		if (CGL.event.STOP_DEFAULT_KEY_EVENT) {
+		
+		function upHandler(e) {
+			document.removeEventListener("mouseup", upHandler, true);
+			document.removeEventListener("mousemove", moveHandler, true);
 			e.stopPropagation();
-			e.preventDefault();
+			console.log("Resize Ending!");
 		}
-		CGL.event.KEYS[e.keyCode] = true;
-		CGL.util.printLn("Key pressed: " + e.keyCode);
-	},
-
-	handleKeyUp : function(e) {
-		if (CGL.event.STOP_DEFAULT_KEY_EVENT) {
-			e.stopPropagation();
-			e.preventDefault();
-		}
-		CGL.event.KEYS[e.keyCode] = false;
-		CGL.util.printLn("Key released: " + e.keyCode);
-	},
-
-	getCursorPosition : function(e) {
-		if (e.pageX != undefined && e.pageY != undefined) {
-			CGL.event.MOUSEX = e.pageX;
-			CGL.event.MOUSEY = e.pageY;
-		} else {
-			CGL.event.MOUSEX = e.clientX + document.body.scrollLeft
-					+ document.documentElement.scrollLeft;
-			CGL.event.MOUSEY = e.clientY + document.body.scrollTop
-					+ document.documentElement.scrollTop;
-		}
-
-		CGL.event.MOUSEX -= document
-				.getElementById(CGL.canvas.DEFAULT_CANVAS_ID).offsetLeft;
-		CGL.event.MOUSEY -= document
-				.getElementById(CGL.canvas.DEFAULT_CANVAS_ID).offsetTop;
 	}
 };
