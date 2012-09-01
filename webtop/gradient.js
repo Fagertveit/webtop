@@ -1,48 +1,118 @@
 WT.gradient = {
 	Application : function(parId) {
 		app = {
-			width : 256,
-			height : 256,
 			parent : parId,
 			gradient : new WT.gradient.Gradient(),
 			
 			init : function() {
 				this.gradient.init();
 				this.genContainer();
+				this.generateColorStops();
 			},
 			
 			genContainer : function() {
 				var container = document.createElement("div");
 				var parentElem = document.getElementById("portal-container-" + this.parent);
+
 				
-				//container.style.width = this.width + "px";
-				//container.style.height = this.height + "px";
-				container.style.width = "100%";
-				container.style.position = "absolute";
-				container.style.top = "2px";
-				container.style.left = "0px";
+				container.setAttribute("class", "gradient");
 				
 				container.appendChild(this.genPreview());
+				container.appendChild(this.generateGradBar());
+				container.appendChild(this.generateActive());
 				
 				parentElem.appendChild(container);
 			},
 			
 			genPreview : function() {
 				var container = document.createElement("div");
-				container.setAttribute("class", "gen-preview");
+				container.setAttribute("class", "preview");
 				container.setAttribute("id", "gen-preview");
-				container.style.height = "32px";
-				container.style.position = "absolute";
-				container.style.left = "2px";
-				container.style.right = "2px";
-				container.style.top = "6px";
-				container.style.borderColor = "#000";
-				container.style.borderStyle = "solid";
-				container.style.borderWidth = "1px";
-				container.style.position = "absolute";
-				container.style.top = "2px";
-				container.style.left = "2px";
 				container.style.backgroundImage = this.gradient.toString();
+				
+				return container;
+			},
+			
+			generateGradBar : function() {
+				var container = document.createElement("div");
+				
+				container.setAttribute("id", "select-bar");
+				container.setAttribute("class", "select-bar");
+				
+				return container;
+			},
+			
+			generateColorStops : function() {
+				var colorStops = this.gradient.colStops;
+				//var width = document.getElementById("portal-container-" + this.parent);
+				var container = document.getElementById("select-bar");
+				
+				//width = width.style.width;
+				//width = Number(width.substr(0, width.length - 2));
+				
+				//console.log("Width: " + width);
+				
+				for(var i = 0; i < colorStops.length; i++) {
+					container.appendChild(this.generateColorStop(colorStops[i]));
+				}
+			},
+			
+			generateColorStop : function(colorStop) {
+				var container = document.createElement("div");
+				var colorBox = document.createElement("div");
+				
+				container.setAttribute("class", "color-stop");
+				
+				colorBox.setAttribute("class", "color-box");
+				
+				container.style.left = colorStop.position + "%";
+				container.style.marginLeft = "-5px";
+				
+				colorBox.style.backgroundColor = "rgb(" + colorStop.color[0] + ", " + colorStop.color[1]
+					+ ", " + colorStop.color[2] + ")";
+				
+				container.appendChild(colorBox);
+				
+				return container;
+			},
+			
+			generateActive : function() {
+				var container = document.createElement("div");
+				var color = document.createElement("div");
+				var colorForm = document.createElement("div");
+				var red = document.createElement("input");
+				var blue = document.createElement("input");
+				var green = document.createElement("input");
+				var posForm = document.createElement("div");
+				var pos = document.createElement("input");
+				
+				container.setAttribute("class", "active-color");
+				
+				color.setAttribute("class", "color-preview");
+				
+				colorForm.setAttribute("class", "color-form");
+				
+				red.setAttribute("class", "color-input");
+				red.setAttribute("type", "text");
+				blue.setAttribute("class", "color-input");
+				blue.setAttribute("type", "text")
+				green.setAttribute("class", "color-input");
+				green.setAttribute("type", "text");
+				
+				posForm.setAttribute("class", "pos-form");
+				
+				pos.setAttribute("class", "pos-input");
+				pos.setAttribute("type", "text");
+				
+				colorForm.appendChild(red);
+				colorForm.appendChild(blue);
+				colorForm.appendChild(green);
+				
+				posForm.appendChild(pos);
+				
+				container.appendChild(color);
+				container.appendChild(colorForm);
+				container.appendChild(posForm);
 				
 				return container;
 			},
@@ -62,6 +132,8 @@ WT.gradient = {
 			
 			init : function() {
 				this.addColor([255, 255, 255], 0, "%");
+				this.addColor([0, 255, 0], 25, "%");
+				this.addColor([255, 0, 0], 70, "%");
 				this.addColor([0, 0, 0], 100, "%");
 			},
 			

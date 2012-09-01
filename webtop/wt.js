@@ -82,20 +82,14 @@ var WT = {
 				text.style.fontSize = 12 + "px";
 				text.style.color = "#000";
 
-				close.style.width = 13 + "px";
-				close.style.height = 13 + "px";
-				close.style.position = "absolute";
-				close.style.right = 2 + "px";
-				close.style.top = 2 + "px";
-				close.style.borderStyle = "solid";
-				close.style.borderWidth = "1px";
-				close.style.borderColor = "#a00";
-				close.style.borderRadius = "3px";
-				close.style.backgroundColor = "#d00";
-				
+				close.setAttribute("class", "close");
+				min.setAttribute("class", "min");
+				max.setAttribute("class", "max");
 				
 				title.appendChild(text);
 				title.appendChild(close);
+				title.appendChild(min);
+				title.appendChild(max);
 				
 				return title;
 			},
