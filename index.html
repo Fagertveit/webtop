@@ -6,12 +6,16 @@
 <link rel='stylesheet' type='text/css' href='css/default.css' />
 <script type='text/javascript' src='webtop/wt.js'></script>
 <script type='text/javascript' src='webtop/event.js'></script>
+<script type='text/javascript' src='webtop/gradient.js'></script>
 <script type='text/javascript'>
 function createDesktop() {
 	var Desk = new WT.Desktop(640, 480);
 	Desk.init();
-	var port = new WT.Portal(120, 80, "desk-cont");
+	var port = new WT.Portal(256, 256, "desk-cont");
+	port.setTitle("Gradient Edit 0.1")
 	port.init();
+	var grad = new WT.gradient.Application(1);
+	grad.init();
 }
 </script>
 </head>

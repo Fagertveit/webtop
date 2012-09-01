@@ -36,6 +36,7 @@ var WT = {
 			height : srcH || 240,
 			parent : srcP || null,
 			id : 1,
+			title : "Untitled",
 			
 			init : function() {
 				var parentElem, container;
@@ -54,6 +55,7 @@ var WT = {
 				container.style.height = this.height + "px";
 				
 				container.appendChild(this.generateTitle());
+				container.appendChild(this.generateContainer());
 				container.appendChild(this.generateFoot());
 				container.appendChild(this.generateHandle());
 				
@@ -72,7 +74,7 @@ var WT = {
 				title.setAttribute("onmousedown", "WT.event.move(this.parentNode, event)");
 				title.setAttribute("class", "title");
 				
-				text.innerHTML = "Untitled";
+				text.innerHTML = this.title;
 				text.style.position = "absolute";
 				text.style.left = 4 + "px";
 				text.style.top = 2 + "px";
@@ -98,6 +100,15 @@ var WT = {
 				return title;
 			},
 			
+			generateContainer : function() {
+				var container = document.createElement("div");
+				
+				container.setAttribute("id", "portal-container-" + this.id);
+				container.setAttribute("class", "container");
+				
+				return container;
+			},
+			
 			generateFoot : function() {
 				var foot = document.createElement("div");
 				
@@ -120,8 +131,8 @@ var WT = {
 				title.addEventListener("mousemove", this.move, false);
 			},
 			
-			move : function() {
-				
+			setTitle : function(title) {
+				this.title = title;
 			}
 		};
 		return portal;

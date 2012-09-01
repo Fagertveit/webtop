@@ -19,8 +19,18 @@ background-color: #fff;
 .portal>.title {
 width: 100%;
 height: 18px;
-background-color: #aaf;
+overflow: hidden;
+background-image: -webkit-linear-gradient(top, #aae, #55a 80%, #aaf 85%); 
+/* background-color: #aaf; */
 border-bottom: 1px solid #aaa;
+}
+
+.portal>.container {
+position: absolute;
+top: 18px;
+left: 1px;
+right: 1px;
+bottom: 14px;
 }
 
 .portal>.foot {

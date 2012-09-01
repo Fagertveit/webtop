@@ -39,11 +39,9 @@ WT.event = {
 		var deltaY = startY - origY;
 		
 		var startWidth = element.style.width;
-		var startWidth = Number(startWidth.substr(0, startWidth.length - 2));
+		startWidth = Number(startWidth.substr(0, startWidth.length - 2));
 		var startHeight = element.style.height;
-		var startHeight = Number(startHeight.substr(0, startHeight.length - 2));
-		
-		console.log("Resize starting!");
+		startHeight = Number(startHeight.substr(0, startHeight.length - 2));
 		
 		document.addEventListener("mousemove", moveHandler, true);
 		document.addEventListener("mouseup", upHandler, true);
@@ -74,7 +72,6 @@ WT.event = {
 			document.removeEventListener("mouseup", upHandler, true);
 			document.removeEventListener("mousemove", moveHandler, true);
 			e.stopPropagation();
-			console.log("Resize Ending!");
 		}
 	}
 };
