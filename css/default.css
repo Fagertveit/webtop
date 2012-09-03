@@ -24,7 +24,7 @@ background-image: -webkit-linear-gradient(top, #aae, #55a 80%, #aaf 85%);
 border-bottom: 1px solid #aaa;
 }
 
-.title>.close {
+.portal>.close {
 width: 14px;
 height: 14px;
 position: absolute;
@@ -37,7 +37,7 @@ background-position: 1px 1px;
 background-color: #ddd;
 }
 
-.title>.min {
+.portal>.min {
 width: 14px;
 height: 14px;
 position: absolute;
@@ -50,7 +50,7 @@ background-position: 1px 10px;
 background-color: #ddd;
 }
 
-.title>.max {
+.portal>.max {
 width: 14px;
 height: 14px;
 position: absolute;
@@ -135,7 +135,7 @@ border-bottom: 1px dotted #555;
 height: 16px;
 width: 10px;
 position: absolute;
-background-image: url(../img/arrow-color-stop.png);
+/*background-image: url(../img/arrow-color-stop.png);*/
 background-repeat: no-repeat;
 cursor: pointer;
 }

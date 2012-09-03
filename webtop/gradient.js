@@ -4,6 +4,9 @@ WT.gradient = {
 			parent : parId,
 			activeColor : 0,
 			gradient : new WT.gradient.Gradient(),
+			width : 256,
+			height : 256,
+			title : "Gradient Edit 0.2",
 			
 			init : function() {
 				this.gradient.init();
@@ -28,7 +31,7 @@ WT.gradient = {
 			genPreview : function() {
 				var container = document.createElement("div");
 				container.setAttribute("class", "preview");
-				container.setAttribute("id", "gen-preview");
+				container.setAttribute("id", "gen-preview-" + this.parent);
 				this.gradient.sortColor();
 				container.style.backgroundImage = this.gradient.toString();
 				
@@ -38,7 +41,7 @@ WT.gradient = {
 			generateGradBar : function() {
 				var container = document.createElement("div");
 				
-				container.setAttribute("id", "select-bar");
+				container.setAttribute("id", "select-bar-" + this.parent);
 				container.setAttribute("class", "select-bar");
 				
 				return container;
@@ -47,7 +50,7 @@ WT.gradient = {
 			generateColorStops : function() {
 				var colorStops = this.gradient.colStops;
 				//var width = document.getElementById("portal-container-" + this.parent);
-				var container = document.getElementById("select-bar");
+				var container = document.getElementById("select-bar-" + this.parent);
 				
 				//width = width.style.width;
 				//width = Number(width.substr(0, width.length - 2));
@@ -65,10 +68,18 @@ WT.gradient = {
 				
 				container.setAttribute("class", "color-stop");
 				container.setAttribute("color-id", id);
+				container.setAttribute("parent", this.parent);
+				container.setAttribute("id", "color-stop-" + this.parent + "-" + id);
 				//container.setAttribute("onclick", "WT.gradient.event.select(" + this + ")");
 				//container.setAttribute("onmousedown", this.moveColorStop, true);
 				container.addEventListener("mousedown", this.moveColorStop, true);
 				container.addEventListener("click", this.selectColorStop, true);
+				
+				if(id == this.activeColor) {
+					container.style.backgroundImage = "url(img/arrow-color-stop-active.png)";
+				} else {
+					container.style.backgroundImage = "url(img/arrow-color-stop.png)";
+				}
 				
 				colorBox.setAttribute("class", "color-box");
 				colorBox.setAttribute("color-id", id);
@@ -114,17 +125,19 @@ WT.gradient = {
 				var add = document.createElement("div");
 				
 				del.setAttribute("class", "btn color-del");
+				del.setAttribute("parent", this.parent);
 				del.innerHTML = "Delete";
 				del.addEventListener("click", this.removeColor, true);
 				
 				add.setAttribute("class", "btn color-add");
+				add.setAttribute("parent", this.parent);
 				add.innerHTML = "Add";
 				add.addEventListener("click", this.addColor, true);
 				
 				container.setAttribute("class", "active-color");
 				
 				color.setAttribute("class", "color-preview");
-				color.setAttribute("id", "color-preview");
+				color.setAttribute("id", "color-preview-" + this.parent);
 				color.style.backgroundColor = active.toCSS();
 				
 				colorForm.setAttribute("class", "color-form");
@@ -133,27 +146,30 @@ WT.gradient = {
 				redLabel.setAttribute("class", "label");
 				redLabel.innerHTML = "Red";
 				red.setAttribute("class", "input");
-				red.setAttribute("id", "gradient-red");
+				red.setAttribute("id", "gradient-red-" + this.parent);
 				red.setAttribute("type", "text");
 				red.setAttribute("value", active.color[0]);
+				red.setAttribute("parent", this.parent);
 				red.addEventListener("change", this.changeRed, true);
 				
 				blueEntry.setAttribute("class", "color-entry");
 				blueLabel.setAttribute("class", "label");
 				blueLabel.innerHTML = "Green";
 				blue.setAttribute("class", "input");
-				blue.setAttribute("id", "gradient-blue");
+				blue.setAttribute("id", "gradient-blue-" + this.parent);
 				blue.setAttribute("type", "text");
 				blue.setAttribute("value", active.color[1]);
+				blue.setAttribute("parent", this.parent);
 				blue.addEventListener("change", this.changeBlue, true);
 				
 				greenEntry.setAttribute("class", "color-entry");
 				greenLabel.setAttribute("class", "label");
 				greenLabel.innerHTML = "Blue";
 				green.setAttribute("class", "input");
-				green.setAttribute("id", "gradient-green");
+				green.setAttribute("id", "gradient-green-" + this.parent);
 				green.setAttribute("type", "text");
 				green.setAttribute("value", active.color[2]);
+				green.setAttribute("parent", this.parent);
 				green.addEventListener("change", this.changeGreen, true);
 				
 				posForm.setAttribute("class", "pos-form");
@@ -162,9 +178,10 @@ WT.gradient = {
 				posLabel.setAttribute("class", "label");
 				posLabel.innerHTML = "Position %";
 				pos.setAttribute("class", "input");
-				pos.setAttribute("id", "gradient-pos");
+				pos.setAttribute("id", "gradient-pos-" + this.parent);
 				pos.setAttribute("type", "text");
 				pos.setAttribute("value", active.position);
+				pos.setAttribute("parent", this.parent);
 				pos.addEventListener("change", this.changePos, true);
 				
 				redEntry.appendChild(redLabel);
@@ -194,12 +211,12 @@ WT.gradient = {
 			},
 			
 			updatePreview : function() {
-				var container = document.getElementById("gen-preview");
+				var container = document.getElementById("gen-preview-" + this.parent);
 				container.style.backgroundImage = this.gradient.toString();
 			},
 			
 			updateGradient : function() {
-				var select = document.getElementById("select-bar");
+				var select = document.getElementById("select-bar-" + this.parent);
 				select.innerHTML = "";
 				
 				this.gradient.sortColor();
@@ -209,11 +226,11 @@ WT.gradient = {
 			
 			setActiveColor : function(id) {
 				this.activeColor = id;
-				var color = document.getElementById("color-preview");
-				var red = document.getElementById("gradient-red");
-				var blue = document.getElementById("gradient-blue");
-				var green = document.getElementById("gradient-green");
-				var pos = document.getElementById("gradient-pos");
+				var color = document.getElementById("color-preview-" + this.parent);
+				var red = document.getElementById("gradient-red-" + this.parent);
+				var blue = document.getElementById("gradient-blue-" + this.parent);
+				var green = document.getElementById("gradient-green-" + this.parent);
+				var pos = document.getElementById("gradient-pos-" + this.parent);
 				var active = this.gradient.getColorById(this.activeColor);
 				
 				color.style.backgroundColor = active.toCSS();
@@ -226,19 +243,21 @@ WT.gradient = {
 			
 			selectColorStop : function(e) {
 				var id = e.srcElement.getAttribute("color-id");
-				app.setActiveColor(id);
+				var parent = e.srcElement.getAttribute("parent");
+				WT.Desk.applications[parent].setActiveColor(id);
 			},
 			
 			moveColorStop : function(e) {
-				elem = e.srcElement;
+				var elem = e.srcElement;
 				
 				if(e.srcElement.getAttribute("class") == "color-box") {
 					elem = e.srcElement.parentNode;
 				}
+				var parent = elem.getAttribute("parent");
 				
-				app.setActiveColor(elem.getAttribute("color-id"));
+				WT.Desk.applications[parent].setActiveColor(elem.getAttribute("color-id"));
 				
-				bar = document.getElementById("select-bar");
+				var bar = document.getElementById("select-bar-" + parent);
 				var barWidth = bar.clientWidth;
 				var startX = e.clientX;
 				var deltaX = startX - elem.offsetLeft;
@@ -274,12 +293,12 @@ WT.gradient = {
 					}
 					elem.style.left = pos + "%";
 					
-					var active = app.gradient.getColorById(app.activeColor);
+					var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
 					active.position = pos;
-					app.gradient.setColorById(app.activeColor);
-					app.updateGradient();
+					WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
+					WT.Desk.applications[parent].updateGradient();
 					
-					var inputPos = document.getElementById("gradient-pos");
+					var inputPos = document.getElementById("gradient-pos-" + parent);
 					inputPos.value = pos;
 					
 					e.stopPropagation();
@@ -290,7 +309,7 @@ WT.gradient = {
 					document.removeEventListener("mouseup", upHandler, true);
 					document.removeEventListener("mousemove", moveHandler, true);
 					
-					app.updateGradient();
+					WT.Desk.applications[parent].updateGradient();
 					
 					e.stopPropagation();
 					e.preventDefault();
@@ -298,55 +317,61 @@ WT.gradient = {
 			},
 			
 			removeColor : function(e) {
-				app.activeColor = app.gradient.removeOldColor(app.activeColor);
-				app.setActiveColor(app.activeColor);
-				app.updateGradient();
+				var parent = e.srcElement.getAttribute("parent");
+				WT.Desk.applications[parent].activeColor = WT.Desk.applications[parent].gradient.removeOldColor(WT.Desk.applications[parent].activeColor);
+				WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
+				WT.Desk.applications[parent].updateGradient();
 			},
 			
 			addColor : function(e) {
-				app.activeColor = app.gradient.addNewColor(app.activeColor);
-				app.setActiveColor(app.activeColor);
-				app.updateGradient();
+				var parent = e.srcElement.getAttribute("parent");
+				WT.Desk.applications[parent].activeColor = WT.Desk.applications[parent].gradient.addNewColor(WT.Desk.applications[parent].activeColor);
+				WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
+				WT.Desk.applications[parent].updateGradient();
 			},
 			
 			changeRed : function(e) {
+				var parent = e.srcElement.getAttribute("parent");
 				var value = e.srcElement.value;
-				var active = app.gradient.getColorById(app.activeColor);
+				var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
 				active.color[0] = value;
-				app.gradient.setColorById(app.activeColor);
+				WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
 				
-				app.setActiveColor(app.activeColor);
-				app.updateGradient();
+				WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
+				WT.Desk.applications[parent].updateGradient();
 			},
 			
 			changeBlue : function(e) {
+				var parent = e.srcElement.getAttribute("parent");
 				var value = e.srcElement.value;
-				var active = app.gradient.getColorById(app.activeColor);
+				var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
 				active.color[1] = value;
-				app.gradient.setColorById(app.activeColor);
+				WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
 				
-				app.setActiveColor(app.activeColor);
-				app.updateGradient();
+				WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
+				WT.Desk.applications[parent].updateGradient();
 			},
 			
 			changeGreen : function(e) {
+				var parent = e.srcElement.getAttribute("parent");
 				var value = e.srcElement.value;
-				var active = app.gradient.getColorById(app.activeColor);
+				var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
 				active.color[2] = value;
-				app.gradient.setColorById(app.activeColor);
+				WT.Desk.applications[parent].gradient.setColorById(app.activeColor);
 				
-				app.setActiveColor(app.activeColor);
-				app.updateGradient();
+				WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
+				WT.Desk.applications[parent].updateGradient();
 			},
 			
 			changePos : function(e) {
+				var parent = e.srcElement.getAttribute("parent");
 				var value = e.srcElement.value;
-				var active = app.gradient.getColorById(app.activeColor);
+				var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
 				active.position = value;
-				app.gradient.setColorById(app.activeColor);
+				WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
 				
-				app.setActiveColor(app.activeColor);
-				app.updateGradient();
+				WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
+				WT.Desk.applications[parent].updateGradient();
 			}
 		};
 		return app;
