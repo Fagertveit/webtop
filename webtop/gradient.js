@@ -1,11 +1,12 @@
 WT.gradient = {
 	Application : function(parId) {
-		app = {
+		var app = {
 			parent : parId,
 			activeColor : 0,
+			color : new WT.color.Color(255, 255, 255),
 			gradient : new WT.gradient.Gradient(),
 			width : 256,
-			height : 256,
+			height : 242,
 			title : "Gradient Edit 0.2",
 			
 			init : function() {
@@ -18,6 +19,8 @@ WT.gradient = {
 			genContainer : function() {
 				var container = document.createElement("div");
 				var parentElem = document.getElementById("portal-container-" + this.parent);
+				this.color = this.gradient.colStops[this.activeColor].color;
+				this.color.RGBtoHSL();
 
 				container.setAttribute("class", "gradient");
 				
@@ -33,6 +36,7 @@ WT.gradient = {
 				container.setAttribute("class", "preview");
 				container.setAttribute("id", "gen-preview-" + this.parent);
 				this.gradient.sortColor();
+				var gradient = this.gradient.toString();
 				
 				container.setAttribute("style",
 						"background-image: -webkit-" + gradient + ";" +
@@ -93,8 +97,7 @@ WT.gradient = {
 				container.style.left = colorStop.position + "%";
 				container.style.marginLeft = "-5px";
 				
-				colorBox.style.backgroundColor = "rgb(" + colorStop.color[0] + ", " + colorStop.color[1]
-					+ ", " + colorStop.color[2] + ")";
+				colorBox.style.backgroundColor = colorStop.toCSS();
 				
 				container.appendChild(colorBox);
 				
@@ -102,8 +105,60 @@ WT.gradient = {
 			},
 			
 			generateActive : function() {
-				var container = document.createElement("div");
+				var active = this.gradient.getColorById(this.activeColor);
 				
+				var container = document.createElement("div");
+				container.setAttribute("class", "active-color");
+				
+				var colorMap = document.createElement("div");
+				colorMap.setAttribute("class", "color-map");
+				colorMap.setAttribute("id", "color-map-" + this.parent);
+				colorMap.style.backgroundColor = active.toCSS();
+				
+				var lightMap = document.createElement("div");
+				lightMap.setAttribute("class", "light-map");
+				
+				var saturationMap = document.createElement("div");
+				saturationMap.setAttribute("class", "sat-map");
+				
+				var hueBar = document.createElement("div");
+				hueBar.setAttribute("class", "hue-bar");
+				
+				var color = document.createElement("div");
+				color.setAttribute("class", "color-preview");
+				color.setAttribute("id", "color-preview-" + this.parent);
+				color.style.backgroundColor = active.toCSS();
+				
+				var add = document.createElement("div");
+				add.setAttribute("class", "btn color-add");
+				add.setAttribute("parent", this.parent);
+				add.innerHTML = "Add";
+				add.addEventListener("click", this.addColor, true);
+				
+				var del = document.createElement("div");
+				del.setAttribute("class", "btn color-del");
+				del.setAttribute("parent", this.parent);
+				del.innerHTML = "Remove";
+				del.addEventListener("click", this.removeColor, true);
+				
+				var exp = document.createElement("div");
+				exp.setAttribute("class", "btn color-export");
+				exp.setAttribute("parent", this.parent);
+				exp.innerHTML = "Export";
+				
+				colorMap.appendChild(lightMap);
+				colorMap.appendChild(saturationMap);
+				
+				container.appendChild(colorMap);
+				container.appendChild(hueBar);
+				container.appendChild(color);
+				
+				container.appendChild(add);
+				container.appendChild(del);
+				container.appendChild(exp);
+				
+				return container;
+				/*
 				var color = document.createElement("div");
 				
 				var colorForm = document.createElement("div");
@@ -212,8 +267,8 @@ WT.gradient = {
 				
 				container.appendChild(add);
 				container.appendChild(del);
+				*/
 				
-				return container;
 			},
 			
 			updatePreview : function() {
@@ -240,18 +295,20 @@ WT.gradient = {
 			setActiveColor : function(id) {
 				this.activeColor = id;
 				var color = document.getElementById("color-preview-" + this.parent);
-				var red = document.getElementById("gradient-red-" + this.parent);
-				var blue = document.getElementById("gradient-blue-" + this.parent);
-				var green = document.getElementById("gradient-green-" + this.parent);
-				var pos = document.getElementById("gradient-pos-" + this.parent);
+				var colorMap = document.getElementById("color-map-" + this.parent)
+				//var red = document.getElementById("gradient-red-" + this.parent);
+				//var blue = document.getElementById("gradient-blue-" + this.parent);
+				//var green = document.getElementById("gradient-green-" + this.parent);
+				//var pos = document.getElementById("gradient-pos-" + this.parent);
 				var active = this.gradient.getColorById(this.activeColor);
 				
 				color.style.backgroundColor = active.toCSS();
+				colorMap.style.backgroundColor = active.toCSS();
 				
-				red.value = active.color[0];
-				blue.value = active.color[1];
-				green.value = active.color[2];
-				pos.value = active.position;
+				//red.value = active.color[0];
+				//blue.value = active.color[1];
+				//green.value = active.color[2];
+				//pos.value = active.position;
 			},
 			
 			selectColorStop : function(e) {
@@ -311,8 +368,8 @@ WT.gradient = {
 					WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
 					WT.Desk.applications[parent].updateGradient();
 					
-					var inputPos = document.getElementById("gradient-pos-" + parent);
-					inputPos.value = pos;
+					//var inputPos = document.getElementById("gradient-pos-" + parent);
+					//inputPos.value = pos;
 					
 					e.stopPropagation();
 					e.preventDefault();
@@ -391,15 +448,14 @@ WT.gradient = {
 	},
 		
 	Gradient : function() {
-		gradient = {
+		var gradient = {
 			colStops : new Array(),
 			start : "left",
 			nextId : 0,
 			
 			init : function() {
-				this.addColor([255, 255, 255], 0, "%");
 				this.addColor([255, 255, 0], 40, "%");
-				this.addColor([0, 0, 255], 25, "%");
+				this.addColor([0, 0, 255], 0, "%");
 				this.addColor([255, 0, 255], 70, "%");
 				this.addColor([255, 0, 0], 50, "%");
 				this.addColor([0, 0, 0], 100, "%");
@@ -561,16 +617,16 @@ WT.gradient = {
 	},
 
 	ColorStop : function(col, pos, posT, i) {
-		cs = {
+		var cs = {
 			position : pos || 0,
-			color : col || [255, 255, 255],
+			color : new WT.color.Color(col[0], col[1], col[2]),
 			posType : posT || "%",
 			id : i || 0,
 			
 			setColors : function(colors) {
-				this.color[0] = colors[0];
-				this.color[1] = colors[1];
-				this.color[2] = colors[2];
+				this.color.r = colors[0];
+				this.color.g = colors[1];
+				this.color.b = colors[2];
 			},
 			
 			setPosition : function(value, type) {
@@ -579,14 +635,14 @@ WT.gradient = {
 			},
 			
 			toString : function() {
-				return "rgb(" + this.color[0] + ", " + this.color[1] + ", " + this.color[2]
+				return "rgb(" + this.color.r + ", " + this.color.g + ", " + this.color.b
 						+ ") " + this.position + this.posType;
 			},
 			
 			toCSS : function() {
-				return "rgb(" + this.color[0] + ", " + this.color[1] + ", " + this.color[2]
+				return "rgb(" + this.color.r + ", " + this.color.g + ", " + this.color.b
 				+ ")";
-			}
+			},
 		};
 		return cs;
 	}

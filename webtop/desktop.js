@@ -1,6 +1,6 @@
 WT.desktop = {
 	Desktop : function(srcW, srcH, color) {
-		desktop = {
+		var desktop = {
 			width : srcW || 640,
 			height : srcH || 480,
 			background : color || [ 245, 245, 245 ],
@@ -32,7 +32,7 @@ WT.desktop = {
 			
 			addApplication : function(application) {
 				var tempApp = new application(this.nextId);
-				var tempPortal = new WT.portal.Portal(tempApp.width, tempApp.weight, this.deskId, this.nextId);
+				var tempPortal = new WT.portal.Portal(tempApp.width, tempApp.height, this.deskId, this.nextId);
 				
 				
 				this.portals[this.nextId] = tempPortal;
@@ -46,5 +46,5 @@ WT.desktop = {
 			}
 		};
 		return desktop;
-	},
+	}
 };

@@ -1,6 +1,6 @@
 WT.portal = {
 	Portal : function(srcW, srcH, srcP, srcId) {
-		portal = {
+		var portal = {
 			width : srcW || 320,
 			height : srcH || 240,
 			parent : srcP || null,
@@ -22,7 +22,7 @@ WT.portal = {
 				container = document.createElement("div");
 				container.setAttribute("id", "portal-" + this.id);
 				container.setAttribute("class", "portal");
-				container.setAttribute("portalid", this.id)
+				container.setAttribute("portalid", this.id);
 				container.style.top = "100px";
 				container.style.left = "10px";
 				container.style.width = this.width + "px";
