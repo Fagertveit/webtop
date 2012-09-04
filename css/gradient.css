@@ -74,6 +74,15 @@ left: 0px;
 background-image: url(../img/gradient-saturation.png);
 }
 
+.color-map>.color-ind {
+width: 10px;
+height: 10px;
+position: absolute;
+top: 10px;
+left: 10px;
+background-image: url(../img/gradient-color-indicator.png);
+}
+
 .active-color>.hue-bar {
 width: 16px;
 height: 128px;
@@ -82,6 +91,15 @@ position: absolute;
 top: 4px;
 left: 148px;
 background-image: url(../img/gradient-hue.png);
+}
+
+.hue-bar>.hue-ind {
+width: 28px;
+height: 10px;
+position: absolute;
+top: 10px;
+left: -6px;
+background-image: url(../img/gradient-hue-indicator.png);
 }
 
 .active-color>.color-preview {

@@ -19,7 +19,8 @@ WT.gradient = {
 			genContainer : function() {
 				var container = document.createElement("div");
 				var parentElem = document.getElementById("portal-container-" + this.parent);
-				this.color = this.gradient.colStops[this.activeColor].color;
+				var tempColor = this.gradient.colStops[this.activeColor].color;
+				this.color.setRGB(tempColor[0], tempColor[1], tempColor[2]);
 				this.color.RGBtoHSL();
 
 				container.setAttribute("class", "gradient");
@@ -113,6 +114,7 @@ WT.gradient = {
 				var colorMap = document.createElement("div");
 				colorMap.setAttribute("class", "color-map");
 				colorMap.setAttribute("id", "color-map-" + this.parent);
+				colorMap.setAttribute("parent", this.parent);
 				colorMap.style.backgroundColor = active.toCSS();
 				
 				var lightMap = document.createElement("div");
@@ -123,6 +125,19 @@ WT.gradient = {
 				
 				var hueBar = document.createElement("div");
 				hueBar.setAttribute("class", "hue-bar");
+				hueBar.setAttribute("parent", this.parent);
+				
+				var hueIndicator = document.createElement("div");
+				hueIndicator.setAttribute("class", "hue-ind");
+				hueIndicator.setAttribute("parent", this.parent);
+				hueIndicator.setAttribute("id", "hue-ind-" + this.parent);
+				hueIndicator.addEventListener("mousedown", this.moveHue, true);
+				
+				var colorIndicator = document.createElement("div");
+				colorIndicator.setAttribute("class", "color-ind");
+				colorIndicator.setAttribute("parent", this.parent);
+				colorIndicator.setAttribute("id", "color-ind-" + this.parent);
+				colorIndicator.addEventListener("mousedown", this.moveSL, true);
 				
 				var color = document.createElement("div");
 				color.setAttribute("class", "color-preview");
@@ -148,6 +163,9 @@ WT.gradient = {
 				
 				colorMap.appendChild(lightMap);
 				colorMap.appendChild(saturationMap);
+				colorMap.appendChild(colorIndicator);
+				
+				hueBar.appendChild(hueIndicator);
 				
 				container.appendChild(colorMap);
 				container.appendChild(hueBar);
@@ -295,20 +313,50 @@ WT.gradient = {
 			setActiveColor : function(id) {
 				this.activeColor = id;
 				var color = document.getElementById("color-preview-" + this.parent);
-				var colorMap = document.getElementById("color-map-" + this.parent)
+				var colorMap = document.getElementById("color-map-" + this.parent);
 				//var red = document.getElementById("gradient-red-" + this.parent);
 				//var blue = document.getElementById("gradient-blue-" + this.parent);
 				//var green = document.getElementById("gradient-green-" + this.parent);
 				//var pos = document.getElementById("gradient-pos-" + this.parent);
 				var active = this.gradient.getColorById(this.activeColor);
+				var tempColor = this.color;
+				
+				tempColor.setHSL(tempColor.h, 1.0, 0.5);
+				tempColor.HSLtoRGB();
 				
 				color.style.backgroundColor = active.toCSS();
-				colorMap.style.backgroundColor = active.toCSS();
+				colorMap.style.backgroundColor = tempColor.toCSS();
 				
 				//red.value = active.color[0];
 				//blue.value = active.color[1];
 				//green.value = active.color[2];
 				//pos.value = active.position;
+			},
+			
+			testColorRGB : function(r, g, b) {
+				var color = document.getElementById("color-preview-" + this.parent);
+				var colorMap = document.getElementById("color-map-" + this.parent);
+				var active = this.gradient.getColorById(this.activeColor);
+				var tempColor = this.color;
+				tempColor.setRGB(r, g, b);
+				//tempColor.setHSL(1.0, 1.0, 0.5);
+				//tempColor.HSLtoRGB();
+				
+				color.style.backgroundColor = tempColor.toCSS();
+				colorMap.style.backgroundColor = tempColor.toCSS();
+			},
+			
+			testColorHSL : function(h, s, l) {
+				var color = document.getElementById("color-preview-" + this.parent);
+				var colorMap = document.getElementById("color-map-" + this.parent);
+				var active = this.gradient.getColorById(this.activeColor);
+				var tempColor = this.color;
+				
+				tempColor.setHSL(h, s, l);
+				tempColor.HSLtoRGB();
+				
+				color.style.backgroundColor = tempColor.toCSS();
+				colorMap.style.backgroundColor = tempColor.toCSS();
 			},
 			
 			selectColorStop : function(e) {
@@ -386,6 +434,168 @@ WT.gradient = {
 				}
 			},
 			
+			moveSL : function(e) {
+				var colorMap = e.target.parentNode;
+				var parent = colorMap.getAttribute("parent");
+				var indicator = document.getElementById("color-ind-" + parent);
+				var sat;
+				var light;
+				var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
+				var color = new WT.color.Color(active.color[0], active.color[1], active.color[2]);
+
+				color.RGBtoHSL();
+				console.log(color.toString());
+				
+				var startX = e.clientX;
+				var startY = e.clientY;
+				
+				var deltaX = startX - indicator.offsetLeft;
+				var deltaY = startY - indicator.offsetTop;
+				
+				document.addEventListener("mousemove", moveHandler, true);
+				document.addEventListener("mouseup", upHandler, true);
+				
+				e.stopPropagation();
+				e.preventDefault();
+				
+				function moveHandler(e) {
+					
+					if(e.clientY > deltaY + 128) {
+						light = 0.0;
+						indicator.style.top = 123 + "px";
+					} else if(e.clientY < deltaY) {
+						light = 1.0;
+						indicator.style.top = -5 + "px";
+					} else {
+						light = (e.clientY - deltaY) / 128;
+						light -= 1;
+						light = Math.abs(light);
+						indicator.style.top = e.clientY - deltaY + "px";
+					}
+					
+					if(e.clientX > deltaX + 128) {
+						sat = 1.0;
+						light -= 0.5;
+						indicator.style.left = 123 + "px";
+					} else if(e.clientX < deltaX) {
+						sat = 0.0;
+						indicator.style.left = -5 + "px";
+					} else {
+						sat = (e.clientX - deltaX) / 128;
+						light -= sat/2;
+						sat = Math.abs(sat);
+						indicator.style.left = e.clientX - deltaX + "px";
+					}
+					/*
+					if(sat < 0.5) {
+						light += sat;
+					}
+					*/
+					
+					color.setSaturation(sat);
+					color.setLight(light);
+					color.HSLtoRGB();
+					
+					active.color[0] = color.r;
+					active.color[1] = color.g;
+					active.color[2] = color.b;
+
+					WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
+					WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
+					WT.Desk.applications[parent].updateGradient();
+					
+					/*
+					var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
+					active.position = pos;
+					WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
+					WT.Desk.applications[parent].updateGradient();
+					*/
+					//var inputPos = document.getElementById("gradient-pos-" + parent);
+					//inputPos.value = pos;
+					
+					e.stopPropagation();
+					e.preventDefault();
+				}
+				
+				function upHandler(e) {
+					document.removeEventListener("mouseup", upHandler, true);
+					document.removeEventListener("mousemove", moveHandler, true);
+					
+					//WT.Desk.applications[parent].updateGradient();
+					console.log(color.toString());
+					
+					e.stopPropagation();
+					e.preventDefault();
+				}
+			},
+			
+			moveHue : function(e) {
+				var hueBar = e.target.parentNode;
+				var indicator = e.target;
+				var hue;
+				var parent = hueBar.getAttribute("parent");
+				var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
+				var color = WT.Desk.applications[parent].color;
+				color.setRGB(active.color[0], active.color[1], active.color[2]);
+				
+				
+				var startY = e.clientY;
+				var deltaY = startY - indicator.offsetTop - 5;
+				
+				document.addEventListener("mousemove", moveHandler, true);
+				document.addEventListener("mouseup", upHandler, true);
+				
+				e.stopPropagation();
+				e.preventDefault();
+				
+				function moveHandler(e) {
+					
+					if(e.clientY > deltaY + 128) {
+						hue = 0.0;
+						indicator.style.top = 123 + "px";
+					} else if(e.clientY < deltaY) {
+						hue = 1.0;
+						indicator.style.top = -5 + "px";
+					} else {
+						hue = (e.clientY - deltaY) / 128;
+						hue -= 1;
+						hue = Math.abs(hue);
+						indicator.style.top = e.clientY - deltaY + "px";
+					}
+					color.setHue(hue);
+					
+					active.color[0] = color.r;
+					active.color[1] = color.g;
+					active.color[2] = color.b;
+
+					WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
+					WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
+					WT.Desk.applications[parent].updateGradient();
+					/*
+					var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
+					active.position = pos;
+					WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
+					WT.Desk.applications[parent].updateGradient();
+					*/
+					//var inputPos = document.getElementById("gradient-pos-" + parent);
+					//inputPos.value = pos;
+					
+					e.stopPropagation();
+					e.preventDefault();
+				}
+				
+				function upHandler(e) {
+					document.removeEventListener("mouseup", upHandler, true);
+					document.removeEventListener("mousemove", moveHandler, true);
+					
+					//WT.Desk.applications[parent].updateGradient();
+					//console.log(color.toString());
+					
+					e.stopPropagation();
+					e.preventDefault();
+				}
+			},
+			
 			removeColor : function(e) {
 				var parent = e.target.getAttribute("parent");
 				WT.Desk.applications[parent].activeColor = WT.Desk.applications[parent].gradient.removeOldColor(WT.Desk.applications[parent].activeColor);
@@ -454,8 +664,8 @@ WT.gradient = {
 			nextId : 0,
 			
 			init : function() {
-				this.addColor([255, 255, 0], 40, "%");
-				this.addColor([0, 0, 255], 0, "%");
+				this.addColor([255, 255, 0], 0, "%");
+				this.addColor([0, 0, 255], 40, "%");
 				this.addColor([255, 0, 255], 70, "%");
 				this.addColor([255, 0, 0], 50, "%");
 				this.addColor([0, 0, 0], 100, "%");
@@ -619,14 +829,14 @@ WT.gradient = {
 	ColorStop : function(col, pos, posT, i) {
 		var cs = {
 			position : pos || 0,
-			color : new WT.color.Color(col[0], col[1], col[2]),
+			color : col || [255, 255, 255],
 			posType : posT || "%",
 			id : i || 0,
 			
 			setColors : function(colors) {
-				this.color.r = colors[0];
-				this.color.g = colors[1];
-				this.color.b = colors[2];
+				this.color[0] = colors[0];
+				this.color[1] = colors[1];
+				this.color[2] = colors[2];
 			},
 			
 			setPosition : function(value, type) {
@@ -635,14 +845,14 @@ WT.gradient = {
 			},
 			
 			toString : function() {
-				return "rgb(" + this.color.r + ", " + this.color.g + ", " + this.color.b
+				return "rgb(" + this.color[0] + ", " + this.color[1] + ", " + this.color[2]
 						+ ") " + this.position + this.posType;
 			},
 			
 			toCSS : function() {
-				return "rgb(" + this.color.r + ", " + this.color.g + ", " + this.color.b
+				return "rgb(" + this.color[0] + ", " + this.color[1] + ", " + this.color[2]
 				+ ")";
-			},
+			}
 		};
 		return cs;
 	}

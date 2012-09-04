@@ -13,8 +13,6 @@ WT.color = {
 				this.r = red;
 				this.g = green;
 				this.b = blue;
-				
-				this.RGBtoHSL();
 			},
 			
 			setRed : function(red) {
@@ -33,8 +31,6 @@ WT.color = {
 				this.h = hue;
 				this.s = sat;
 				this.l = light;
-				
-				this.HSLtoRGB();
 			},
 			
 			setHue : function(hue) {
@@ -59,15 +55,18 @@ WT.color = {
 				var max = Math.max(tRed, tGreen, tBlue), min = Math.min(tRed, tGreen, tBlue);
 				this.h, this.s, this.l = (max + min) / 2;
 
+				/*
 				if(max == min){
-					this.h = this.s = 0; // achromatic
-				}else{
+					this.h = this.s = 0; // achromatic*/
+				if(max == min) {
+					this.s = 0; // achromatic
+				} else {
 					var d = max - min;
 					this.s = this.l > 0.5 ? d / (2 - max - min) : d / (max + min);
-					switch(max){
-					case tRed: this.h = (tGreen - tBlue) / d + (tGreen < tBlue ? 6 : 0); break;
-					case tGreen: this.h = (tBlue - tRed) / d + 2; break;
-					case tBlue: this.h = (tRed - tGreen) / d + 4; break;
+					switch(max) {
+						case tRed: this.h = (tGreen - tBlue) / d + (tGreen < tBlue ? 6 : 0); break;
+						case tGreen: this.h = (tBlue - tRed) / d + 2; break;
+						case tBlue: this.h = (tRed - tGreen) / d + 4; break;
 					}
 					this.h /= 6;
 				}
@@ -93,9 +92,9 @@ WT.color = {
 					this.b = hue2rgb(p, q, this.h - 1/3);
 				}
 
-				this.r * 255;
-				this.g * 255;
-				this.b * 255;
+				this.r = Math.floor(this.r * 255);
+				this.g = Math.floor(this.g * 255);
+				this.b = Math.floor(this.b * 255);
 			},
 			
 			getHex : function() {
@@ -120,6 +119,11 @@ WT.color = {
 						 ", S : " + this.s +
 						 ", L : " + this.l +
 						 " | Hex : " + this.getHex();
+			},
+			
+			toCSS : function() {
+				return "rgb(" + this.r + ", " + this.g + ", " + this.b
+				+ ")";
 			}
 		};
 		return color;
