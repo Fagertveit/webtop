@@ -20,7 +20,7 @@ background-color: #fff;
 width: 100%;
 height: 18px;
 overflow: hidden;
-background-image: -webkit-linear-gradient(top, #aae, #55a 80%, #aaf 85%); 
+/* background-image: -webkit-linear-gradient(top, #aae, #55a 80%, #aaf 85%); */
 border-bottom: 1px solid #aaa;
 }
 
@@ -95,6 +95,10 @@ right: 0px;
 height: 14px;
 padding: 4px 8px;
 background-image: -webkit-linear-gradient(top, #ddd, #eee 80%, #ccc 85%);
+background-image: -moz-linear-gradient(top, #ddd, #eee 80%, #ccc 85%);
+background-image: -ms-linear-gradient(top, #ddd, #eee 80%, #ccc 85%);
+background-image: -o-linear-gradient(top, #ddd, #eee 80%, #ccc 85%);
+background-image: linear-gradient(top, #ddd, #eee 80%, #ccc 85%);
 border: 1px solid #aaa;
 border-radius: 3px;
 font-size: 14px;
@@ -104,6 +108,10 @@ cursor: pointer;
 
 .btn:hover {
 background-image: -webkit-linear-gradient(top, #aaa, #ddd 80%, #bbb 85%);
+background-image: -moz-linear-gradient(top, #aaa, #ddd 80%, #bbb 85%);
+background-image: -ms-linear-gradient(top, #aaa, #ddd 80%, #bbb 85%);
+background-image: -o-linear-gradient(top, #aaa, #ddd 80%, #bbb 85%);
+background-image: linear-gradient(top, #aaa, #ddd 80%, #bbb 85%);
 }
 
 .gradient {

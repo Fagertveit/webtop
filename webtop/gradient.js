@@ -33,7 +33,13 @@ WT.gradient = {
 				container.setAttribute("class", "preview");
 				container.setAttribute("id", "gen-preview-" + this.parent);
 				this.gradient.sortColor();
-				container.style.backgroundImage = this.gradient.toString();
+				
+				container.setAttribute("style",
+						"background-image: -webkit-" + gradient + ";" +
+						"background-image: -moz-" + gradient + ";" +
+						"background-image: -ms-" + gradient + ";" +
+						"background-image: -o-" + gradient + ";" +
+						"background-image: " + gradient + ";");
 				
 				return container;
 			},
@@ -212,7 +218,14 @@ WT.gradient = {
 			
 			updatePreview : function() {
 				var container = document.getElementById("gen-preview-" + this.parent);
-				container.style.backgroundImage = this.gradient.toString();
+				var gradient = this.gradient.toString();
+				//container.style.backgroundImage = this.gradient.toString();
+				container.setAttribute("style",
+								"background-image: -webkit-" + gradient + ";" +
+								"background-image: -moz-" + gradient + ";" +
+								"background-image: -ms-" + gradient + ";" +
+								"background-image: -o-" + gradient + ";" +
+								"background-image: " + gradient + ";");
 			},
 			
 			updateGradient : function() {
@@ -534,7 +547,7 @@ WT.gradient = {
 			
 			toString : function() {
 				var str;
-				str = "-webkit-linear-gradient("
+				str = "linear-gradient("
 					+ this.start;
 				for(var i = 0; i < this.colStops.length; i++) {
 					str += ", " + this.colStops[i].toString();
