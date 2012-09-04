@@ -242,16 +242,16 @@ WT.gradient = {
 			},
 			
 			selectColorStop : function(e) {
-				var id = e.srcElement.getAttribute("color-id");
-				var parent = e.srcElement.getAttribute("parent");
+				var id = e.target.getAttribute("color-id");
+				var parent = e.target.getAttribute("parent");
 				WT.Desk.applications[parent].setActiveColor(id);
 			},
 			
 			moveColorStop : function(e) {
-				var elem = e.srcElement;
+				var elem = e.target;
 				
-				if(e.srcElement.getAttribute("class") == "color-box") {
-					elem = e.srcElement.parentNode;
+				if(e.target.getAttribute("class") == "color-box") {
+					elem = e.target.parentNode;
 				}
 				var parent = elem.getAttribute("parent");
 				
@@ -317,22 +317,22 @@ WT.gradient = {
 			},
 			
 			removeColor : function(e) {
-				var parent = e.srcElement.getAttribute("parent");
+				var parent = e.target.getAttribute("parent");
 				WT.Desk.applications[parent].activeColor = WT.Desk.applications[parent].gradient.removeOldColor(WT.Desk.applications[parent].activeColor);
 				WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
 				WT.Desk.applications[parent].updateGradient();
 			},
 			
 			addColor : function(e) {
-				var parent = e.srcElement.getAttribute("parent");
+				var parent = e.target.getAttribute("parent");
 				WT.Desk.applications[parent].activeColor = WT.Desk.applications[parent].gradient.addNewColor(WT.Desk.applications[parent].activeColor);
 				WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
 				WT.Desk.applications[parent].updateGradient();
 			},
 			
 			changeRed : function(e) {
-				var parent = e.srcElement.getAttribute("parent");
-				var value = e.srcElement.value;
+				var parent = e.target.getAttribute("parent");
+				var value = e.target.value;
 				var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
 				active.color[0] = value;
 				WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
@@ -342,8 +342,8 @@ WT.gradient = {
 			},
 			
 			changeBlue : function(e) {
-				var parent = e.srcElement.getAttribute("parent");
-				var value = e.srcElement.value;
+				var parent = e.target.getAttribute("parent");
+				var value = e.target.value;
 				var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
 				active.color[1] = value;
 				WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
@@ -353,8 +353,8 @@ WT.gradient = {
 			},
 			
 			changeGreen : function(e) {
-				var parent = e.srcElement.getAttribute("parent");
-				var value = e.srcElement.value;
+				var parent = e.target.getAttribute("parent");
+				var value = e.target.value;
 				var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
 				active.color[2] = value;
 				WT.Desk.applications[parent].gradient.setColorById(app.activeColor);
@@ -364,8 +364,8 @@ WT.gradient = {
 			},
 			
 			changePos : function(e) {
-				var parent = e.srcElement.getAttribute("parent");
-				var value = e.srcElement.value;
+				var parent = e.target.getAttribute("parent");
+				var value = e.target.value;
 				var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
 				active.position = value;
 				WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);

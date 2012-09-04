@@ -111,7 +111,7 @@ WT.portal = {
 			},
 
 			move : function(event) {
-				var element = event.srcElement.parentNode;
+				var element = event.target.parentNode;
 
 				var startX = event.clientX;
 				var startY = event.clientY;
@@ -142,7 +142,7 @@ WT.portal = {
 			},
 
 			resize : function(event) {
-				var element = event.srcElement.parentNode;
+				var element = event.target.parentNode;
 				var startX = event.clientX;
 				var startY = event.clientY;
 
@@ -189,7 +189,7 @@ WT.portal = {
 			},
 			
 			close : function(e) {
-				var element = e.srcElement.parentNode;
+				var element = e.target.parentNode;
 				var id = element.getAttribute("portalid");
 				
 				var portals = document.getElementById("desk-cont");
