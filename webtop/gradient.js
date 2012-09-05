@@ -4,6 +4,7 @@ WT.gradient = {
 			parent : parId,
 			activeColor : 0,
 			color : new WT.color.Color(255, 255, 255),
+			hue : 0.0,
 			gradient : new WT.gradient.Gradient(),
 			width : 256,
 			height : 242,
@@ -314,6 +315,10 @@ WT.gradient = {
 				this.activeColor = id;
 				var color = document.getElementById("color-preview-" + this.parent);
 				var colorMap = document.getElementById("color-map-" + this.parent);
+				var hueIndicator = document.getElementById("hue-ind-" + this.parent);
+				var colorIndicator = document.getElementById("color-ind-" + this.parent);
+				var x;
+				var y;
 				//var red = document.getElementById("gradient-red-" + this.parent);
 				//var blue = document.getElementById("gradient-blue-" + this.parent);
 				//var green = document.getElementById("gradient-green-" + this.parent);
@@ -326,6 +331,16 @@ WT.gradient = {
 				
 				color.style.backgroundColor = active.toCSS();
 				colorMap.style.backgroundColor = tempColor.toCSS();
+				
+				x = Math.floor(tempColor.s * 128);
+				y = Math.floor(Math.abs(tempColor.l - 1) * 128);
+				
+				colorIndicator.style.top = y + "px";
+				colorIndicator.style.left = x + "px";
+				
+				y = Math.floor(Math.abs(tempColor.h - 1) * 128);
+				
+				hueIndicator.style.top = y + "px";
 				
 				//red.value = active.color[0];
 				//blue.value = active.color[1];
@@ -442,7 +457,8 @@ WT.gradient = {
 				var light;
 				var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
 				var color = new WT.color.Color(active.color[0], active.color[1], active.color[2]);
-
+				var x, y, xy;
+				
 				color.RGBtoHSL();
 				console.log(color.toString());
 				
@@ -460,58 +476,50 @@ WT.gradient = {
 				
 				function moveHandler(e) {
 					
+					
 					if(e.clientY > deltaY + 128) {
-						light = 0.0;
+						y = 0.0;
 						indicator.style.top = 123 + "px";
 					} else if(e.clientY < deltaY) {
-						light = 1.0;
+						y = 1.0;
 						indicator.style.top = -5 + "px";
 					} else {
-						light = (e.clientY - deltaY) / 128;
-						light -= 1;
-						light = Math.abs(light);
+						y = (e.clientY - deltaY) / 128;
+						y -= 1;
+						y = Math.abs(y);
 						indicator.style.top = e.clientY - deltaY + "px";
 					}
 					
 					if(e.clientX > deltaX + 128) {
-						sat = 1.0;
-						light -= 0.5;
+						x = 1.0
 						indicator.style.left = 123 + "px";
 					} else if(e.clientX < deltaX) {
-						sat = 0.0;
+						x = 0.0;
 						indicator.style.left = -5 + "px";
 					} else {
-						sat = (e.clientX - deltaX) / 128;
-						light -= sat/2;
-						sat = Math.abs(sat);
+						x = (e.clientX - deltaX) / 128;
 						indicator.style.left = e.clientX - deltaX + "px";
 					}
-					/*
-					if(sat < 0.5) {
-						light += sat;
-					}
-					*/
 					
+					sat = x;
 					color.setSaturation(sat);
+					
+					light = y / 2;
+					if(y/2 - x/2 > 0) {
+						light += y/2 - x/2;
+					}
+					
 					color.setLight(light);
+					
 					color.HSLtoRGB();
 					
 					active.color[0] = color.r;
 					active.color[1] = color.g;
 					active.color[2] = color.b;
-
+					
 					WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
 					WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
 					WT.Desk.applications[parent].updateGradient();
-					
-					/*
-					var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
-					active.position = pos;
-					WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
-					WT.Desk.applications[parent].updateGradient();
-					*/
-					//var inputPos = document.getElementById("gradient-pos-" + parent);
-					//inputPos.value = pos;
 					
 					e.stopPropagation();
 					e.preventDefault();
@@ -520,9 +528,6 @@ WT.gradient = {
 				function upHandler(e) {
 					document.removeEventListener("mouseup", upHandler, true);
 					document.removeEventListener("mousemove", moveHandler, true);
-					
-					//WT.Desk.applications[parent].updateGradient();
-					console.log(color.toString());
 					
 					e.stopPropagation();
 					e.preventDefault();
@@ -571,14 +576,7 @@ WT.gradient = {
 					WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
 					WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
 					WT.Desk.applications[parent].updateGradient();
-					/*
-					var active = WT.Desk.applications[parent].gradient.getColorById(WT.Desk.applications[parent].activeColor);
-					active.position = pos;
-					WT.Desk.applications[parent].gradient.setColorById(WT.Desk.applications[parent].activeColor);
-					WT.Desk.applications[parent].updateGradient();
-					*/
-					//var inputPos = document.getElementById("gradient-pos-" + parent);
-					//inputPos.value = pos;
+					
 					
 					e.stopPropagation();
 					e.preventDefault();
@@ -588,8 +586,6 @@ WT.gradient = {
 					document.removeEventListener("mouseup", upHandler, true);
 					document.removeEventListener("mousemove", moveHandler, true);
 					
-					//WT.Desk.applications[parent].updateGradient();
-					//console.log(color.toString());
 					
 					e.stopPropagation();
 					e.preventDefault();
