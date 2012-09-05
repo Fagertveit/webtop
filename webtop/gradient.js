@@ -1,3 +1,21 @@
+/* WebTop Gradient
+ * ---------------
+ * Gradient is a collection of classes that together makes a general purpose gradient tool
+ * package for Webtop, it will contain both modules and an Application that will be used
+ * within WebTop.
+ * Right now the package contains:
+ * Application
+ * 	A application where the user can edit and export gradients. At start the export function will
+ * 	only work for Linear gradients in CSS, I will try to expand this to work in different
+ *  gradient types and applications such as Adobe Photoshop and Inkscape!
+ *  
+ * Gradient
+ *  The container for a gradient object, this object holds an array of colorstops.
+ *  
+ * ColorStop
+ *  A object that holds color and position data.
+ * 
+ */
 WT.gradient = {
 	Application : function(parId) {
 		var app = {

@@ -1,3 +1,15 @@
+/* WebTop Portal
+ * -------------
+ * Portals is the WebTop version of windows, the word Window is already taken, so I had to come up
+ * with an alternative. Portals are containers for applications in WebTop and all portals are
+ * children of the WebTop Desktop object.
+ * I will extend on the functionality of portals as development proceds, I would like to be able
+ * to create sub portals that have other portals as their parents, but this system needs some think
+ * through.
+ * The portals also should have basic window functionality, such as move, resize, minimize, maximize
+ * close and z-indexing.
+ * 
+ */
 WT.portal = {
 	Portal : function(srcW, srcH, srcP, srcId) {
 		var portal = {
