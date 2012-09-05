@@ -1,3 +1,9 @@
+/* WebTop Color
+ * A general purpose class for handling colors! I will try to expand on this to be able
+ * to convert to a bunch of different color spaces.
+ * 
+ */
+
 WT.color = {
 	Color : function(red, green, blue) {
 		var color = {
@@ -59,7 +65,7 @@ WT.color = {
 				if(max == min){
 					this.h = this.s = 0; // achromatic*/
 				if(max == min) {
-					this.s = 0; // achromatic
+					this.h = this.s = 0; // achromatic
 				} else {
 					var d = max - min;
 					this.s = this.l > 0.5 ? d / (2 - max - min) : d / (max + min);

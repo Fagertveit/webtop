@@ -1,3 +1,12 @@
+/* WebTop Desktop
+ * --------------
+ * The Desktop object holds reference to everything that is happening in the webtop system, except sublevel
+ * that has portals and such as parents.
+ * It's a little blury how the system will work, but I will plan this out as I go along with the general
+ * development of the WebTop environment.
+ * 
+ */
+
 WT.desktop = {
 	Desktop : function(srcW, srcH, color) {
 		var desktop = {

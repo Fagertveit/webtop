@@ -1,3 +1,453 @@
+/*
+ * WebTop main class.
+ * This class will take care of the main components of the WebTop environment
+ * such as the Desktop and the portal containers. Might make a new class for the portals though.
+ */
+
+var WT = {
+	Desk : null,
+	
+	init : function() {
+		/*
+		var browser = "Browser Information:\n";
+		for(var propname in navigator) {
+			browser += propname + ": " + navigator[propname] + "\n";
+		}
+		
+		console.log(browser);
+		*/
+		this.Desk = new WT.desktop.Desktop();
+		this.Desk.init();
+	}
+};
+
+/* WebTop Desktop
+ * --------------
+ * The Desktop object holds reference to everything that is happening in the webtop system, except sublevel
+ * that has portals and such as parents.
+ * It's a little blury how the system will work, but I will plan this out as I go along with the general
+ * development of the WebTop environment.
+ * 
+ */
+
+WT.desktop = {
+	Desktop : function(srcW, srcH, color) {
+		var desktop = {
+			width : srcW || 640,
+			height : srcH || 480,
+			background : color || [ 245, 245, 245 ],
+			portals : new Array(),
+			applications : new Array(),
+			nextId : 0,
+			deskId : "desk-cont",
+
+			init : function() {
+				var container = document.createElement("div");
+				container.setAttribute("id", this.deskId);
+				container.setAttribute("class", "desktop");
+				container.style.marginTop = "-" + (this.height / 2) + "px";
+				container.style.marginLeft = "-" + (this.width / 2) + "px";
+				container.style.width = this.width + "px";
+				container.style.height = this.height + "px";
+
+				document.body.appendChild(container);
+			},
+
+			addPortal : function(height, width) {
+				var tempPortal = new WT.portal.Portal(width, height, this.deskId, this.nextId);
+				this.nextId++;
+				
+				this.portals.push(tempPortal);
+				
+				this.portals[this.portals.length-1].init();
+			},
+			
+			addApplication : function(application) {
+				var tempApp = new application(this.nextId);
+				var tempPortal = new WT.portal.Portal(tempApp.width, tempApp.height, this.deskId, this.nextId);
+				
+				
+				this.portals[this.nextId] = tempPortal;
+				this.applications[this.nextId] = tempApp;
+				
+				this.portals[this.nextId].setTitle(tempApp.title);
+				this.portals[this.nextId].init();
+				this.applications[this.nextId].init();
+				
+				this.nextId++;
+			}
+		};
+		return desktop;
+	}
+};
+
+/* WebTop Portal
+ * -------------
+ * Portals is the WebTop version of windows, the word Window is already taken, so I had to come up
+ * with an alternative. Portals are containers for applications in WebTop and all portals are
+ * children of the WebTop Desktop object.
+ * I will extend on the functionality of portals as development proceds, I would like to be able
+ * to create sub portals that have other portals as their parents, but this system needs some think
+ * through.
+ * The portals also should have basic window functionality, such as move, resize, minimize, maximize
+ * close and z-indexing.
+ * 
+ */
+WT.portal = {
+	Portal : function(srcW, srcH, srcP, srcId) {
+		var portal = {
+			width : srcW || 320,
+			height : srcH || 240,
+			parent : srcP || null,
+			id : srcId,
+			title : "Untitled",
+
+			init : function() {
+				var parentElem, container;
+				if (this.parent != null) {
+					parentElem = document.getElementById(this.parent);
+				} else {
+					parentElem = document.body;
+				}
+				
+				var close = document.createElement("div");
+				var max = document.createElement("div");
+				var min = document.createElement("div");
+
+				container = document.createElement("div");
+				container.setAttribute("id", "portal-" + this.id);
+				container.setAttribute("class", "portal");
+				container.setAttribute("portalid", this.id);
+				container.style.top = "100px";
+				container.style.left = "10px";
+				container.style.width = this.width + "px";
+				container.style.height = this.height + "px";
+				
+				close.setAttribute("class", "close");
+				close.addEventListener("click", this.close, true);
+				min.setAttribute("class", "min");
+				max.setAttribute("class", "max");
+
+				container.appendChild(this.generateTitle());
+				container.appendChild(this.generateContainer());
+				container.appendChild(this.generateFoot());
+				container.appendChild(this.generateHandle());
+				
+				container.appendChild(close);
+				container.appendChild(min);
+				container.appendChild(max);
+
+				parentElem.appendChild(container);
+
+				this.id = WT.nextId;
+				WT.nextId++;
+			},
+
+			generateTitle : function() {
+				var title = document.createElement("div");
+
+				var text = document.createElement("div");
+				
+
+				title.setAttribute("id", "portal-titlebar-" + this.id);
+				title.setAttribute("class", "title");
+				title.setAttribute("style",
+					"background-image: -webkit-linear-gradient(top, #aae, #55a 80%, #aaf 85%);" +
+					"background-image: -moz-linear-gradient(top, #aae, #55a 80%, #aaf 85%);" +
+					"background-image: -ms-linear-gradient(top, #aae, #55a 80%, #aaf 85%);" +
+					"background-image: -o-linear-gradient(top, #aae, #55a 80%, #aaf 85%);" +
+					"background-image: linear-gradient(top, #aae, #55a 80%, #aaf 85%);"	
+					);
+
+				title.addEventListener("mousedown", this.move, true);
+
+				text.setAttribute("id", "portal-title-" + this.id);
+				text.innerHTML = this.title;
+				text.style.position = "absolute";
+				text.style.left = 4 + "px";
+				text.style.top = 2 + "px";
+				text.style.fontSize = 12 + "px";
+				text.style.color = "#000";
+
+				
+
+				title.appendChild(text);
+				
+
+				return title;
+			},
+
+			generateContainer : function() {
+				var container = document.createElement("div");
+
+				container.setAttribute("id", "portal-container-" + this.id);
+				container.setAttribute("class", "container");
+
+				return container;
+			},
+
+			generateFoot : function() {
+				var foot = document.createElement("div");
+
+				foot.setAttribute("class", "foot");
+
+				return foot;
+			},
+
+			generateHandle : function() {
+				var handle = document.createElement("div");
+
+				handle.addEventListener("mousedown", this.resize, true);
+				handle.setAttribute("class", "handle");
+
+				return handle;
+			},
+
+			setTitle : function(title) {
+				this.title = title;
+			},
+			
+			updateTitle : function() {
+				var title = document.getElementById("portal-title-" + this.id);
+				title.innerHTML = this.title;
+			},
+
+			move : function(event) {
+				var element = event.target.parentNode;
+
+				var startX = event.clientX;
+				var startY = event.clientY;
+
+				var origX = element.offsetLeft;
+				var origY = element.offsetTop;
+
+				var deltaX = startX - origX;
+				var deltaY = startY - origY;
+
+				document.addEventListener("mousemove", moveHandler, true);
+				document.addEventListener("mouseup", upHandler, true);
+
+				event.stopPropagation();
+				event.preventDefault();
+
+				function moveHandler(e) {
+					element.style.left = (e.clientX - deltaX) + "px";
+					element.style.top = (e.clientY - deltaY) + "px";
+					e.stopPropagation();
+				}
+
+				function upHandler(e) {
+					document.removeEventListener("mouseup", upHandler, true);
+					document.removeEventListener("mousemove", moveHandler, true);
+					e.stopPropagation();
+				}
+			},
+
+			resize : function(event) {
+				var element = event.target.parentNode;
+				var startX = event.clientX;
+				var startY = event.clientY;
+
+				var origX = element.offsetLeft;
+				var origY = element.offsetTop;
+
+				var deltaX = startX - origX;
+				var deltaY = startY - origY;
+
+				var startWidth = element.style.width;
+				startWidth = Number(startWidth.substr(0, startWidth.length - 2));
+				var startHeight = element.style.height;
+				startHeight = Number(startHeight.substr(0, startHeight.length - 2));
+
+				document.addEventListener("mousemove", moveHandler, true);
+				document.addEventListener("mouseup", upHandler, true);
+
+				event.stopPropagation();
+				event.preventDefault();
+
+				function moveHandler(e) {
+					width = e.clientX - deltaX - origX + startWidth;
+					height = e.clientY - deltaY - origY + startHeight;
+					if (width > 70) {
+						element.style.width = width + "px";
+					} else {
+						element.style.width = 70 + "px";
+					}
+
+					if (height > 70) {
+						element.style.height = height + "px";
+					} else {
+						element.style.height = 70 + "px";
+					}
+
+					e.stopPropagation();
+				}
+
+				function upHandler(e) {
+					document.removeEventListener("mouseup", upHandler, true);
+					document.removeEventListener("mousemove", moveHandler, true);
+					e.stopPropagation();
+				}
+			},
+			
+			close : function(e) {
+				var element = e.target.parentNode;
+				var id = element.getAttribute("portalid");
+				
+				var portals = document.getElementById("desk-cont");
+				for(var i = 0; i < portals.childNodes.length; i++) {
+					if(portals.childNodes[i].getAttribute("portalid") == id) {
+						portals.removeChild(portals.childNodes[i]);
+						break;
+					}
+				}
+				
+				WT.Desk.applications[id] = null;
+				WT.Desk.portals[id] = null;
+			}
+		};
+		return portal;
+	}
+};
+
+/* WebTop Color
+ * A general purpose class for handling colors! I will try to expand on this to be able
+ * to convert to a bunch of different color spaces.
+ * 
+ */
+
+WT.color = {
+	Color : function(red, green, blue) {
+		var color = {
+			r : 0 || red,
+			g : 0 || green,
+			b : 0 || blue,
+			
+			h : 0.0,
+			s : 0.0,
+			l : 0.0,
+			
+			setRGB : function(red, green, blue) {
+				this.r = red;
+				this.g = green;
+				this.b = blue;
+			},
+			
+			setRed : function(red) {
+				this.setRGB(red, this.g, this.b);
+			},
+			
+			setGreen : function(green) {
+				this.setRGB(this.r, green, this.b);
+			},
+			
+			setBlue : function(blue) {
+				this.setRGB(this.r, this.g, blue);
+			},
+			
+			setHSL : function(hue, sat, light) {
+				this.h = hue;
+				this.s = sat;
+				this.l = light;
+			},
+			
+			setHue : function(hue) {
+				this.setHSL(hue, this.s, this.l);
+			},
+			
+			setSaturation : function(sat) {
+				this.setHSL(this.h, sat, this.l);
+			},
+			
+			setLight : function(light) {
+				this.setHSL(this.h, this.s, light);
+			},
+			
+			RGBtoHSL : function() {
+				var tRed, tGreen, tBlue;
+				tRed = this.r;
+				tGreen = this.g;
+				tBlue = this.b;
+				
+				tRed /= 255, tGreen /= 255, tBlue /= 255;
+				var max = Math.max(tRed, tGreen, tBlue), min = Math.min(tRed, tGreen, tBlue);
+				this.h, this.s, this.l = (max + min) / 2;
+
+				/*
+				if(max == min){
+					this.h = this.s = 0; // achromatic*/
+				if(max == min) {
+					this.h = this.s = 0; // achromatic
+				} else {
+					var d = max - min;
+					this.s = this.l > 0.5 ? d / (2 - max - min) : d / (max + min);
+					switch(max) {
+						case tRed: this.h = (tGreen - tBlue) / d + (tGreen < tBlue ? 6 : 0); break;
+						case tGreen: this.h = (tBlue - tRed) / d + 2; break;
+						case tBlue: this.h = (tRed - tGreen) / d + 4; break;
+					}
+					this.h /= 6;
+				}
+			},
+			
+			HSLtoRGB : function() {
+				if(this.s == 0){
+					this.r = this.g = this.b = this.l; // achromatic
+				}else{
+					function hue2rgb(p, q, t){
+						if(t < 0) t += 1;
+						if(t > 1) t -= 1;
+						if(t < 1/6) return p + (q - p) * 6 * t;
+						if(t < 1/2) return q;
+						if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+						return p;
+					}
+
+					var q = this.l < 0.5 ? this.l * (1 + this.s) : this.l + this.s - this.l * this.s;
+					var p = 2 * this.l - q;
+					this.r = hue2rgb(p, q, this.h + 1/3);
+					this.g = hue2rgb(p, q, this.h);
+					this.b = hue2rgb(p, q, this.h - 1/3);
+				}
+
+				this.r = Math.floor(this.r * 255);
+				this.g = Math.floor(this.g * 255);
+				this.b = Math.floor(this.b * 255);
+			},
+			
+			getHex : function() {
+			    return "#" + ((1 << 24) + (this.r << 16) + (this.g << 8) + this.b).toString(16).slice(1);
+			},
+			
+			setHex : function(hex) {
+				var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+			    this.r = parseInt(result[1], 16);
+			    this.g = parseInt(result[2], 16);
+			    this.b = parseInt(result[3], 16);
+			    
+			    this.RGBtoHSL();
+			},
+			
+			toString : function() {
+				return "Color Object | R : " + this.r +
+						 ", G : " + this.g +
+						 ", B : " + this.b +
+						 "| H : " + this.h +
+						 ", S : " + this.s +
+						 ", L : " + this.l +
+						 " | Hex : " + this.getHex();
+			},
+			
+			toCSS : function() {
+				return "rgb(" + this.r + ", " + this.g + ", " + this.b
+				+ ")";
+			}
+		};
+		return color;
+	}	
+};
+
 /* WebTop Gradient
  * ---------------
  * Gradient is a collection of classes that together makes a general purpose gradient tool
