@@ -18,5 +18,7 @@ var WT = {
 		*/
 		this.Desk = new WT.desktop.Desktop();
 		this.Desk.init();
+		
+		WT.Desk.addApplication(WT.gradient.Application);
 	}
 };

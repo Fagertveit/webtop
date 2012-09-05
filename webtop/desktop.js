@@ -41,13 +41,13 @@ WT.desktop = {
 			
 			addApplication : function(application) {
 				var tempApp = new application(this.nextId);
-				var tempPortal = new WT.portal.Portal(tempApp.width, tempApp.height, this.deskId, this.nextId);
+				var settings = tempApp.portalSettings;
+				var tempPortal = new WT.portal.Portal(settings.width, settings.height, this.deskId, this.nextId, settings.fixed, settings.footer, settings.title);
 				
 				
 				this.portals[this.nextId] = tempPortal;
 				this.applications[this.nextId] = tempApp;
 				
-				this.portals[this.nextId].setTitle(tempApp.title);
 				this.portals[this.nextId].init();
 				this.applications[this.nextId].init();
 				

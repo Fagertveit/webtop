@@ -11,13 +11,15 @@
  * 
  */
 WT.portal = {
-	Portal : function(srcW, srcH, srcP, srcId) {
+	Portal : function(srcWidth, srcHeight, srcParent, srcId, srcFixed, srcFooter, srcTitle) {
 		var portal = {
-			width : srcW || 320,
-			height : srcH || 240,
-			parent : srcP || null,
+			width : srcWidth || 320,
+			height : srcHeight || 240,
+			parent : srcParent || null,
 			id : srcId,
-			title : "Untitled",
+			fixed : srcFixed || false,
+			foot : srcFooter || false,
+			title : srcTitle || "Untitled", 
 
 			init : function() {
 				var parentElem, container;
@@ -25,6 +27,12 @@ WT.portal = {
 					parentElem = document.getElementById(this.parent);
 				} else {
 					parentElem = document.body;
+				}
+				
+				if(this.footer || !this.fixed) {
+					this.height += 34;
+				} else {
+					this.height += 18;
 				}
 				
 				var close = document.createElement("div");
@@ -47,12 +55,20 @@ WT.portal = {
 
 				container.appendChild(this.generateTitle());
 				container.appendChild(this.generateContainer());
-				container.appendChild(this.generateFoot());
-				container.appendChild(this.generateHandle());
+				
+				if(this.foot) {
+					container.appendChild(this.generateFoot());
+				}
+				
+				if(!this.fixed) {
+					container.appendChild(this.generateHandle());
+				}
 				
 				container.appendChild(close);
 				container.appendChild(min);
-				container.appendChild(max);
+				if(!this.fixed) {
+					container.appendChild(max);
+				}
 
 				parentElem.appendChild(container);
 

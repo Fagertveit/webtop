@@ -24,9 +24,7 @@ WT.gradient = {
 			color : new WT.color.Color(255, 255, 255),
 			hue : 0.0,
 			gradient : new WT.gradient.Gradient(),
-			width : 256,
-			height : 242,
-			title : "Gradient Edit 0.2",
+			portalSettings : { width : 256, height : 208, fixed : true, footer : false, title : "Gradient Edit 0.3"},
 			
 			/*
 			 * Init the application
