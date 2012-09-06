@@ -22,6 +22,8 @@ height: 18px;
 overflow: hidden;
 /* background-image: -webkit-linear-gradient(top, #aae, #55a 80%, #aaf 85%); */
 border-bottom: 1px solid #aaa;
+border-top-left-radius: 2px;
+border-top-right-radius: 2px;
 }
 
 .portal>.close {

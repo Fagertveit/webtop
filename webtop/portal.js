@@ -93,6 +93,7 @@ WT.portal = {
 					);
 
 				title.addEventListener("mousedown", this.move, true);
+				title.addEventListener("touchstart", this.moveTouch, true);
 
 				text.setAttribute("id", "portal-title-" + this.id);
 				text.innerHTML = this.title;
@@ -172,6 +173,42 @@ WT.portal = {
 				function upHandler(e) {
 					document.removeEventListener("mouseup", upHandler, true);
 					document.removeEventListener("mousemove", moveHandler, true);
+					e.stopPropagation();
+				}
+			},
+			
+			moveTouch : function(event) {
+				if(event.targetTouches.length == 1) {
+					var touch = event.targetTouches[0];
+				}
+					
+				var element = event.target.parentNode;
+
+				var startX = touch.clientX;
+				var startY = touch.clientY;
+
+				var origX = element.offsetLeft;
+				var origY = element.offsetTop;
+
+				var deltaX = startX - origX;
+				var deltaY = startY - origY;
+
+				document.addEventListener("touchmove", moveHandler, true);
+				document.addEventListener("touchend", upHandler, true);
+
+				event.stopPropagation();
+				event.preventDefault();
+
+				function moveHandler(e) {
+					var moveTouch = e.targetTouches[0];
+					element.style.left = (moveTouch.clientX - deltaX) + "px";
+					element.style.top = (moveTouch.clientY - deltaY) + "px";
+					e.stopPropagation();
+				}
+
+				function upHandler(e) {
+					document.removeEventListener("touchend", upHandler, true);
+					document.removeEventListener("touchmove", moveHandler, true);
 					e.stopPropagation();
 				}
 			},
