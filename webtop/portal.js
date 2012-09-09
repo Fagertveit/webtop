@@ -19,7 +19,8 @@ WT.portal = {
 			id : srcId,
 			fixed : srcFixed || false,
 			foot : srcFooter || false,
-			title : srcTitle || "Untitled", 
+			title : srcTitle || "Untitled",
+			zIndex : 10,
 
 			init : function() {
 				var parentElem, container;
@@ -47,6 +48,7 @@ WT.portal = {
 				container.style.left = "10px";
 				container.style.width = this.width + "px";
 				container.style.height = this.height + "px";
+				container.addEventListener("click", WT.Desk.moveToFront, true);
 				
 				close.setAttribute("class", "close");
 				close.addEventListener("click", this.close, true);
@@ -139,6 +141,12 @@ WT.portal = {
 
 			setTitle : function(title) {
 				this.title = title;
+			},
+			
+			setZIndex : function(zIndex) {
+				var container = document.getElementById("portal-" + this.id);
+				this.zIndex = zIndex;
+				container.style.zIndex = zIndex;
 			},
 			
 			updateTitle : function() {

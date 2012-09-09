@@ -13,10 +13,13 @@ WT.desktop = {
 			width : srcW || 640,
 			height : srcH || 480,
 			background : color || [ 245, 245, 245 ],
+			icons : new Array(),
 			portals : new Array(),
 			applications : new Array(),
+			nextIcon : 0,
 			nextId : 0,
 			deskId : "desk-cont",
+			nextZIndex : 10,
 
 			init : function() {
 				var container = document.createElement("div");
@@ -31,28 +34,74 @@ WT.desktop = {
 			},
 
 			addPortal : function(height, width) {
-				var tempPortal = new WT.portal.Portal(width, height, this.deskId, this.nextId);
-				this.nextId++;
+				var tempPortal = new WT.portal.Portal(width, height, WT.Desk.deskId, WT.Desk.nextId);
+				WT.Desk.nextId++;
 				
-				this.portals.push(tempPortal);
+				WT.Desk.portals.push(tempPortal);
 				
-				this.portals[this.portals.length-1].init();
+				WT.Desk.portals[WT.Desk.portals.length-1].init();
 			},
 			
 			addApplication : function(application) {
-				var tempApp = new application(this.nextId);
+				var tempApp = new application(WT.Desk.nextId);
 				var settings = tempApp.portalSettings;
-				var tempPortal = new WT.portal.Portal(settings.width, settings.height, this.deskId, this.nextId, settings.fixed, settings.footer, settings.title);
+				var tempPortal = new WT.portal.Portal(settings.width, settings.height, WT.Desk.deskId, WT.Desk.nextId, settings.fixed, settings.footer, settings.title);
+				var container;
 				
+				WT.Desk.portals[WT.Desk.nextId] = tempPortal;
+				WT.Desk.applications[WT.Desk.nextId] = tempApp;
 				
-				this.portals[this.nextId] = tempPortal;
-				this.applications[this.nextId] = tempApp;
+				WT.Desk.portals[WT.Desk.nextId].init();
+				WT.Desk.applications[WT.Desk.nextId].init();
+				//WT.Desk.portals[WT.Desk.nextId].setZIndex(WT.Desk.nextZIndex);
+				container = document.getElementById("portal-" + WT.Desk.nextId);
+				container.style.zIndex = WT.Desk.nextZIndex;
 				
-				this.portals[this.nextId].init();
-				this.applications[this.nextId].init();
+				WT.Desk.nextZIndex += 10;
+				WT.Desk.nextId++;
+			},
+			
+			addIcon : function(application) {
+				var tempApp = new application(9999);
+				var settings = tempApp.iconSettings;
+				var icon = new WT.icon.Icon(settings.img, [0, 3], application, settings.title, WT.Desk.deskId, WT.Desk.nextIcon);
 				
-				this.nextId++;
-			}
+				icon.init();
+				WT.Desk.icons[WT.Desk.nextIcon] = icon;
+				WT.Desk.nextIcon++;
+			},
+			
+			moveToFront : function(e) {
+				var target = e.target;
+				var targetNode = false;
+				var id = 0;
+				var container;
+				while(!targetNode) {
+					target = target.parentNode;
+					if(target.hasAttribute("portalid")) {
+						id = new Number(target.getAttribute("portalid"));
+						targetNode = true;
+						break;
+					}
+				}
+				// Need to check the "hasAttribute" and make a tree search till we find
+				// the node that has the attribute we need (portalid)
+				// while()
+				var zIndex = 10;
+				for(var i = 0; i < WT.Desk.portals.length; i++) {
+					if(WT.Desk.portals[i] != null && i != id) {
+						container = document.getElementById("portal-" + i);
+						
+						container.style.zIndex = zIndex;
+						//WT.Desk.portals[i].setZIndex(zIndex);
+						zIndex += 10;
+					}
+				}
+				
+				container = document.getElementById("portal-" + id);
+				container.style.zIndex = zIndex + 10;
+				//WT.Desk.portals[id].setZIndex(zIndex);
+			},
 		};
 		return desktop;
 	}

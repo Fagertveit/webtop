@@ -25,6 +25,7 @@ WT.gradient = {
 			hue : 0.0,
 			gradient : new WT.gradient.Gradient(),
 			portalSettings : { width : 256, height : 208, fixed : true, footer : false, title : "Gradient Edit 0.3"},
+			iconSettings : { img : "img/wt-icon-gradient.png", app : WT.gradient.Application, title : "Gradient Edit" },
 			
 			/*
 			 * Init the application
