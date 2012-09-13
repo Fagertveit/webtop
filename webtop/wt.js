@@ -19,6 +19,7 @@ var WT = {
 		this.Desk = new WT.desktop.Desktop();
 		this.Desk.init();
 		
-		WT.Desk.addApplication(WT.gradient.Application);
+		WT.Desk.addIcon(WT.gradient.Application);
+		WT.Desk.addIcon(WT.wtedit.Application);
 	}
 };

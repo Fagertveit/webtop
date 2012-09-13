@@ -81,6 +81,7 @@ position: absolute;
 top: 10px;
 left: 10px;
 background-image: url(../img/gradient-color-indicator.png);
+cursor: pointer;
 }
 
 .active-color>.hue-bar {
@@ -100,6 +101,7 @@ position: absolute;
 top: 10px;
 left: -6px;
 background-image: url(../img/gradient-hue-indicator.png);
+cursor: pointer;
 }
 
 .active-color>.color-preview {

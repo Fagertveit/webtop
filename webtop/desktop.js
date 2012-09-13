@@ -64,7 +64,7 @@ WT.desktop = {
 			addIcon : function(application) {
 				var tempApp = new application(9999);
 				var settings = tempApp.iconSettings;
-				var icon = new WT.icon.Icon(settings.img, [0, 3], application, settings.title, WT.Desk.deskId, WT.Desk.nextIcon);
+				var icon = new WT.icon.Icon(settings.img, [0, 3 + WT.Desk.nextIcon], application, settings.title, WT.Desk.deskId, WT.Desk.nextIcon);
 				
 				icon.init();
 				WT.Desk.icons[WT.Desk.nextIcon] = icon;

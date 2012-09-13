@@ -80,8 +80,8 @@ WT.portal = {
 
 			generateTitle : function() {
 				var title = document.createElement("div");
-
 				var text = document.createElement("div");
+				var titleHandle = document.createElement("div");
 				
 
 				title.setAttribute("id", "portal-titlebar-" + this.id);
@@ -104,11 +104,19 @@ WT.portal = {
 				text.style.top = 2 + "px";
 				text.style.fontSize = 12 + "px";
 				text.style.color = "#000";
-
 				
+				titleHandle.setAttribute("id", "portal-titlehandle-" + this.id);
+				titleHandle.style.height = 18 + "px";
+				titleHandle.style.width = "inherit";
+				titleHandle.style.position = "absolute";
+				titleHandle.style.top = 0 + "px";
+				titleHandle.style.left = 0 + "px";
+				
+				titleHandle.addEventListener("mousedown", this.move, true);
+				titleHandle.addEventListener("touchstart", this.moveTouch, true);
 
 				title.appendChild(text);
-				
+				title.appendChild(titleHandle);
 
 				return title;
 			},
@@ -156,6 +164,7 @@ WT.portal = {
 
 			move : function(event) {
 				var element = event.target.parentNode;
+				element = element.parentNode;
 
 				var startX = event.clientX;
 				var startY = event.clientY;
@@ -191,6 +200,7 @@ WT.portal = {
 				}
 					
 				var element = event.target.parentNode;
+				element = element.parentNode;
 
 				var startX = touch.clientX;
 				var startY = touch.clientY;

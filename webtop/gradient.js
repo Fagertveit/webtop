@@ -265,9 +265,7 @@ WT.gradient = {
 				
 				y = Math.abs(y - 1);
 				
-				console.log("Active: Light: " + tempColor.l + ", Saturation:" + tempColor.s + " ColorIndicator: " + y + " - " + x );
-				
-				
+				//console.log("Active: Light: " + tempColor.l + ", Saturation:" + tempColor.s + " ColorIndicator: " + y + " - " + x );
 				
 				y = Math.floor(y * 128);
 				x = Math.floor(x * 128);
@@ -286,7 +284,7 @@ WT.gradient = {
 				y = Math.abs(y - 1);
 				y = Math.floor(y * 128);
 				
-				console.log("Active Hue: " + tempColor.h + ", Huebar: " + y);
+				//console.log("Active Hue: " + tempColor.h + ", Huebar: " + y);
 				
 				hueIndicator.style.top = y - 5 + "px";
 			},

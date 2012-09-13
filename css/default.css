@@ -24,6 +24,7 @@ overflow: hidden;
 border-bottom: 1px solid #aaa;
 border-top-left-radius: 2px;
 border-top-right-radius: 2px;
+cursor: hand;
 }
 
 .portal>.close {
