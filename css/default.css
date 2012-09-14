@@ -69,8 +69,8 @@ background-color: #ddd;
 .portal>.container {
 position: absolute;
 top: 18px;
-left: 1px;
-right: 1px;
+left: 0px;
+right: 0px;
 bottom: 14px;
 }
 
@@ -147,4 +147,14 @@ background-image: linear-gradient(top, #aaa, #ddd 80%, #bbb 85%);
 
 input {
 border: 1px solid #aaa;
+}
+
+.menubar {
+width: 100%;
+height: 18px;
+position: absolute;
+top: 0px;
+left: 0px;
+background-color: #ddd;
+border-bottom: 1px solid #aaa;
 }

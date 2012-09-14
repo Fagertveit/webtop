@@ -12,9 +12,29 @@ WT.menu = {
 	 * The menubar is the main container for menus and menu items, this is the class that
 	 * is used by the application.
 	 */
-	MenuBar : function() {
+	MenuBar : function(parId) {
 		var menubar = {
+			parent : parId,
+			menus : new Array(),
 				
+			init : function() {
+				
+			},
+		
+			generateMenuBar : function() {
+				var container = document.createElement("div");
+				container.setAttribute("class", "menubar");
+				container.setAttribute("id", "menubar-" + this.parent);
+				
+				return container;
+			},
+			
+			addMenu : function(label) {
+				var temp = new WT.menu.Menu(label, this.parent);
+				temp.init();
+				
+				this.menus[label] = temp;
+			}
 		};
 		return menubar;
 	},	
@@ -22,25 +42,43 @@ WT.menu = {
 	/* Menu
 	 * The main menu
 	 */
-	Menu : function() {
+	Menu : function(srcLabel, srcPar) {
 		var menu = {
+			parent : srcPar,
+			label : srcLabel,
+			menuItems : new Array(),
+			
+			init : function() {
+				this.generateMenu();
+			},
+			
+			generateMenu : function() {
 				
+			}
 		};
 		return menu;
 	},
 	
 	MenuItem : function() {
 		var item = {
+			parent : srcPar,
+			
+			init : function() {
 				
+			}
 		};
 		return item;
 	},
 	
 	SubMenu : function() {
 		var sub = {
+			parent : srcPar,
+			items : new Array(),
+			
+			init : function() {
 				
+			}
 		};
-		
 		return sub;
 	}
 };
