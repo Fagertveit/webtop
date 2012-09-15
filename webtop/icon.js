@@ -46,7 +46,6 @@ WT.icon = {
 			onClick : function(e) {
 				var target = e.target;
 				var id = target.getAttribute("iconid");
-				console.log("Icon ID: " + id);
 				var app = WT.Desk.icons[target.getAttribute("iconid")].application;
 				//var d = new Date();
 				//var clickTimer = d.getTime();

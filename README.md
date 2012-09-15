@@ -18,11 +18,11 @@ I will try to make a good framework for these to run on, I want WebTop to be abl
 Here's a list of probable applications that might see the light of the day inside WebTop.
 <ul>
 <li>Gradient Edit - In development</li>
-<li>PixelJS</li>
-<li>TextJS</li>
-<li>WebGL Shader Edit</li>
-<li>Image Viewer</li>
-<li>File Manager</li>
+<li>WtPixel</li>
+<li>WtEdit</li>
+<li>Wt WebGL Studio</li>
+<li>WtImage</li>
+<li>WtFile</li>
 </ul>
 
 <h3>CGL</h3>

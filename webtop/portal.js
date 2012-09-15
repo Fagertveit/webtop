@@ -86,12 +86,19 @@ WT.portal = {
 
 				title.setAttribute("id", "portal-titlebar-" + this.id);
 				title.setAttribute("class", "title");
-				title.setAttribute("style",
+				/*title.setAttribute("style",
 					"background-image: -webkit-linear-gradient(top, #aae, #55a 80%, #aaf 85%);" +
 					"background-image: -moz-linear-gradient(top, #aae, #55a 80%, #aaf 85%);" +
 					"background-image: -ms-linear-gradient(top, #aae, #55a 80%, #aaf 85%);" +
 					"background-image: -o-linear-gradient(top, #aae, #55a 80%, #aaf 85%);" +
 					"background-image: linear-gradient(top, #aae, #55a 80%, #aaf 85%);"	
+					);*/
+				title.setAttribute("style",
+						"background-image: -webkit-linear-gradient(top, rgb(98, 216, 161) 0%, rgb(233, 238, 239) 82%, rgb(171, 211, 130) 83%, rgb(223, 217, 228) 100%);" +
+						"background-image: -moz-linear-gradient(top, rgb(98, 216, 161) 0%, rgb(233, 238, 239) 82%, rgb(171, 211, 130) 83%, rgb(223, 217, 228) 100%);" +
+						"background-image: -ms-linear-gradient(top, rgb(98, 216, 161) 0%, rgb(233, 238, 239) 82%, rgb(171, 211, 130) 83%, rgb(223, 217, 228) 100%);" +
+						"background-image: -o-linear-gradient(top, rgb(98, 216, 161) 0%, rgb(233, 238, 239) 82%, rgb(171, 211, 130) 83%, rgb(223, 217, 228) 100%);" +
+						"background-image: linear-gradient(top, rgb(98, 216, 161) 0%, rgb(233, 238, 239) 82%, rgb(171, 211, 130) 83%, rgb(223, 217, 228) 100%);"
 					);
 
 				title.addEventListener("mousedown", this.move, true);
@@ -143,6 +150,8 @@ WT.portal = {
 
 				handle.addEventListener("mousedown", this.resize, true);
 				handle.setAttribute("class", "handle");
+				handle.setAttribute("id", "portal-handle-" + this.id);
+				handle.setAttribute("parent", this.id);
 
 				return handle;
 			},
