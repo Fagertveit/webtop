@@ -17,10 +17,10 @@ Applications will run inside portals as they are the containers. They will also 
 I will try to make a good framework for these to run on, I want WebTop to be able to use both homemade applications and general HTML5 applications, and make the implementation as easy as possible.
 Here's a list of probable applications that might see the light of the day inside WebTop.
 <ul>
-<li>Gradient Edit - In development</li>
+<li>WtGradient Edit - In development</li>
 <li>WtPixel</li>
-<li>WtEdit</li>
-<li>Wt WebGL Studio</li>
+<li>WtEdit - In development</li>
+<li>WtWebGL Studio</li>
 <li>WtImage</li>
 <li>WtFile</li>
 </ul>

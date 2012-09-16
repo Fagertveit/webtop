@@ -192,7 +192,10 @@ WT.portal = {
 
 				function moveHandler(e) {
 					element.style.left = (e.clientX - deltaX) + "px";
-					element.style.top = (e.clientY - deltaY) + "px";
+					if(e.clientY - deltaY > 0) {
+						element.style.top = (e.clientY - deltaY) + "px";
+					}
+					
 					e.stopPropagation();
 				}
 

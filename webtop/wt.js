@@ -8,14 +8,6 @@ var WT = {
 	Desk : null,
 	
 	init : function() {
-		/*
-		var browser = "Browser Information:\n";
-		for(var propname in navigator) {
-			browser += propname + ": " + navigator[propname] + "\n";
-		}
-		
-		console.log(browser);
-		*/
 		this.Desk = new WT.desktop.Desktop();
 		this.Desk.init();
 		

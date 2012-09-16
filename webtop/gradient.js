@@ -194,6 +194,7 @@ WT.gradient = {
 				exp.setAttribute("class", "btn color-export");
 				exp.setAttribute("parent", this.parent);
 				exp.innerHTML = "Export";
+				exp.addEventListener("click", this.exportGradient, true);
 				
 				colorMap.appendChild(lightMap);
 				colorMap.appendChild(saturationMap);
@@ -685,8 +686,8 @@ WT.gradient = {
 				var startY = touch.clientY;
 				var deltaY = startY - indicator.offsetTop - 5;
 				
-				document.addEventListener("mousemove", moveHandler, true);
-				document.addEventListener("mouseup", upHandler, true);
+				document.addEventListener("touchmove", moveHandler, true);
+				document.addEventListener("touchend", upHandler, true);
 				
 				e.stopPropagation();
 				e.preventDefault();
@@ -745,6 +746,19 @@ WT.gradient = {
 				WT.Desk.applications[parent].activeColor = WT.Desk.applications[parent].gradient.addNewColor(WT.Desk.applications[parent].activeColor);
 				WT.Desk.applications[parent].setActiveColor(WT.Desk.applications[parent].activeColor);
 				WT.Desk.applications[parent].updateGradient();
+			},
+			
+			/*
+			 * Export to CSS
+			 */
+			exportGradient : function(e) {
+				var parent = e.target.getAttribute("parent");
+				var wteditId;
+				var gradientSrc = WT.Desk.applications[parent].gradient.toRichText();
+				WT.Desk.addApplication(WT.wtedit.Application);
+				wteditId = WT.Desk.nextId - 1;
+				WT.Desk.applications[wteditId].setSource(gradientSrc);
+				//WT.Desk.applications[wteditId].setMode(false);
 			}
 		};
 		return app;
@@ -915,6 +929,29 @@ WT.gradient = {
 					str += ", " + this.colStops[i].toString();
 				}
 				str += ")";
+				
+				return str;
+			},
+			
+			toRichText : function() {
+				var str;
+				var gradient = this.toString();
+				
+				str = "<div style=\"width: 280px; height: 32px; border: 1px solid black; " +
+					"background-image: -webkit-" + gradient + "; " +
+					"background-image: -moz-" + gradient + "; " +
+					"background-image: -ms-" + gradient + "; " +
+					"background-image: -o-" + gradient + "; " +
+					"background-image: " + gradient + ";\"> " +
+					"</div>" +
+					"<h3>Gradient CSS code</h3>" + 
+					"<div style='width: 280px; font-size: 12px; font-family: \"Lucida Console\", Monaco, monospace;'>" +
+					"background-image: -webkit-" + gradient + "; <br />" +
+					"background-image: -moz-" + gradient + "; <br />" +
+					"background-image: -ms-" + gradient + "; <br />" +
+					"background-image: -o-" + gradient + "; <br />" +
+					"background-image: " + gradient + "; <br />" +
+					"</div>";
 				
 				return str;
 			}

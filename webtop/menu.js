@@ -173,11 +173,11 @@ WT.menu = {
 				var label = target.getAttribute("label");
 				var container = target.getAttribute("container");
 				
-				console.log("Clicked: " + label + " in menu " + container + " with the parent " + parent);
+				//console.log("Clicked: " + label + " in menu " + container + " with the parent " + parent);
 				
 				var menuItem = WT.Desk.applications[parent].menu.menus[container].menuItems[label];
 				
-				menuItem.action("Clicked " + label + "!");
+				menuItem.action(event);
 			}
 		};
 		return item;

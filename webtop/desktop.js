@@ -23,12 +23,21 @@ WT.desktop = {
 
 			init : function() {
 				var container = document.createElement("div");
+				if(document.width) {
+					var width = document.width - 20;
+					var height = document.height - 20;
+				} else {
+					var width = document.documentElement.scrollWidth - 20;
+					var height = document.documentElement.scrollHeight - 20;
+				}
+				
+				
 				container.setAttribute("id", this.deskId);
 				container.setAttribute("class", "desktop");
-				container.style.marginTop = "-" + (this.height / 2) + "px";
-				container.style.marginLeft = "-" + (this.width / 2) + "px";
-				container.style.width = this.width + "px";
-				container.style.height = this.height + "px";
+				container.style.marginTop = "-" + (height / 2) + "px";
+				container.style.marginLeft = "-" + (width / 2) + "px";
+				container.style.width = width + "px";
+				container.style.height = height + "px";
 
 				document.body.appendChild(container);
 			},
@@ -102,6 +111,19 @@ WT.desktop = {
 				container.style.zIndex = zIndex + 10;
 				//WT.Desk.portals[id].setZIndex(zIndex);
 			},
+			
+			resize : function(event) {
+				var container = document.getElementById("desk-cont");
+				var width = document.width - 20;
+				var height = document.height - 20;
+				
+				console.log("Resizing!");
+				
+				container.style.marginTop = "-" + (height / 2) + "px";
+				container.style.marginLeft = "-" + (width / 2) + "px";
+				container.style.width = width + "px";
+				container.style.height = height + "px";
+			}
 		};
 		return desktop;
 	}

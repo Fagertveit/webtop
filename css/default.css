@@ -24,7 +24,6 @@ overflow: hidden;
 border-bottom: 1px solid #aaa;
 border-top-left-radius: 2px;
 border-top-right-radius: 2px;
-cursor: hand;
 }
 
 .portal>.close {
@@ -92,6 +91,7 @@ background-position: center;
 position: absolute;
 bottom: 0px;
 right: 0px;
+cursor: nw-resize;
 }
 
 .icon {

@@ -10,7 +10,7 @@ WT.wtedit = {
 	Application : function(parId) {
 		var app = {
 			parent : parId,
-			portalSettings : { width : 256, height : 208, fixed : false, footer : true, title : "WtEdit 0.1"},
+			portalSettings : { width : 316, height : 308, fixed : false, footer : true, title : "WtEdit 0.2"},
 			iconSettings : { img : "img/wt-icon-gradient.png", app : WT.gradient.Application, title : "WtEdit" },
 			menu : new WT.menu.MenuBar(parId),
 			toolbar : new WT.toolbar.ToolBar(parId),
@@ -23,6 +23,14 @@ WT.wtedit = {
 				
 				// Custom eventlistener for the portal on resize!
 				this.setCustomResizeEvent();
+				this.afterInit();
+			},
+			
+			afterInit : function() {
+				var ifr = document.getElementById("wtedit-textcanvas-" + this.parent);
+				ifr.contentWindow.document.designMode = "on";
+				this.document = ifr.contentWindow.document;
+				console.log("DesignMode: " + ifr.contentWindow.document.designMode);
 			},
 			
 			setCustomResizeEvent : function() {
@@ -95,7 +103,7 @@ WT.wtedit = {
 				textCanvas.setAttribute("id", "wtedit-textcanvas-" + this.parent);
 				textCanvas.setAttribute("name", "wtedit-textcanvas-" + this.parent);
 				textCanvas.setAttribute("class", "wtedit-textcanvas");
-				textCanvas.setAttribute("width", this.portalSettings.width - 2);
+				textCanvas.setAttribute("width", this.portalSettings.width);
 				textCanvas.setAttribute("height", this.portalSettings.height - 40);
 				
 				//textCanvas.addEventListener("click", this.focusTextArea, true);
@@ -110,7 +118,6 @@ WT.wtedit = {
 				
 				this.document = textCanvas.contentDocument;
 				textCanvas.contentDocument.designMode = "on";
-				
 			},
 			
 			generateMenu : function() {
@@ -126,6 +133,8 @@ WT.wtedit = {
 				this.menu.menus["Edit"].addMenuItem("Clear");
 				this.menu.menus["Edit"].addMenuItem("Insert URL");
 				this.menu.menus["Edit"].addMenuItem("Insert Image");
+				this.menu.menus["Edit"].addMenuItem("Edit Source");
+				this.menu.menus["Edit"].menuItems["Edit Source"].setAction(WT.Desk.applications[this.parent].switchModes);
 				this.menu.addMenu("Help");
 				this.menu.menus["Help"].setWidth(60);
 				this.menu.menus["Help"].addMenuItem("About");
@@ -134,6 +143,7 @@ WT.wtedit = {
 			generateToolBar : function() {
 				this.toolbar.addTool("New");
 				this.toolbar.items["New"].setIcon("img/wtedit/icon_new.png");
+				this.toolbar.items["New"].setAction(WT.Desk.applications[this.parent].deleteAll);
 				this.toolbar.addTool("Save");
 				this.toolbar.items["Save"].setIcon("img/wtedit/icon_save.png");
 				this.toolbar.addTool("Bold");
@@ -180,21 +190,45 @@ WT.wtedit = {
 				textArea.focus;
 			}*/
 			
-			switchModes : function(id) {
-				var textArea = document.getElementById("wtedit-textarea-" + id);
-				var textCanvas = document.getElementById("wtedit-textcanvas-" + id);
+			switchModes : function(event) {
+				var parent = event.target.getAttribute("parent");
+				var textArea = document.getElementById("wtedit-textarea-" + parent);
+				var canvas = WT.Desk.applications[parent].document.body;
+				var iframe = document.getElementById("wtedit-textcanvas-" + parent);
 				var value;
 				
 				if(textArea.style.display == "none") {
-					value = textCanvas.innerHTML;
+					value = canvas.innerHTML;
 					textArea.value = value;
-					textCanvas.style.display = "none";
+					iframe.style.display = "none";
 					textArea.style.display = "block";
 				} else {
 					value = textArea.value;
-					textCanvas.innerHTML = value;
+					canvas.innerHTML = value;
 					textArea.style.display = "none";
-					textCanvas.style.display = "block";
+					iframe.style.display = "block";
+				}
+			},
+			
+			setSource : function(source) {
+				var textArea = document.getElementById("wtedit-textarea-" + this.parent);
+				var canvas = WT.Desk.applications[this.parent].document.body;
+				
+				textArea.value = source;
+				canvas.innerHTML = source;
+			},
+			
+			setMode : function(mode) {
+				var textArea = document.getElementById("wtedit-textarea-" + this.parent);
+				var canvas = WT.Desk.applications[this.parent].document.body;
+				var iframe = document.getElementById("wtedit-textcanvas-" + this.parent);
+				
+				if(!mode) {
+					iframe.style.display = "none";
+					textArea.style.display = "block";
+				} else {
+					textArea.style.display = "none";
+					iframe.style.display = "block";
 				}
 			},
 			
@@ -245,6 +279,14 @@ WT.wtedit = {
 				var canvas = WT.Desk.applications[parent].document;
 				
 				canvas.execCommand("justifyRight", false, null);
+			},
+			
+			deleteAll : function(event) {
+				var parent = event.target.getAttribute("parent");
+				var canvas = WT.Desk.applications[parent].document;
+				
+				canvas.execCommand("selectAll", false, null);
+				canvas.execCommand("delete", false, null);
 			}
 		};
 		return app;

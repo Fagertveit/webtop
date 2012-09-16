@@ -1,6 +1,6 @@
 .wtedit-container {
-*width: inherit;
-*height: inherit;
+/*width: inherit;*/
+/*height: inherit;*/
 position: absolute;
 top: 40px;
 left: 0px;
@@ -19,8 +19,8 @@ position: absolute;
 .wtedit-textcanvas {
 top: 0px;
 bottom: 0px;
-left: 0px;
-right: 0px;
+left: -1px;
+right: -1px;
 position: absolute;
 background-color: #fff;
 border: 1px solid black;
