@@ -23,7 +23,7 @@ WT.wtedit = {
 				
 				// Custom eventlistener for the portal on resize!
 				this.setCustomResizeEvent();
-				this.afterInit();
+				//this.afterInit();
 			},
 			
 			afterInit : function() {
@@ -116,8 +116,12 @@ WT.wtedit = {
 				parentElem.appendChild(this.toolbar.generateToolBar());
 				parentElem.appendChild(this.menu.generateMenuBar());
 				
-				this.document = textCanvas.contentDocument;
-				textCanvas.contentDocument.designMode = "on";
+				//this.document = textCanvas.contentDocument;
+				//textCanvas.contentDocument.designMode = "on";
+				//ifr.contentWindow.document.designMode = "on";
+				
+				this.document = textCanvas.contentWindow.document;
+				this.document.designMode = "on";
 			},
 			
 			generateMenu : function() {
@@ -220,7 +224,6 @@ WT.wtedit = {
 			
 			setMode : function(mode) {
 				var textArea = document.getElementById("wtedit-textarea-" + this.parent);
-				var canvas = WT.Desk.applications[this.parent].document.body;
 				var iframe = document.getElementById("wtedit-textcanvas-" + this.parent);
 				
 				if(!mode) {
