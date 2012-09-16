@@ -98,6 +98,7 @@ WT.wtedit = {
 				textInput.setAttribute("id", "wtedit-textarea-" + this.parent);
 				textInput.setAttribute("parent", this.parent);
 				textInput.setAttribute("class", "wtedit-textarea");
+				textInput.style.display = "none";
 				//textInput.addEventListener("keyup", this.changeDocument, true);
 				
 				textCanvas.setAttribute("id", "wtedit-textcanvas-" + this.parent);
@@ -235,11 +236,18 @@ WT.wtedit = {
 				}
 			},
 			
+			focusTextArea : function() {
+				var iframe = document.getElementById("wtedit-textcanvas-" + this.parent);
+				iframe.focus();
+			},
+			
 			toggleBold : function(event) {
 				var parent = event.target.getAttribute("parent");
 				var canvas = WT.Desk.applications[parent].document;
 				
 				canvas.execCommand("bold", false, null);
+				
+				WT.Desk.applications[parent].focusTextArea();
 			},
 			
 			toggleItalic : function(event) {
@@ -247,6 +255,8 @@ WT.wtedit = {
 				var canvas = WT.Desk.applications[parent].document;
 				
 				canvas.execCommand("italic", false, null);
+				
+				WT.Desk.applications[parent].focusTextArea();
 			},
 			
 			toggleUnderline : function(event) {
@@ -254,6 +264,8 @@ WT.wtedit = {
 				var canvas = WT.Desk.applications[parent].document;
 				
 				canvas.execCommand("underline", false, null);
+				
+				WT.Desk.applications[parent].focusTextArea();
 			},
 			
 			toggleStroke : function(event) {
@@ -261,6 +273,8 @@ WT.wtedit = {
 				var canvas = WT.Desk.applications[parent].document;
 				
 				canvas.execCommand("strikeThrough", false, null);
+				
+				WT.Desk.applications[parent].focusTextArea();
 			},
 			
 			leftAlign : function(event) {
@@ -268,6 +282,8 @@ WT.wtedit = {
 				var canvas = WT.Desk.applications[parent].document;
 				
 				canvas.execCommand("justifyLeft", false, null);
+				
+				WT.Desk.applications[parent].focusTextArea();
 			},
 			
 			centerAlign : function(event) {
@@ -275,6 +291,8 @@ WT.wtedit = {
 				var canvas = WT.Desk.applications[parent].document;
 				
 				canvas.execCommand("justifyCenter", false, null);
+				
+				WT.Desk.applications[parent].focusTextArea();
 			},
 			
 			rightAlign : function(event) {
@@ -282,6 +300,8 @@ WT.wtedit = {
 				var canvas = WT.Desk.applications[parent].document;
 				
 				canvas.execCommand("justifyRight", false, null);
+				
+				WT.Desk.applications[parent].focusTextArea();
 			},
 			
 			deleteAll : function(event) {
@@ -290,6 +310,8 @@ WT.wtedit = {
 				
 				canvas.execCommand("selectAll", false, null);
 				canvas.execCommand("delete", false, null);
+				
+				WT.Desk.applications[parent].focusTextArea();
 			}
 		};
 		return app;

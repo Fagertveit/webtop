@@ -40,6 +40,14 @@ WT.menu = {
 				for(menu in this.menus) {
 					WT.Desk.applications[this.parent].menu.menus[menu].hideMenu();
 				}
+			},
+			
+			hideAllExcept : function(label) {
+				for(menu in this.menus) {
+					if(menu != label) {
+						WT.Desk.applications[this.parent].menu.menus[menu].hideMenu();
+					}
+				}
 			}
 		};
 		return menubar;
@@ -53,7 +61,7 @@ WT.menu = {
 			parent : srcPar,
 			label : srcLabel,
 			menuItems : new Array(),
-			visible : false,
+			visible : true,
 			
 			init : function() {
 				this.generateMenu();
@@ -69,17 +77,18 @@ WT.menu = {
 				label.setAttribute("class", "menulabel");
 				label.setAttribute("id", "menulabel-" + this.label + "-" + this.parent);
 				label.setAttribute("parent", this.parent);
-				label.addEventListener("click", this.toggleMenu, true);
 				
 				menuHandle.setAttribute("id", "menuhandle-" + this.label + "-" + this.parent);
 				menuHandle.setAttribute("parent", this.parent);
 				menuHandle.setAttribute("type", "menu");
+				menuHandle.setAttribute("label", this.label);
 				menuHandle.style.height = 16 + "px";
 				menuHandle.style.width = "100%";
 				menuHandle.style.position = "absolute";
 				menuHandle.style.top = 0 + "px";
 				menuHandle.style.left = 0 + "px";
 				menuHandle.addEventListener("click", this.toggleMenu, true);
+				//menuHandle.addEventListener("mouseout", this.mouseOut, true);
 				
 				container.setAttribute("class", "menu");
 				container.setAttribute("id", "menu-" + this.label + "-" + this.parent);
@@ -104,24 +113,46 @@ WT.menu = {
 			
 			toggleMenu : function(event) {
 				var target = event.target;
+				var label = target.getAttribute("label");
 				var child = target.childNodes;
 				var parent = target.getAttribute("parent");
 				
 				if(target.getAttribute("type") == "menu") {
-					WT.Desk.applications[parent].menu.hideAll();
-					
-					if(this.visible == false) {
+					WT.Desk.applications[parent].menu.hideAllExcept(label);
+					//console.log("Clicked on Menu! " + target.getAttribute("type"));
+
+					if(child[0].style.display == "none") {
 						child[0].style.display = "block";
-						this.visible = true;
 					} else {
-						this.visible = false;
+						child[0].style.display = "none";
 					}
+				}
+				
+				//document.addEventListener("click", hide, true);
+				
+				//event.stopPropagation();
+				//event.preventDefault();
+				
+				function hide(event) {
+					var target = event.target;
+					
+					console.log(event);
+					if(target.getAttribute("container") == label) {
+						
+					} else {
+						child[0].style.display = "none";
+						document.removeEventListener("click", hide, true);
+					}
+					
+					//event.stopPropagation();
+					//event.preventDefault();
 				}
 			},
 			
 			hideMenu : function() {
 				var container = document.getElementById("menu-" + this.label + "-" + this.parent);
 				container.style.display = "none";
+				this.visible = false;
 			}
 		};
 		return menu;
@@ -172,7 +203,7 @@ WT.menu = {
 				var parent = target.getAttribute("parent");
 				var label = target.getAttribute("label");
 				var container = target.getAttribute("container");
-				
+				WT.Desk.applications[parent].menu.hideAll();
 				//console.log("Clicked: " + label + " in menu " + container + " with the parent " + parent);
 				
 				var menuItem = WT.Desk.applications[parent].menu.menus[container].menuItems[label];
