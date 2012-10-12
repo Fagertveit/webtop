@@ -15,6 +15,12 @@
  * ColorStop
  *  A object that holds color and position data.
  * 
+ * ToDo's
+ *  I need to fix syncronization problems with the hue and saturation controllers so that they are
+ *  placed right when I switch colorstops and such.
+ *  Maybe write a function that is dedicated to placing these elements.
+ *  
+ *  Extended controls and options to make the application a bit more interesting.
  */
 WT.gradient = {
 	Application : function(parId) {
