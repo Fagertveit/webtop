@@ -4,9 +4,11 @@
  * -------------
  * ToDo
  * -------------
- * * Fix resize handle and event listeners.
+ * V Fix resize handle and event listeners.
  * * Fix Z-Index event listeners on the main container (Will use Z-order from the desktop class).
  * * Fix Maximize, Minimize and Close listeners and gfx.
+ * * Look into overriding the event listener functions so that I can implement event listeners
+ * 	 that works on both desktop and mobile devices! (ie. mousedown becomes touchstart and such).
  */
 WT.portal = {
 	Portal : function(uid, srcParent, srcTitle) {
@@ -21,7 +23,7 @@ WT.portal = {
 			topPadding : 0,
 			bottomPadding : 0,
 			
-			init : function() {
+			init : function(deskElem) {
 				var container = WT.dom.createDiv(
 					{"id" : "portal-" + this.id,
 					"class" : "portal-container"},
@@ -40,7 +42,9 @@ WT.portal = {
 				container.appendChild(this.generateFooter());
 				container.appendChild(this.generateContainer());
 				
-				this.parent.appendChild(container);
+				deskElem.appendChild(container);
+				
+				this.parent.log("Portal generated with ID: " + this.id);
 			},
 			
 			generateTitleBar : function() {
@@ -48,7 +52,7 @@ WT.portal = {
 				var title = WT.dom.createDiv(
 					{"id" : "portal_title-" + this.id,
 					"class" : "portal_title"},
-					{"width" : "inherit",
+					{"width" : "100%",
 					"height" : "20px",
 					"position" : "absolute",
 					"top" : "0px",
@@ -107,24 +111,91 @@ WT.portal = {
 					{"id" : "portal_container-" + this.id,
 					"class" : "portal_container"},
 					{"position" : "absolute",
-					"width" : "inherit",
 					"top" : this.topPadding + "px",
-					"height" : this.height - (this.topPadding + this.bottomPadding) + "px"}
+					"bottom" : this.bottomPadding + "px",
+					"left" : "0px",
+					"right" : "0px"}
 				);
 				
 				return cont;
 			},
 			
 			generateFooter : function() {
+				var _this = this;
 				var footer = WT.dom.createDiv(
 					{"id" : "portal_footer-" + this.id,
 					"class" : "portal_footer"},
 					{"position" : "absolute",
-					"width" : "inherit",
-					"top" : (this.height - 16) + "px",
+					"width" : "100%",
+					"bottom" : "0px",
 					"height" : "16px",
 					"backgroundColor" : "#ddd"}
 				);
+				
+				var rsHandle = WT.dom.createDiv(
+					{"id" : "portal_resize" + this.id,
+					"class" : "portal_resize"},
+					{"position" : "absolute",
+					"width" : "16px",
+					"height" : "inherit",
+					"float" : "right",
+					"right" : "0px",
+					"borderLeftStyle" : "solid",
+					"borderLeftWidth" : "1px",
+					"borderLeftColor" : "#aaa"}
+				);
+				
+				rsHandle.addEventListener("mousedown", function(event) {
+					var portal = document.getElementById("portal-" + _this.id);
+					console.log("Portal ID: " + _this.id + " resizing!");
+					
+					var startX = event.clientX;
+					var startY = event.clientY;
+
+					var origX = portal.offsetLeft;
+					var origY = portal.offsetTop;
+
+					var deltaX = startX - origX;
+					var deltaY = startY - origY;
+
+					var startWidth = portal.style.width;
+					startWidth = Number(startWidth.substr(0, startWidth.length - 2));
+					
+					var startHeight = portal.style.height;
+					startHeight = Number(startHeight.substr(0, startHeight.length - 2));
+
+					document.addEventListener("mousemove", moveHandler, true);
+					document.addEventListener("mouseup", upHandler, true);
+
+					event.stopPropagation();
+					event.preventDefault();
+
+					function moveHandler(e) {
+						width = e.clientX - deltaX - origX + startWidth;
+						height = e.clientY - deltaY - origY + startHeight;
+						if (width > 70) {
+							portal.style.width = width + "px";
+						} else {
+							portal.style.width = 70 + "px";
+						}
+
+						if (height > 70) {
+							portal.style.height = height + "px";
+						} else {
+							portal.style.height = 70 + "px";
+						}
+
+						e.stopPropagation();
+					}
+
+					function upHandler(e) {
+						document.removeEventListener("mouseup", upHandler, true);
+						document.removeEventListener("mousemove", moveHandler, true);
+						e.stopPropagation();
+					}
+				}, true);
+				
+				footer.appendChild(rsHandle);
 				
 				this.bottomPadding += 16;
 				

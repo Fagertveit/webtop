@@ -1,3 +1,9 @@
+/* WebTop Main
+ * ------------
+ * This class will hold the main data for WebTop as well as the Desktop class that handles
+ * pretty much everything that goes on behind the scenes (Icons, Portals, Applications and
+ * settings).
+ */
 var WT = {
 	DEFAULT_DESK_ID : "wtdesk",
 	CURRENT_PORTAL_ID : 0,
@@ -33,9 +39,13 @@ var WT = {
 			},
 		
 			addPortal : function(title, width, height) {
-				var portal = new WT.portal.Portal(WT.CURRENT_PORTAL_ID, this.container, "Test");
-				portal.init();
+				var portal = new WT.portal.Portal(WT.CURRENT_PORTAL_ID, this, "Test");
+				portal.init(this.container);
 				WT.CURRENT_PORTAL_ID++;
+			},
+			
+			log : function(message) {
+				console.log(message);
 			}
 		};
 		return desktop;
