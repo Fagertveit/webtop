@@ -4,18 +4,31 @@
 <meta http-equiv='Content-Type' content='text/html;charset=ISO-8859-1' />
 <title>WebTop - A Webbased desktop environment!</title>
 
+<link rel='stylesheet' type='text/css' href='css/wt.css' />
+
 <script type='text/javascript' src='wt/wt.js'></script>
 <script type='text/javascript' src='wt/wt.portal.js'></script>
 <script type='text/javascript' src='wt/wt.dom.js'></script>
+<script type='text/javascript' src='wt/wt.menu.js'></script>
 
 </head>
 <body onload="">
 
 </body>
 <script>
-var desktop = new WT.Desktop(800, 300);
+var desktop = new WT.Desktop(800, 500);
 desktop.init();
-desktop.addPortal();
+desktop.addPortal("Awesome");
+desktop.portals[0].addMenuBar();
+desktop.portals[0].addMenu("File");
+desktop.portals[0].addMenu("Edit");
+desktop.portals[0].addMenu("Help");
+desktop.portals[0].addMenuItem("File", "Open");
+desktop.portals[0].menu.menus["File"].items["Open"].setAttributes("Open");
+desktop.portals[0].addMenuItem("File", "Save");
+desktop.portals[0].menu.menus["File"].items["Save"].setAttributes("Save");
+desktop.portals[0].addMenuItem("File", "Exit", desktop.portals[0].terminate);
+desktop.portals[0].menu.menus["File"].items["Exit"].setAttributes(desktop.portals[0]);
 </script>
 </html>
 

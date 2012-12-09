@@ -22,22 +22,21 @@ WT.portal = {
 			footer : true,
 			topPadding : 0,
 			bottomPadding : 0,
+			menu : null,
+			zIndex : 0,
 			
 			init : function(deskElem) {
+				var _this = this;
 				var container = WT.dom.createDiv(
 					{"id" : "portal-" + this.id,
-					"class" : "portal-container"},
+					"class" : "portal"},
 					{"width" : this.width + "px",
-					"height" : this.height + "px",
-					"borderStyle" : "solid",
-					"borderWidth" : "1px",
-					"borderColor" : "#aaa",
-					"backgroundColor" : "#fff",
-					"position" : "absolute",
-					"top" : "10px",
-					"left" : "10px"
+					"height" : this.height + "px"
 					}
 				);
+				
+				container.addEventListener("click", function() { _this.parent.resortPortals(_this); }, true);
+				
 				container.appendChild(this.generateTitleBar());
 				container.appendChild(this.generateFooter());
 				container.appendChild(this.generateContainer());
@@ -51,58 +50,45 @@ WT.portal = {
 				var _this = this;
 				var title = WT.dom.createDiv(
 					{"id" : "portal_title-" + this.id,
-					"class" : "portal_title"},
-					{"width" : "100%",
-					"height" : "20px",
-					"position" : "absolute",
-					"top" : "0px",
-					"left" : "0px",
-					"borderBottomStyle" : "solid",
-					"borderBottomWidth" : "1px",
-					"borderBottomColor" : "#000",
-					"backgroundColor" : "#ddd",
-					"textIndent" : "4px",
-					"lineHeight" : "18px"}
+					"class" : "portal_title"}
 				);
+				
+				var close = WT.dom.createDiv(
+					{"id" : "portal_close-" + this.id,
+					"class" : "portal_close portal_title_btn"}
+				);
+				
+				close.innerHTML = "X";
+				close.addEventListener("click", function() { _this.terminate(_this); }, true);
+				
+				var maximize = WT.dom.createDiv(
+					{"id" : "portal_max-" + this.id,
+					"class" : "portal_max portal_title_btn"}
+				);
+				
+				maximize.innerHTML = "[]";
+				maximize.addEventListener("click", function() { _this.maximize(_this); }, true);
+				
+				var minimize = WT.dom.createDiv(
+					{"id" : "portal_min-" + this.id,
+					"class" : "portal_min portal_title_btn"}
+				);
+				
+				minimize.innerHTML = "_";
+				minimize.addEventListener("click", function() { _this.minimize(_this); }, true);
 				
 				title.innerHTML = this.title;
 				
 				title.addEventListener("mousedown", function(event) {
-					var id = _this.id;
-					var portal = document.getElementById("portal-" + id);
-
-					var startX = event.clientX;
-					var startY = event.clientY;
-
-					var origX = portal.offsetLeft;
-					var origY = portal.offsetTop;
-
-					var deltaX = startX - origX;
-					var deltaY = startY - origY;
-
-					document.addEventListener("mousemove", moveHandler, true);
-					document.addEventListener("mouseup", upHandler, true);
-
-					event.stopPropagation();
-					event.preventDefault();
-
-					function moveHandler(e) {
-						portal.style.left = (e.clientX - deltaX) + "px";
-						if(e.clientY - deltaY > 0) {
-							portal.style.top = (e.clientY - deltaY) + "px";
-						}
-						
-						e.stopPropagation();
-					}
-
-					function upHandler(e) {
-						document.removeEventListener("mouseup", upHandler, true);
-						document.removeEventListener("mousemove", moveHandler, true);
-						e.stopPropagation();
-					}
+					_this.move(event, _this);
 				}, true);
 				
 				this.topPadding += 21;
+				
+				title.appendChild(close);
+				title.appendChild(maximize);
+				title.appendChild(minimize);
+				
 				return title;
 			},
 			
@@ -110,12 +96,11 @@ WT.portal = {
 				var cont = WT.dom.createDiv(
 					{"id" : "portal_container-" + this.id,
 					"class" : "portal_container"},
-					{"position" : "absolute",
-					"top" : this.topPadding + "px",
-					"bottom" : this.bottomPadding + "px",
-					"left" : "0px",
-					"right" : "0px"}
+					{"top" : this.topPadding + "px",
+					"bottom" : this.bottomPadding + "px"}
 				);
+				
+				cont.innerHTML = '<a href="www.fagertveit.com" target="_blank">www.fagertveit.com</a>';
 				
 				return cont;
 			},
@@ -124,75 +109,16 @@ WT.portal = {
 				var _this = this;
 				var footer = WT.dom.createDiv(
 					{"id" : "portal_footer-" + this.id,
-					"class" : "portal_footer"},
-					{"position" : "absolute",
-					"width" : "100%",
-					"bottom" : "0px",
-					"height" : "16px",
-					"backgroundColor" : "#ddd"}
+					"class" : "portal_footer"}
 				);
 				
 				var rsHandle = WT.dom.createDiv(
 					{"id" : "portal_resize" + this.id,
-					"class" : "portal_resize"},
-					{"position" : "absolute",
-					"width" : "16px",
-					"height" : "inherit",
-					"float" : "right",
-					"right" : "0px",
-					"borderLeftStyle" : "solid",
-					"borderLeftWidth" : "1px",
-					"borderLeftColor" : "#aaa"}
+					"class" : "portal_resize"}
 				);
 				
 				rsHandle.addEventListener("mousedown", function(event) {
-					var portal = document.getElementById("portal-" + _this.id);
-					console.log("Portal ID: " + _this.id + " resizing!");
-					
-					var startX = event.clientX;
-					var startY = event.clientY;
-
-					var origX = portal.offsetLeft;
-					var origY = portal.offsetTop;
-
-					var deltaX = startX - origX;
-					var deltaY = startY - origY;
-
-					var startWidth = portal.style.width;
-					startWidth = Number(startWidth.substr(0, startWidth.length - 2));
-					
-					var startHeight = portal.style.height;
-					startHeight = Number(startHeight.substr(0, startHeight.length - 2));
-
-					document.addEventListener("mousemove", moveHandler, true);
-					document.addEventListener("mouseup", upHandler, true);
-
-					event.stopPropagation();
-					event.preventDefault();
-
-					function moveHandler(e) {
-						width = e.clientX - deltaX - origX + startWidth;
-						height = e.clientY - deltaY - origY + startHeight;
-						if (width > 70) {
-							portal.style.width = width + "px";
-						} else {
-							portal.style.width = 70 + "px";
-						}
-
-						if (height > 70) {
-							portal.style.height = height + "px";
-						} else {
-							portal.style.height = 70 + "px";
-						}
-
-						e.stopPropagation();
-					}
-
-					function upHandler(e) {
-						document.removeEventListener("mouseup", upHandler, true);
-						document.removeEventListener("mousemove", moveHandler, true);
-						e.stopPropagation();
-					}
+					_this.resize(event, _this);
 				}, true);
 				
 				footer.appendChild(rsHandle);
@@ -200,6 +126,142 @@ WT.portal = {
 				this.bottomPadding += 16;
 				
 				return footer;
+			},
+			
+			setTopPadding : function(value) {
+				this.topPadding += value;
+				var elem = document.getElementById("portal_container-" + this.id);
+				elem.style.top = this.topPadding + "px";
+			},
+			
+			addMenuBar : function() {
+				this.menu = new WT.menu.MenuBar(this);
+				this.setTopPadding(20);
+				var elem = document.getElementById("portal-" + this.id);
+				elem.appendChild(this.menu.generateMenuBar());
+			},
+			
+			addMenu : function(title) {
+				this.menu.addMenu(title);
+			},
+			
+			addMenuItem : function(menu, title, callback) {
+				var _this = this;
+				if(callback != undefined) {
+					this.menu.menus[menu].addItem(title, callback);
+				} else {
+					this.menu.menus[menu].addItem(title, _this.testCallback);
+				}
+			},
+			
+			testCallback : function(msg) {
+				console.log("Callback test for: " + msg);
+			},
+			
+			setZIndex : function(zIndex) {
+				var portal = document.getElementById("portal-" + this.id);
+				this.zIndex = zIndex;
+				
+				portal.style.zIndex = this.zIndex;
+			},
+			
+			resize : function(event, objRef) {
+				var _this = objRef;
+				var portal = document.getElementById("portal-" + _this.id);
+				//console.log("Portal ID: " + _this.id + " resizing!");
+				
+				var startX = event.clientX;
+				var startY = event.clientY;
+
+				var origX = portal.offsetLeft;
+				var origY = portal.offsetTop;
+
+				var deltaX = startX - origX;
+				var deltaY = startY - origY;
+
+				var startWidth = portal.style.width;
+				startWidth = Number(startWidth.substr(0, startWidth.length - 2));
+				
+				var startHeight = portal.style.height;
+				startHeight = Number(startHeight.substr(0, startHeight.length - 2));
+
+				document.addEventListener("mousemove", moveHandler, true);
+				document.addEventListener("mouseup", upHandler, true);
+
+				event.stopPropagation();
+				event.preventDefault();
+
+				function moveHandler(e) {
+					width = e.clientX - deltaX - origX + startWidth;
+					height = e.clientY - deltaY - origY + startHeight;
+					if (width > 70) {
+						portal.style.width = width + "px";
+					} else {
+						portal.style.width = 70 + "px";
+					}
+
+					if (height > 70) {
+						portal.style.height = height + "px";
+					} else {
+						portal.style.height = 70 + "px";
+					}
+
+					e.stopPropagation();
+				}
+
+				function upHandler(e) {
+					document.removeEventListener("mouseup", upHandler, true);
+					document.removeEventListener("mousemove", moveHandler, true);
+					e.stopPropagation();
+				}
+			},
+			
+			move : function(event, objRef) {
+				var id = objRef.id;
+				var portal = document.getElementById("portal-" + id);
+
+				var startX = event.clientX;
+				var startY = event.clientY;
+
+				var origX = portal.offsetLeft;
+				var origY = portal.offsetTop;
+
+				var deltaX = startX - origX;
+				var deltaY = startY - origY;
+
+				document.addEventListener("mousemove", moveHandler, true);
+				document.addEventListener("mouseup", upHandler, true);
+
+				event.stopPropagation();
+				event.preventDefault();
+
+				function moveHandler(e) {
+					portal.style.left = (e.clientX - deltaX) + "px";
+					if(e.clientY - deltaY > 0) {
+						portal.style.top = (e.clientY - deltaY) + "px";
+					}
+					
+					e.stopPropagation();
+				}
+
+				function upHandler(e) {
+					document.removeEventListener("mouseup", upHandler, true);
+					document.removeEventListener("mousemove", moveHandler, true);
+					e.stopPropagation();
+				}
+			},
+			
+			terminate : function(_this) {
+				//console.log(_this);
+				_this.parent.destroyPortal(_this);
+			},
+			
+			maximize : function(_this) {
+				console.log("Maximize: Portal-" + _this.id);
+			},
+			
+			minimize : function(_this) {
+				console.log("Minimize: Portal-" + _this.id);
 			}
 		};
 		return portal;
