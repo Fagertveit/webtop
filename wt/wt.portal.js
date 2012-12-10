@@ -24,6 +24,9 @@ WT.portal = {
 			bottomPadding : 0,
 			menu : null,
 			zIndex : 0,
+			maximized : false,
+			posX : 10,
+			posY : 10,
 			
 			init : function(deskElem) {
 				var _this = this;
@@ -165,8 +168,7 @@ WT.portal = {
 				portal.style.zIndex = this.zIndex;
 			},
 			
-			resize : function(event, objRef) {
-				var _this = objRef;
+			resize : function(event, _this) {
 				var portal = document.getElementById("portal-" + _this.id);
 				//console.log("Portal ID: " + _this.id + " resizing!");
 				
@@ -196,14 +198,18 @@ WT.portal = {
 					height = e.clientY - deltaY - origY + startHeight;
 					if (width > 70) {
 						portal.style.width = width + "px";
+						_this.width = width;
 					} else {
 						portal.style.width = 70 + "px";
+						_this.width = 70;
 					}
 
 					if (height > 70) {
 						portal.style.height = height + "px";
+						_this.height = height;
 					} else {
 						portal.style.height = 70 + "px";
+						_this.height = 70;
 					}
 
 					e.stopPropagation();
@@ -216,8 +222,8 @@ WT.portal = {
 				}
 			},
 			
-			move : function(event, objRef) {
-				var id = objRef.id;
+			move : function(event, _this) {
+				var id = _this.id;
 				var portal = document.getElementById("portal-" + id);
 
 				var startX = event.clientX;
@@ -237,8 +243,10 @@ WT.portal = {
 
 				function moveHandler(e) {
 					portal.style.left = (e.clientX - deltaX) + "px";
+					_this.posX = (e.clientX - deltaX);
 					if(e.clientY - deltaY > 0) {
 						portal.style.top = (e.clientY - deltaY) + "px";
+						_this.posY = (e.clientY - deltaY);
 					}
 					
 					e.stopPropagation();
@@ -258,6 +266,20 @@ WT.portal = {
 			
 			maximize : function(_this) {
 				console.log("Maximize: Portal-" + _this.id);
+				var elem = document.getElementById("portal-" + _this.id);
+				if(_this.maximized) {
+					elem.style.width = _this.width + "px";
+					elem.style.height = _this.height + "px";
+					elem.style.left = _this.posX + "px";
+					elem.style.top = _this.posY + "px";
+					_this.maximized = false;
+				} else {
+					elem.style.width = _this.parent.width + "px";
+					elem.style.height = (_this.parent.height - 32) + "px";
+					elem.style.left = "0px";
+					elem.style.top = "0px";
+					_this.maximized = true;
+				}
 			},
 			
 			minimize : function(_this) {
