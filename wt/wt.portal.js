@@ -116,7 +116,7 @@ WT.portal = {
 				);
 				
 				var rsHandle = WT.dom.createDiv(
-					{"id" : "portal_resize" + this.id,
+					{"id" : "portal_resize-" + this.id,
 					"class" : "portal_resize"}
 				);
 				
@@ -223,6 +223,9 @@ WT.portal = {
 			},
 			
 			move : function(event, _this) {
+				if(_this.maximized) {
+					return 0;
+				}
 				var id = _this.id;
 				var portal = document.getElementById("portal-" + id);
 
@@ -259,25 +262,36 @@ WT.portal = {
 				}
 			},
 			
+			toggleResize : function(active) {
+				var resize = document.getElementById("portal_resize-" + this.id);
+				if(active) {
+					resize.style.display = "block";
+				} else {
+					resize.style.display = "none";
+				}
+			},
+			
 			terminate : function(_this) {
 				//console.log(_this);
 				_this.parent.destroyPortal(_this);
 			},
 			
 			maximize : function(_this) {
-				console.log("Maximize: Portal-" + _this.id);
 				var elem = document.getElementById("portal-" + _this.id);
+				
 				if(_this.maximized) {
 					elem.style.width = _this.width + "px";
 					elem.style.height = _this.height + "px";
 					elem.style.left = _this.posX + "px";
 					elem.style.top = _this.posY + "px";
+					_this.toggleResize(true);
 					_this.maximized = false;
 				} else {
 					elem.style.width = _this.parent.width + "px";
 					elem.style.height = (_this.parent.height - 32) + "px";
 					elem.style.left = "0px";
 					elem.style.top = "0px";
+					_this.toggleResize(false);
 					_this.maximized = true;
 				}
 			},
