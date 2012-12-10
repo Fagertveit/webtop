@@ -10,13 +10,14 @@
 <script type='text/javascript' src='wt/wt.portal.js'></script>
 <script type='text/javascript' src='wt/wt.dom.js'></script>
 <script type='text/javascript' src='wt/wt.menu.js'></script>
+<script type='text/javascript' src='wt/wt.anim.js'></script>
 
 </head>
 <body onload="">
 
 </body>
 <script>
-var desktop = new WT.Desktop(800, 350);
+var desktop = new WT.Desktop(800, 500);
 desktop.init();
 desktop.addPortal("Awesome");
 desktop.portals[0].addMenuBar();
@@ -29,6 +30,18 @@ desktop.portals[0].addMenuItem("File", "Save");
 desktop.portals[0].menu.menus["File"].items["Save"].setAttributes("Save");
 desktop.portals[0].addMenuItem("File", "Exit", desktop.portals[0].terminate);
 desktop.portals[0].menu.menus["File"].items["Exit"].setAttributes(desktop.portals[0]);
+desktop.portals[0].setStatus("Testing status bar text!");
+/*
+WT.anim.animateElement(document.getElementById("portal-" + desktop.portals[0].id),
+	{
+		"width" : {"start" : desktop.portals[0].width, "end" : (desktop.width - 2)},
+		"height" : {"start" : desktop.portals[0].height, "end" : (desktop.height - 35)},
+		"top" : {"start" : desktop.portals[0].posY, "end" : 0},
+		"left" : {"start" : desktop.portals[0].posX, "end" : 0}
+	},
+	250
+);
+*/
 </script>
 </html>
 

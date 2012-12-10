@@ -60,13 +60,13 @@ border: 1px solid #aaa;
 
 .portal_title {
 width: 100%;
-height: 20px;
+height: 28px;
 top: 0px;
 left: 0px;
 border-bottom: 1px solid #aaa;
 background-color: #aaa;
-text-indent: 4px;
-line-height: 20px;
+text-indent: 28px;
+line-height: 28px;
 font-weight: bold;
 font-size: 14px;
 color: #fff;
@@ -78,12 +78,14 @@ position: relative;
 float: right;
 top: -1px;
 right: 6px;
-width:16px;
-height: 16px;
+width: 20px;
+height: 20px;
 border-left: 1px solid #000;
 border-bottom: 1px solid #000;
-line-height: 14px;
-font-size: 10px;
+line-height: 18px;
+font-size: 14px;
+text-indent: 0px;
+text-align: center;
 color: #000;
 background-color: #ddd;
 cursor: default;
@@ -116,6 +118,16 @@ background-color: #ddd;
 border-top: 1px solid #aaa;
 }
 
+.portal_status {
+position: absolute;
+height: inherit;
+line-height: 16px;
+font-size: 10px;
+text-indent: 0px;
+left: 2px;
+overflow: hidden;
+}
+
 .portal_container {
 right: 0px;
 left: 0px;
@@ -127,7 +139,6 @@ overflow: auto;
 position: absolute;
 height: inherit;
 width: 16px;
-float: right;
 right: 0px;
 border-left: 1px solid #aaa;
 cursor: nw-resize;
@@ -138,7 +149,7 @@ cursor: nw-resize;
 position: absolute;
 width: 100%;
 height: 20px;
-top: 20px;
+top: 28px;
 left: 0px;
 background-color: #ddd;
 border-bottom: 1px solid #aaa;

@@ -18,6 +18,8 @@ var WT = {
 	DEFAULT_DESK_ID : "wtdesk",
 	CURRENT_PORTAL_ID : 0,
 	CURRENT_TOP_Z_INDEX : 1,
+	ANIM_DELAY : 1000,
+	ANIM_SPEED : 10,
 	
 	Desktop : function(srcWidth, srcHeight) {
 		desktop = {
@@ -107,19 +109,38 @@ var WT = {
 				toolBarHandles.innerHTML = "";
 				
 				for(portal in this.portals) {
-					toolBarHandles.appendChild(this.createHandle(portal));
+					toolBarHandles.appendChild(this.createHandle(this.portals[portal]));
 				}
 			},
 			
-			createHandle : function(i) {
+			createHandle : function(portal) {
+				var _this = this;
+				var id = portal.id;
 				var handle = WT.dom.createDiv(
-					{"id" : "portal_handle-" + i,
+					{"id" : "portal_handle-" + id,
 					"class" : "portal_handle"}
 				);
 				
-				handle.innerHTML = this.portals[i].title;
+				handle.innerHTML = this.portals[id].title;
+				handle.addEventListener("click", function(){
+					_this.triggerHandle(_this, portal);
+				}, true);
 				
 				return handle;
+			},
+			
+			triggerHandle : function(_this, portal) {
+				// Check if portal is on top, if so Minimize it.
+				// If not, bring portal to the top.
+				if(portal.active) {
+					portal.minimize(portal);
+				} else {
+					_this.resortPortals(portal);
+				}
+				// Check if portal is minimized, if so, make it normal.
+				if(portal.minimized) {
+					portal.minimize(portal);
+				}
 			},
 			
 			destroyPortal : function(src) {
@@ -149,10 +170,12 @@ var WT = {
 			resortPortals : function(topPortal) {
 				//console.log("Resorting Portals!");
 				//console.log(topPortal);
+				topPortal.active = true;
 				
 				var doSwitch, srcIndex, dstIndex;
 				for(portal in this.portals) {
 					if(this.portals[portal].id != topPortal.id) {
+						this.portals[portal].active = false;
 						if(this.portals[portal].zIndex > topPortal.zIndex) {
 							srcIndex = topPortal.zIndex;
 							dstIndex = this.portals[portal].zIndex;

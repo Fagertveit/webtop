@@ -5,10 +5,13 @@
  * ToDo
  * -------------
  * V Fix resize handle and event listeners.
- * * Fix Z-Index event listeners on the main container (Will use Z-order from the desktop class).
- * * Fix Maximize, Minimize and Close listeners and gfx.
+ * V Fix Z-Index event listeners on the main container (Will use Z-order from the desktop class).
+ * V Fix Maximize, Minimize and Close listeners and gfx.
+ *  * When stepping out from minimize, check if the maximize is active, if so, go to maximized state
+ *    instead of normal.
  * * Look into overriding the event listener functions so that I can implement event listeners
  * 	 that works on both desktop and mobile devices! (ie. mousedown becomes touchstart and such).
+ * * Redraw DOM looks like urk in FireFox.
  */
 WT.portal = {
 	Portal : function(uid, srcParent, srcTitle) {
@@ -25,6 +28,8 @@ WT.portal = {
 			menu : null,
 			zIndex : 0,
 			maximized : false,
+			minimized : false,
+			active : true,
 			posX : 10,
 			posY : 10,
 			
@@ -86,7 +91,7 @@ WT.portal = {
 					_this.move(event, _this);
 				}, true);
 				
-				this.topPadding += 21;
+				this.topPadding += 29;
 				
 				title.appendChild(close);
 				title.appendChild(maximize);
@@ -115,6 +120,11 @@ WT.portal = {
 					"class" : "portal_footer"}
 				);
 				
+				var status = WT.dom.createDiv(
+					{"id" : "portal_status-" + this.id,
+					"class" : "portal_status"}
+				);
+				
 				var rsHandle = WT.dom.createDiv(
 					{"id" : "portal_resize-" + this.id,
 					"class" : "portal_resize"}
@@ -124,6 +134,7 @@ WT.portal = {
 					_this.resize(event, _this);
 				}, true);
 				
+				footer.appendChild(status);
 				footer.appendChild(rsHandle);
 				
 				this.bottomPadding += 16;
@@ -166,6 +177,11 @@ WT.portal = {
 				this.zIndex = zIndex;
 				
 				portal.style.zIndex = this.zIndex;
+			},
+			
+			setStatus : function(content) {
+				var elem = document.getElementById("portal_status-" + this.id);
+				elem.innerHTML = content;
 			},
 			
 			resize : function(event, _this) {
@@ -280,24 +296,79 @@ WT.portal = {
 				var elem = document.getElementById("portal-" + _this.id);
 				
 				if(_this.maximized) {
-					elem.style.width = _this.width + "px";
-					elem.style.height = _this.height + "px";
-					elem.style.left = _this.posX + "px";
-					elem.style.top = _this.posY + "px";
+					WT.anim.animateElement(elem,
+						{
+							"width" : {"start" : (_this.parent.width - 2), "end" : _this.width},
+							"height" : {"start" : (_this.parent.height - 35), "end" : _this.height},
+							"top" : {"start" : 0, "end" : _this.posY},
+							"left" : {"start" : 0, "end" : _this.posX}
+						},
+						WT.ANIM_DELAY
+					);
+					//elem.style.width = _this.width + "px";
+					//elem.style.height = _this.height + "px";
+					//elem.style.left = _this.posX + "px";
+					//elem.style.top = _this.posY + "px";
 					_this.toggleResize(true);
 					_this.maximized = false;
 				} else {
-					elem.style.width = _this.parent.width + "px";
-					elem.style.height = (_this.parent.height - 32) + "px";
-					elem.style.left = "0px";
-					elem.style.top = "0px";
+					WT.anim.animateElement(elem,
+						{
+							"width" : {"start" : _this.width, "end" : (_this.parent.width - 2)},
+							"height" : {"start" : _this.height, "end" : (_this.parent.height - 35)},
+							"top" : {"start" : _this.posY, "end" : 0},
+							"left" : {"start" : _this.posX, "end" : 0}
+						},
+						WT.ANIM_DELAY
+					);
+					//elem.style.width = (_this.parent.width - 2) + "px";
+					//elem.style.height = (_this.parent.height - 35) + "px";
+					//elem.style.left = "0px";
+					//elem.style.top = "0px";
 					_this.toggleResize(false);
 					_this.maximized = true;
 				}
 			},
 			
 			minimize : function(_this) {
-				console.log("Minimize: Portal-" + _this.id);
+				//console.log("Minimize: Portal-" + _this.id);
+				var elem = document.getElementById("portal-" + _this.id);
+				var handle = document.getElementById("portal_handle-" + _this.id);
+				var endX, endY, endWidth, endHeight;
+				endWidth = handle.clientWidth;
+				endHeight = handle.clientHeight;
+				endX = handle.clientX;
+				endY = (_this.parent.height - 32);
+				
+				if(_this.minimized) {
+					WT.anim.animateElement(elem,
+						{
+							"width" : {"start" : endWidth, "end" : _this.width},
+							"height" : {"start" : endHeight, "end" : _this.height},
+							"top" : {"start" : endY, "end" : _this.posY},
+							"left" : {"start" : endX, "end" : _this.posX}
+						},
+						WT.ANIM_DELAY
+					);
+					_this.minimized = false;
+				} else {
+					WT.anim.animateElement(elem,
+						{
+							"width" : {"start" : _this.width, "end" : endWidth},
+							"height" : {"start" : _this.height, "end" : endHeight},
+							"top" : {"start" : _this.posY, "end" : endY},
+							"left" : {"start" : _this.posX, "end" : endX}
+						},
+						WT.ANIM_DELAY
+					);
+					_this.minimized = true;
+				}
+			},
+			
+			repaint : function(_this) {
+				var elem = document.getElementById("portal-" + _this.id);
+				elem.style.display = "none";
+				elem.style.display = "block";
 			}
 		};
 		return portal;
