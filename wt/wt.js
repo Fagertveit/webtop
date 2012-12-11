@@ -69,7 +69,7 @@ var WT = {
 			},
 			
 			checkUserAgent : function() {
-				var isMobile = navigator.userAgent.search(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i);
+				var isMobile = navigator.userAgent.search(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|Opera Mobile|IEMobile/i);
 				//console.log("Is Mobile: " + isMobile);
 				if(isMobile > -1) {
 					WT.IS_MOBILE = true;
