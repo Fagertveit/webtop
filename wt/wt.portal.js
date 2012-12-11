@@ -67,7 +67,6 @@ WT.portal = {
 				);
 				
 				close.innerHTML = "X";
-				close.addEventListener("click", function() { _this.terminate(_this); }, true);
 				
 				var maximize = WT.dom.createDiv(
 					{"id" : "portal_max-" + this.id,
@@ -75,7 +74,6 @@ WT.portal = {
 				);
 				
 				maximize.innerHTML = "[]";
-				maximize.addEventListener("click", function() { _this.maximize(_this); }, true);
 				
 				var minimize = WT.dom.createDiv(
 					{"id" : "portal_min-" + this.id,
@@ -83,14 +81,19 @@ WT.portal = {
 				);
 				
 				minimize.innerHTML = "_";
-				minimize.addEventListener("click", function() { _this.minimize(_this); }, true);
 				
 				title.innerHTML = this.title;
 				if(WT.IS_MOBILE) {
+					close.addEventListener("touchstart", function() { _this.terminate(_this); }, true);
+					maximize.addEventListener("touchstart", function() { _this.maximize(_this); }, true);
+					minimize.addEventListener("touchstart", function() { _this.minimize(_this); }, true);
 					title.addEventListener("touchstart", function(event) {
 						_this.moveTouch(event, _this);
 					}, true);
 				} else {
+					close.addEventListener("click", function() { _this.terminate(_this); }, true);
+					maximize.addEventListener("click", function() { _this.maximize(_this); }, true);
+					minimize.addEventListener("click", function() { _this.minimize(_this); }, true);
 					title.addEventListener("mousedown", function(event) {
 						_this.move(event, _this);
 					}, true);
@@ -135,9 +138,16 @@ WT.portal = {
 					"class" : "portal_resize"}
 				);
 				
-				rsHandle.addEventListener("mousedown", function(event) {
-					_this.resize(event, _this);
-				}, true);
+				if(WT.IS_MOBILE) {
+					rsHandle.addEventListener("touchstart", function(event) {
+						_this.resizeTouch(event, _this);
+					}, true);
+				} else {
+					rsHandle.addEventListener("mousedown", function(event) {
+						_this.resize(event, _this);
+					}, true);
+				}
+				
 				
 				footer.appendChild(status);
 				footer.appendChild(rsHandle);
@@ -239,6 +249,64 @@ WT.portal = {
 				function upHandler(e) {
 					document.removeEventListener("mouseup", upHandler, true);
 					document.removeEventListener("mousemove", moveHandler, true);
+					e.stopPropagation();
+				}
+			},
+			
+			resizeTouch : function(event, _this) {
+				var portal = document.getElementById("portal-" + _this.id);
+				
+				if(event.targetTouches.length == 1) {
+					var touch = event.targetTouches[0];
+				}
+				
+				var startX = touch.clientX;
+				var startY = touch.clientY;
+
+				var origX = portal.offsetLeft;
+				var origY = portal.offsetTop;
+
+				var deltaX = startX - origX;
+				var deltaY = startY - origY;
+
+				var startWidth = portal.style.width;
+				startWidth = Number(startWidth.substr(0, startWidth.length - 2));
+				
+				var startHeight = portal.style.height;
+				startHeight = Number(startHeight.substr(0, startHeight.length - 2));
+
+				document.addEventListener("touchmove", moveHandler, true);
+				document.addEventListener("touchend", upHandler, true);
+
+				event.stopPropagation();
+				event.preventDefault();
+
+				function moveHandler(e) {
+					var t = e.targetTouches[0];
+					width = t.clientX - deltaX - origX + startWidth;
+					height = t.clientY - deltaY - origY + startHeight;
+					if (width > 70) {
+						portal.style.width = width + "px";
+						_this.width = width;
+					} else {
+						portal.style.width = 70 + "px";
+						_this.width = 70;
+					}
+
+					if (height > 70) {
+						portal.style.height = height + "px";
+						_this.height = height;
+					} else {
+						portal.style.height = 70 + "px";
+						_this.height = 70;
+					}
+
+					e.stopPropagation();
+				}
+
+				function upHandler(e) {
+					document.removeEventListener("touchend", upHandler, true);
+					document.removeEventListener("touchmove", moveHandler, true);
 					e.stopPropagation();
 				}
 			},
