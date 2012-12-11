@@ -71,7 +71,7 @@ var WT = {
 			checkUserAgent : function() {
 				var isMobile = navigator.userAgent.search(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i);
 				//console.log("Is Mobile: " + isMobile);
-				if(isMobile > 0) {
+				if(isMobile > -1) {
 					WT.IS_MOBILE = true;
 				}
 			},
