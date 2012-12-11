@@ -108,7 +108,7 @@ WT.portal = {
 					"bottom" : this.bottomPadding + "px"}
 				);
 				
-				cont.innerHTML = '<a href="www.fagertveit.com" target="_blank">www.fagertveit.com</a>';
+				cont.innerHTML = WT.IS_MOBILE;
 				
 				return cont;
 			},
