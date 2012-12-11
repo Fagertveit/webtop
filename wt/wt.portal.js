@@ -86,10 +86,15 @@ WT.portal = {
 				minimize.addEventListener("click", function() { _this.minimize(_this); }, true);
 				
 				title.innerHTML = this.title;
-				
-				title.addEventListener("mousedown", function(event) {
-					_this.move(event, _this);
-				}, true);
+				if(WT.IS_MOBILE) {
+					title.addEventListener("touchstart", function(event) {
+						_this.moveTouch(event, _this);
+					}, true);
+				} else {
+					title.addEventListener("mousedown", function(event) {
+						_this.move(event, _this);
+					}, true);
+				}
 				
 				this.topPadding += 29;
 				
@@ -274,6 +279,52 @@ WT.portal = {
 				function upHandler(e) {
 					document.removeEventListener("mouseup", upHandler, true);
 					document.removeEventListener("mousemove", moveHandler, true);
+					e.stopPropagation();
+				}
+			},
+			
+			moveTouch : function(event, _this) {
+				if(_this.maximized) {
+					return 0;
+				}
+				
+				if(event.targetTouches.length == 1) {
+					var touch = event.targetTouches[0];
+				}
+				
+				var id = _this.id;
+				var portal = document.getElementById("portal-" + id);
+
+				var startX = touch.clientX;
+				var startY = touch.clientY;
+
+				var origX = portal.offsetLeft;
+				var origY = portal.offsetTop;
+
+				var deltaX = startX - origX;
+				var deltaY = startY - origY;
+
+				document.addEventListener("touchmove", moveHandler, true);
+				document.addEventListener("touchend", upHandler, true);
+
+				event.stopPropagation();
+				event.preventDefault();
+
+				function moveHandler(e) {
+					var t = e.targetTouches[0];
+					portal.style.left = (t.clientX - deltaX) + "px";
+					_this.posX = (t.clientX - deltaX);
+					if(t.clientY - deltaY > 0) {
+						portal.style.top = (t.clientY - deltaY) + "px";
+						_this.posY = (t.clientY - deltaY);
+					}
+					
+					e.stopPropagation();
+				}
+
+				function upHandler(e) {
+					document.removeEventListener("touchend", upHandler, true);
+					document.removeEventListener("touchmove", moveHandler, true);
 					e.stopPropagation();
 				}
 			},
