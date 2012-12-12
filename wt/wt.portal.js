@@ -32,6 +32,7 @@ WT.portal = {
 			active : true,
 			posX : 10,
 			posY : 10,
+			subPortals : new Array(),
 			
 			init : function(deskElem) {
 				var _this = this;
@@ -61,13 +62,23 @@ WT.portal = {
 					"class" : "portal_title"}
 				);
 				
+				var handle = WT.dom.createDiv(
+					{"id" : "portal_title_handle-" + this.id,
+					"class" : "portal_title_handle"}
+				);
+				
+				var icon = WT.dom.createDiv(
+					{"id" : "portal_icon-" + this.id,
+					"class" : "portal_icon"},
+					{"backgroundImage" : "url('img/wt_icon_chainsaw.png')"}
+				);
+				
 				var close = WT.dom.createDiv(
 					{"id" : "portal_close-" + this.id,
 					"class" : "portal_close portal_title_btn"}
 				);
 				
 				close.innerHTML = "X";
-				close.addEventListener("click", function() { _this.terminate(_this); }, true);
 				
 				var maximize = WT.dom.createDiv(
 					{"id" : "portal_max-" + this.id,
@@ -75,7 +86,6 @@ WT.portal = {
 				);
 				
 				maximize.innerHTML = "[]";
-				maximize.addEventListener("click", function() { _this.maximize(_this); }, true);
 				
 				var minimize = WT.dom.createDiv(
 					{"id" : "portal_min-" + this.id,
@@ -83,19 +93,31 @@ WT.portal = {
 				);
 				
 				minimize.innerHTML = "_";
-				minimize.addEventListener("click", function() { _this.minimize(_this); }, true);
 				
 				title.innerHTML = this.title;
-				
-				title.addEventListener("mousedown", function(event) {
-					_this.move(event, _this);
-				}, true);
+				if(WT.IS_MOBILE) {
+					close.addEventListener("touchstart", function() { _this.terminate(_this); }, true);
+					maximize.addEventListener("touchstart", function() { _this.maximize(_this); }, true);
+					minimize.addEventListener("touchstart", function() { _this.minimize(_this); }, true);
+					handle.addEventListener("touchstart", function(event) {
+						_this.moveTouch(event, _this);
+					}, true);
+				} else {
+					close.addEventListener("click", function() { _this.terminate(_this); }, true);
+					maximize.addEventListener("click", function() { _this.maximize(_this); }, true);
+					minimize.addEventListener("click", function() { _this.minimize(_this); }, true);
+					handle.addEventListener("mousedown", function(event) {
+						_this.move(event, _this);
+					}, true);
+				}
 				
 				this.topPadding += 29;
 				
 				title.appendChild(close);
 				title.appendChild(maximize);
 				title.appendChild(minimize);
+				title.appendChild(handle);
+				title.appendChild(icon);
 				
 				return title;
 			},
@@ -108,7 +130,7 @@ WT.portal = {
 					"bottom" : this.bottomPadding + "px"}
 				);
 				
-				cont.innerHTML = '<a href="www.fagertveit.com" target="_blank">www.fagertveit.com</a>';
+				cont.innerHTML = WT.IS_MOBILE;
 				
 				return cont;
 			},
@@ -130,9 +152,16 @@ WT.portal = {
 					"class" : "portal_resize"}
 				);
 				
-				rsHandle.addEventListener("mousedown", function(event) {
-					_this.resize(event, _this);
-				}, true);
+				if(WT.IS_MOBILE) {
+					rsHandle.addEventListener("touchstart", function(event) {
+						_this.resizeTouch(event, _this);
+					}, true);
+				} else {
+					rsHandle.addEventListener("mousedown", function(event) {
+						_this.resize(event, _this);
+					}, true);
+				}
+				
 				
 				footer.appendChild(status);
 				footer.appendChild(rsHandle);
@@ -182,6 +211,14 @@ WT.portal = {
 			setStatus : function(content) {
 				var elem = document.getElementById("portal_status-" + this.id);
 				elem.innerHTML = content;
+			},
+			
+			addSubPortal : function(title) {
+				var sub = new WT.portal.SubPortal(this, title);
+				var nextId = this.subPortals.length + 1;
+				sub.id = nextId;
+				sub.init();
+				this.subPortals.push(sub);
 			},
 			
 			resize : function(event, _this) {
@@ -238,6 +275,64 @@ WT.portal = {
 				}
 			},
 			
+			resizeTouch : function(event, _this) {
+				var portal = document.getElementById("portal-" + _this.id);
+				
+				if(event.targetTouches.length == 1) {
+					var touch = event.targetTouches[0];
+				}
+				
+				var startX = touch.clientX;
+				var startY = touch.clientY;
+
+				var origX = portal.offsetLeft;
+				var origY = portal.offsetTop;
+
+				var deltaX = startX - origX;
+				var deltaY = startY - origY;
+
+				var startWidth = portal.style.width;
+				startWidth = Number(startWidth.substr(0, startWidth.length - 2));
+				
+				var startHeight = portal.style.height;
+				startHeight = Number(startHeight.substr(0, startHeight.length - 2));
+
+				document.addEventListener("touchmove", moveHandler, true);
+				document.addEventListener("touchend", upHandler, true);
+
+				event.stopPropagation();
+				event.preventDefault();
+
+				function moveHandler(e) {
+					var t = e.targetTouches[0];
+					width = t.clientX - deltaX - origX + startWidth;
+					height = t.clientY - deltaY - origY + startHeight;
+					if (width > 70) {
+						portal.style.width = width + "px";
+						_this.width = width;
+					} else {
+						portal.style.width = 70 + "px";
+						_this.width = 70;
+					}
+
+					if (height > 70) {
+						portal.style.height = height + "px";
+						_this.height = height;
+					} else {
+						portal.style.height = 70 + "px";
+						_this.height = 70;
+					}
+
+					e.stopPropagation();
+				}
+
+				function upHandler(e) {
+					document.removeEventListener("touchend", upHandler, true);
+					document.removeEventListener("touchmove", moveHandler, true);
+					e.stopPropagation();
+				}
+			},
+			
 			move : function(event, _this) {
 				if(_this.maximized) {
 					return 0;
@@ -274,6 +369,52 @@ WT.portal = {
 				function upHandler(e) {
 					document.removeEventListener("mouseup", upHandler, true);
 					document.removeEventListener("mousemove", moveHandler, true);
+					e.stopPropagation();
+				}
+			},
+			
+			moveTouch : function(event, _this) {
+				if(_this.maximized) {
+					return 0;
+				}
+				
+				if(event.targetTouches.length == 1) {
+					var touch = event.targetTouches[0];
+				}
+				
+				var id = _this.id;
+				var portal = document.getElementById("portal-" + id);
+
+				var startX = touch.clientX;
+				var startY = touch.clientY;
+
+				var origX = portal.offsetLeft;
+				var origY = portal.offsetTop;
+
+				var deltaX = startX - origX;
+				var deltaY = startY - origY;
+
+				document.addEventListener("touchmove", moveHandler, true);
+				document.addEventListener("touchend", upHandler, true);
+
+				event.stopPropagation();
+				event.preventDefault();
+
+				function moveHandler(e) {
+					var t = e.targetTouches[0];
+					portal.style.left = (t.clientX - deltaX) + "px";
+					_this.posX = (t.clientX - deltaX);
+					if(t.clientY - deltaY > 0) {
+						portal.style.top = (t.clientY - deltaY) + "px";
+						_this.posY = (t.clientY - deltaY);
+					}
+					
+					e.stopPropagation();
+				}
+
+				function upHandler(e) {
+					document.removeEventListener("touchend", upHandler, true);
+					document.removeEventListener("touchmove", moveHandler, true);
 					e.stopPropagation();
 				}
 			},
@@ -337,19 +478,33 @@ WT.portal = {
 				var endX, endY, endWidth, endHeight;
 				endWidth = handle.clientWidth;
 				endHeight = handle.clientHeight;
-				endX = handle.clientX;
+				endX = handle.offsetLeft;
 				endY = (_this.parent.height - 32);
 				
+				//console.log("End Values: X: " + endX + " Y: " + endY + " Width: " + endWidth + " Height: " + endHeight);
+				
 				if(_this.minimized) {
-					WT.anim.animateElement(elem,
-						{
-							"width" : {"start" : endWidth, "end" : _this.width},
-							"height" : {"start" : endHeight, "end" : _this.height},
-							"top" : {"start" : endY, "end" : _this.posY},
-							"left" : {"start" : endX, "end" : _this.posX}
-						},
-						WT.ANIM_DELAY
-					);
+					if(_this.maximized) {
+						WT.anim.animateElement(elem,
+							{
+								"width" : {"start" : endWidth, "end" : (_this.parent.width - 2)},
+								"height" : {"start" : endHeight, "end" : (_this.parent.height - 35)},
+								"top" : {"start" : endY, "end" : 0},
+								"left" : {"start" : endX, "end" : 0}
+							},
+							WT.ANIM_DELAY
+						);
+					} else {
+						WT.anim.animateElement(elem,
+							{
+								"width" : {"start" : endWidth, "end" : _this.width},
+								"height" : {"start" : endHeight, "end" : _this.height},
+								"top" : {"start" : endY, "end" : _this.posY},
+								"left" : {"start" : endX, "end" : _this.posX}
+							},
+							WT.ANIM_DELAY
+						);
+					}
 					_this.minimized = false;
 				} else {
 					WT.anim.animateElement(elem,
@@ -372,5 +527,145 @@ WT.portal = {
 			}
 		};
 		return portal;
-	}	
+	},
+	/* ------------
+	 * SubPortal
+	 * ------------
+	 * The subportal is used to generate lightweight portals to go with a main portal, so these little
+	 * buggers will be created through the parent portal.
+	 * Subportals will have less options of interaction than their big brother, mostly their size will
+	 * be static, and you will only be able to move them around through it's title bar.
+	 * Some portals will have the option to hide, usually the main portal will be able to show and hide
+	 * this through it's menu.
+	 * 
+	 * Subportals will be used to host such things as tools and palettes as well as widgets that goes
+	 * with the main application, Navigation window, info, data input and such.
+	 * They can also be used as a base for alert, confirm and input windows.
+	 */
+	SubPortal : function(srcParent, srcTitle) {
+		var sub = {
+			id : 0,
+			parent : srcParent || null,
+			title : srcTitle || "Untitled",
+			width : 80,
+			height : 120,
+			titleBar : true,
+			footer : false,
+			close : true,
+			hidden : false,
+			topPadding : 0,
+			bottomPadding : 0,
+			
+			init : function() {
+				var parentElem = document.getElementById("portal-" + this.parent.id);
+				var elem = WT.dom.createDiv(
+					{"id" : "subportal-" + this.id + "-" + this.parent.id,
+					"class" : "subportal"},
+					{"width" : this.width + "px",
+					"height" : this.height + "px"}
+				);
+				if(this.titleBar) {
+					elem.appendChild(this.generateTitle());
+				}
+				elem.appendChild(this.generateContainer());
+				if(this.footer) {
+					elem.appendChild(this.generateFooter());
+				}
+				parentElem.appendChild(elem);
+			},
+		
+			generateTitle : function() {
+				var _this = this;
+				var title = WT.dom.createDiv(
+					{"id" : "subportal_title-" + this.id + "-" + this.parent.id,
+					"class" : "subportal_title"}
+				);
+				
+				title.innerHTML = this.title;
+				
+				if(this.close) {
+					var close = WT.dom.createDiv(
+						{"id" : "subportal_title_close-" + this.id + "-" + this.parent.id,
+						"class" : "subportal_title_btn"}
+					);
+					
+					close.innerHTML = "X";
+					
+					close.addEventListener("click", function() {_this.hide(_this);}, true);
+					title.appendChild(close);
+				}
+				
+				title.addEventListener("mousedown", function(event) { _this.move(event, _this); }, true);
+				
+				return title;
+			},
+			
+			generateContainer : function() {
+				var container = WT.dom.createDiv(
+					{"id" : "subportal_container-" + this.id + "-" + this.parent.id,
+					"class" : "subportal_container"}
+				);
+				
+				return container;
+			},
+			
+			generateFooter : function() {
+				var footer = WT.dom.createDiv(
+					{"id" : "subportal_footer-" + this.id + "-" + this.parent.id,
+					"class" : "subportal_footer"} 
+				);
+				
+				return footer;
+			},
+			
+			move : function(event, _this) {
+				var id = _this.id;
+				var parent = _this.parent;
+				var portal = document.getElementById("subportal-" + id + "-" + parent.id);
+
+				var startX = event.clientX;
+				var startY = event.clientY;
+
+				var origX = portal.offsetLeft;
+				var origY = portal.offsetTop;
+
+				var deltaX = startX - origX;
+				var deltaY = startY - origY;
+
+				document.addEventListener("mousemove", moveHandler, true);
+				document.addEventListener("mouseup", upHandler, true);
+
+				event.stopPropagation();
+				event.preventDefault();
+
+				function moveHandler(e) {
+					portal.style.left = (e.clientX - deltaX) + "px";
+					//if(e.clientY - deltaY > 0) {
+					portal.style.top = (e.clientY - deltaY) + "px";
+					//}
+					
+					e.stopPropagation();
+				}
+
+				function upHandler(e) {
+					document.removeEventListener("mouseup", upHandler, true);
+					document.removeEventListener("mousemove", moveHandler, true);
+					e.stopPropagation();
+				}
+			},
+			
+			hide : function(_this) {
+				console.log("Hiding subportal!");
+			},
+			
+			show : function(_this) {
+				
+			},
+			
+			terminate : function() {
+				
+			}
+		};
+		return sub;
+	}
 };

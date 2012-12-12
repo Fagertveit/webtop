@@ -18,8 +18,9 @@ var WT = {
 	DEFAULT_DESK_ID : "wtdesk",
 	CURRENT_PORTAL_ID : 0,
 	CURRENT_TOP_Z_INDEX : 1,
-	ANIM_DELAY : 1000,
-	ANIM_SPEED : 10,
+	ANIM_DELAY : 200,
+	ANIM_SPEED : 50,
+	IS_MOBILE : false,
 	
 	Desktop : function(srcWidth, srcHeight) {
 		desktop = {
@@ -64,6 +65,15 @@ var WT = {
 				document.body.appendChild(elem);
 				
 				this.setTime();
+				this.checkUserAgent();
+			},
+			
+			checkUserAgent : function() {
+				var isMobile = navigator.userAgent.search(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|Opera Mobi|IEMobile/i);
+				//console.log("Is Mobile: " + isMobile);
+				if(isMobile > -1) {
+					WT.IS_MOBILE = true;
+				}
 			},
 			
 			setTime : function() {
@@ -132,15 +142,20 @@ var WT = {
 			triggerHandle : function(_this, portal) {
 				// Check if portal is on top, if so Minimize it.
 				// If not, bring portal to the top.
-				if(portal.active) {
-					portal.minimize(portal);
-				} else {
-					_this.resortPortals(portal);
-				}
-				// Check if portal is minimized, if so, make it normal.
 				if(portal.minimized) {
 					portal.minimize(portal);
+					return 0;
 				}
+				
+				if(portal.active) {
+					portal.minimize(portal);
+					return 0;
+				} else {
+					_this.resortPortals(portal);
+					return 0;
+				}
+				// Check if portal is minimized, if so, make it normal.
+				
 			},
 			
 			destroyPortal : function(src) {

@@ -31,6 +31,7 @@ desktop.portals[0].menu.menus["File"].items["Save"].setAttributes("Save");
 desktop.portals[0].addMenuItem("File", "Exit", desktop.portals[0].terminate);
 desktop.portals[0].menu.menus["File"].items["Exit"].setAttributes(desktop.portals[0]);
 desktop.portals[0].setStatus("Testing status bar text!");
+desktop.portals[0].addSubPortal("Subportal");
 /*
 WT.anim.animateElement(document.getElementById("portal-" + desktop.portals[0].id),
 	{

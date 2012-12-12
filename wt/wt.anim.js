@@ -15,12 +15,13 @@ WT.anim = {
 			frame++;
 			
 			for(style in styles) {
-				element.style[style] = WT.anim.interpolate(styles[style].start, styles[style].end, Math.floor(frames / frame)) + "px";
+				
+				element.style[style] = WT.anim.interpolate(styles[style].start, styles[style].end, frame / frames) + "px";
 			}
 		}
 	},
 	
 	interpolate : function(srcValue, dstValue, pos) {
-		return srcValue + ((dstValue - srcValue) / pos);
+		return srcValue + Math.floor((dstValue - srcValue) * pos);
 	}
 };
