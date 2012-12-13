@@ -130,6 +130,7 @@ WT.menu = {
 			
 			toogleMenu : function(event, _this) {
 				var hidden = _this.isHidden();
+
 				_this.parent.hideAll();
 				
 				if(hidden) {
@@ -148,13 +149,23 @@ WT.menu = {
 			showMenu : function() {
 				var _this = this;
 				var elem = document.getElementById("menu_container_" + this.title + "-" + this.parent.parent.id);
-				var portal = document.getElementById("portal-" + this.parent.parent.id);
 				elem.style.display = "block";
-				portal.addEventListener("click", function(event) {
-					if(event.target.getAttribute("id") != "menu_container_" + _this.title + "-" + _this.parent.parent.id) {
+				
+				//document.addEventListener("click", checkActiveMenu, true);
+				
+				function checkActiveMenu(event) {
+					var evtElem = event.target.getAttribute("id");
+					console.log(evtElem);
+					if(evtElem != "menu_container_" + _this.title + "-" + _this.parent.id ||
+						evtElem != "menu_" + _this.title + "-" + _this.parent.parent.id) {
 						_this.hideMenu();
 					}
-				}, true);
+					
+					document.removeEventListener("click", checkActiveMenu, true);
+					
+					event.preventDefault();
+					event.stopPropagation();
+				}
 			},
 			
 			isHidden : function() {

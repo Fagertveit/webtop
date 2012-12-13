@@ -2,7 +2,7 @@
 .desktop {
 background-color: #eee;
 border: 1px solid #ddd;
-position: fixed;
+position: absolute;
 top: 50%;
 left: 50%;
 overflow: hidden;

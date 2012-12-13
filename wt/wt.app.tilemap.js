@@ -35,6 +35,7 @@ WT.app.tilemap = {
 			},
 		
 			initMenu : function() {
+				var _this = this;
 				this.portal.addMenuBar();
 				this.portal.addMenu("File");
 				this.portal.addMenu("Edit");
@@ -53,9 +54,19 @@ WT.app.tilemap = {
 				this.portal.addMenuItem("Edit", "Settings");
 				this.portal.addMenuItem("Tileset", "Load");
 				this.portal.addMenuItem("Tileset", "Edit");
-				this.portal.addMenuItem("View", "Toolbar");
-				this.portal.addMenuItem("View", "Tilette");
+				this.portal.addMenuItem("View", "Toolbar", _this.toggleSub);
+				this.portal.menu.menus["View"].items["Toolbar"].setAttributes({"src" : "tool", "that" : _this});
+				this.portal.addMenuItem("View", "Tilette", _this.toggleSub);
+				this.portal.menu.menus["View"].items["Tilette"].setAttributes({"src" : "tile", "that" : _this});
 				this.portal.addMenuItem("Help", "About");
+			},
+			
+			toggleSub : function(attr) {
+				if(attr.src == "tool") {
+					attr.that.toolbar.toggle();
+				} else {
+					attr.that.tilette.toggle();
+				}
 			}
 		};
 		return tilemap;

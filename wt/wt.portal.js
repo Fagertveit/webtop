@@ -686,6 +686,19 @@ WT.portal = {
 				elem.style.zIndex = zIndex;
 			},
 			
+			toggle : function() {
+				if(this.isHidden()) {
+					this.show(this);
+				} else {
+					this.hide(this);
+				}
+			},
+			
+			isHidden : function() {
+				var elem = document.getElementById("subportal-" + this.id + "-" + this.parent.id);
+				return elem.style.display == "none";
+			},
+			
 			hide : function(_this) {
 				console.log("Hiding subportal!");
 				var elem = document.getElementById("subportal-" + _this.id + "-" + _this.parent.id);
