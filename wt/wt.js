@@ -103,13 +103,15 @@ var WT = {
 			addPortal : function(title, width, height) {
 				var pos, zIndex;
 				zIndex = WT.CURRENT_TOP_Z_INDEX;
-				var portal = new WT.portal.Portal(WT.CURRENT_PORTAL_ID, this, title);
+				var portal = new WT.portal.Portal(WT.CURRENT_PORTAL_ID, this, title, width, height);
 				portal.init(this.container);
 				portal.setZIndex(zIndex);
-				this.portals.push(portal);
+				pos = this.portals.push(portal);
 				WT.CURRENT_PORTAL_ID++;
 				WT.CURRENT_TOP_Z_INDEX++;
 				this.updateToolBar();
+				
+				return portal;
 			},
 			
 			updateToolBar : function() {
@@ -163,7 +165,7 @@ var WT = {
 				var container = this.container;
 				var nodes = container.childNodes;
 				var contLen = nodes.length;
-				var _i = 0;
+				var _i;
 				
 				for(portal in this.portals) {
 					if(this.portals[portal].id == src.id) {
@@ -180,6 +182,24 @@ var WT = {
 				}
 				
 				this.updateToolBar();
+			},
+			
+			destroySubPortal : function(src) {
+				var id = src.id;
+				var parentId = src.parent.id;
+				var container = this.container;
+				var nodes = container.childNodes;
+				var contLen = nodes.length;
+				var _i;
+				
+				delete this.portals[parentId].subPortals[id];
+				
+				for(_i = 0; _i < contLen; _i++) {
+					if(nodes[_i].getAttribute("id") == "subportal-" + id + "-" + parentId) {
+						container.removeChild(nodes[_i]);
+						break;
+					}
+				}
 			},
 			
 			resortPortals : function(topPortal) {

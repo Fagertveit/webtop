@@ -5,12 +5,15 @@
 <title>WebTop - A Webbased desktop environment!</title>
 
 <link rel='stylesheet' type='text/css' href='css/wt.css' />
+<link rel='stylesheet' type='text/css' href='css/tilemap.css' />
 
 <script type='text/javascript' src='wt/wt.js'></script>
 <script type='text/javascript' src='wt/wt.portal.js'></script>
 <script type='text/javascript' src='wt/wt.dom.js'></script>
 <script type='text/javascript' src='wt/wt.menu.js'></script>
 <script type='text/javascript' src='wt/wt.anim.js'></script>
+<script type='text/javascript' src='wt/wt.app.js'></script>
+<script type='text/javascript' src='wt/wt.app.tilemap.js'></script>
 
 </head>
 <body onload="">
@@ -19,6 +22,9 @@
 <script>
 var desktop = new WT.Desktop(800, 500);
 desktop.init();
+var tmedit = new WT.app.tilemap.App(desktop);
+tmedit.init();
+/*
 desktop.addPortal("Awesome");
 desktop.portals[0].addMenuBar();
 desktop.portals[0].addMenu("File");

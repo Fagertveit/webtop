@@ -14,13 +14,13 @@
  * * Redraw DOM looks like urk in FireFox.
  */
 WT.portal = {
-	Portal : function(uid, srcParent, srcTitle) {
+	Portal : function(uid, srcParent, srcTitle, srcWidth, srcHeight) {
 		var portal = {
 			id : uid,
 			parent : srcParent || null,
 			title : srcTitle || "Untitled",
-			width : 320,
-			height : 240,
+			width : srcWidth || 320,
+			height : srcHeight || 240,
 			titleBar : true,
 			footer : true,
 			topPadding : 0,
@@ -130,7 +130,7 @@ WT.portal = {
 					"bottom" : this.bottomPadding + "px"}
 				);
 				
-				cont.innerHTML = WT.IS_MOBILE;
+				//cont.innerHTML = WT.IS_MOBILE;
 				
 				return cont;
 			},
@@ -202,8 +202,13 @@ WT.portal = {
 			},
 			
 			setZIndex : function(zIndex) {
+				// Need to set Z-Index on menu containers so that subportals don't get in their way.
 				var portal = document.getElementById("portal-" + this.id);
 				this.zIndex = zIndex;
+				
+				for(portals in this.subPortals) {
+					this.subPortals[portals].setZIndex(zIndex + 1);
+				}
 				
 				portal.style.zIndex = this.zIndex;
 			},
@@ -215,10 +220,13 @@ WT.portal = {
 			
 			addSubPortal : function(title) {
 				var sub = new WT.portal.SubPortal(this, title);
-				var nextId = this.subPortals.length + 1;
+				var nextId = this.subPortals.length;
 				sub.id = nextId;
 				sub.init();
 				this.subPortals.push(sub);
+				this.setZIndex(this.zIndex);
+				// Return the subPortal id for Application reference.
+				return sub;
 			},
 			
 			resize : function(event, _this) {
@@ -557,7 +565,7 @@ WT.portal = {
 			bottomPadding : 0,
 			
 			init : function() {
-				var parentElem = document.getElementById("portal-" + this.parent.id);
+				var parentElem = this.parent.parent.container;
 				var elem = WT.dom.createDiv(
 					{"id" : "subportal-" + this.id + "-" + this.parent.id,
 					"class" : "subportal"},
@@ -572,6 +580,8 @@ WT.portal = {
 					elem.appendChild(this.generateFooter());
 				}
 				parentElem.appendChild(elem);
+				
+				this.parent.setZIndex(this.parent.zIndex);
 			},
 		
 			generateTitle : function() {
@@ -618,6 +628,22 @@ WT.portal = {
 				return footer;
 			},
 			
+			setWidth : function(width) {
+				var cont = document.getElementById("subportal-" + this.id + "-" + this.parent.id);
+				cont.style.width = width + "px";
+			},
+			
+			setHeight : function(height) {
+				var cont = document.getElementById("subportal-" + this.id + "-" + this.parent.id);
+				cont.style.height = height + "px";
+			},
+			
+			setPosition : function(x, y) {
+				var cont = document.getElementById("subportal-" + this.id + "-" + this.parent.id);
+				cont.style.top = y + "px";
+				cont.style.left = x + "px";
+			},
+			
 			move : function(event, _this) {
 				var id = _this.id;
 				var parent = _this.parent;
@@ -654,16 +680,25 @@ WT.portal = {
 				}
 			},
 			
+			setZIndex : function(zIndex) {
+				var elem = document.getElementById("subportal-" + this.id + "-" + this.parent.id);
+				this.zIndex = zIndex;
+				elem.style.zIndex = zIndex;
+			},
+			
 			hide : function(_this) {
 				console.log("Hiding subportal!");
+				var elem = document.getElementById("subportal-" + _this.id + "-" + _this.parent.id);
+				elem.style.display = "none";
 			},
 			
 			show : function(_this) {
-				
+				var elem = document.getElementById("subportal-" + _this.id + "-" + _this.parent.id); 
+				elem.style.display = "block";
 			},
 			
-			terminate : function() {
-				
+			terminate : function(_this) {
+				_this.parent.parent.destroySubPortal(_this);
 			}
 		};
 		return sub;

@@ -1,0 +1,12 @@
+.tilemap_container {
+border: 1px solid #aaa;
+background-color: #ddd;
+}
+
+.tile {
+position: relative;
+float: left;
+clear: none;
+border-right: 1px solid #aaa;
+border-bottom: 1px solid #aaa;
+}

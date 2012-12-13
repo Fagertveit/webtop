@@ -116,6 +116,14 @@ WT.menu = {
 				item.generateMenuItem();
 			},
 			
+			addDelimiter : function() {
+				var cont = document.getElementById("menu_container_" + this.title + "-" + this.parent.parent.id);
+				var delimiter = WT.dom.createDiv(
+					{"class" : "menu_delimiter"}
+				);
+				cont.appendChild(delimiter);
+			},
+			
 			removeItem : function() {
 				
 			},
