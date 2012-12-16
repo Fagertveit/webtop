@@ -8,5 +8,31 @@
  * 
  */
 WT.ajax = {
+	_createXHR : function() {   
+		try { return new XMLHttpRequest(); } catch(e) {}
+		try { return new ActiveXObject("Msxml2.XMLHTTP.6.0"); } catch (e) {}
+		try { return new ActiveXObject("Msxml2.XMLHTTP.3.0"); } catch (e) {}
+		try { return new ActiveXObject("Msxml2.XMLHTTP"); } 	  catch (e) {}
+		try { return new ActiveXObject("Microsoft.XMLHTTP"); }  catch (e) {}
+								  	           
+		return null;
+	},
 		
+	sendRequest : function(url, payload, callback) {
+		var xhr = WT.ajax._createXHR();
+		if(xhr)
+		{
+			xhr.open("POST", url, false);
+			xhr.setRequestHeader("Content-Type", "text/xml");
+			xhr.setRequestHeader("Content-Disposition", "attachement");
+			xhr.setRequestHeader("Content-Disposition", "filename=map.xml");
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4 && xhr.status == 200)
+				{	
+					callback(xhr);
+				}
+			};
+			xhr.send(payload);
+		}
+	}
 };

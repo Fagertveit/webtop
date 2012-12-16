@@ -5,8 +5,101 @@ background-color: #ddd;
 
 .tile {
 position: relative;
+margin-left: -2px;
+margin-top: -2px;
 float: left;
 clear: none;
-border-right: 1px solid #aaa;
-border-bottom: 1px solid #aaa;
+border: 1px dotted #aaa;
+background-color: #ddd;
+}
+
+.tile_img {
+position: relative;
+top: 0px;
+left: 0px;
+}
+
+.tile_handle {
+position: absolute;
+top: 0px;
+left: 0px;
+}
+
+.tool_btn {
+position: relative;
+width: 36px;
+height: 36px;
+clear: both;
+background-position: center;
+background-repeat: no-repeat;
+background-color: #ddd;
+}
+
+.tool_btn:hover {
+background-color: #eee;
+}
+
+.tool_active {
+background-color: #fff;	
+}
+
+.btn_info {
+background-image: url("../img/tmedit/icon_info.png");	
+}
+
+.btn_add {
+background-image: url("../img/tmedit/icon_add.png");
+}
+
+.btn_remove {
+background-image: url("../img/tmedit/icon_remove.png");	
+}
+
+.btn_fill {
+background-image: url("../img/tmedit/icon_fill.png");
+}
+
+.btn_mark {
+background-image: url("../img/tmedit/icon_mark.png");	
+}
+
+.tileset_output {
+width: 296px;
+height: 252px;
+overflow: auto;
+background-color: #ddd;
+border: 1px solid #aaa;
+margin: 1px;
+}
+
+.tilette {
+height: 183px;
+width: 200px;
+overflow-y: scroll;
+}
+
+.tilette_tile_container {
+position: relative;
+margin-top: 1px;
+margin-left: 1px;
+padding: 0px;
+float: left;
+clear: none;
+border: 1px dotted #aaa;
+background-color: #ddd;
+}
+
+.tilette_tile {
+}
+
+.tilette_tile_handle {
+position: absolute;
+top: 0px;
+left: 0px;
+width: 32px;
+height: 32px;
+}
+
+.tilette_tile_handle:hover {
+background-color: rgba(0, 100, 255, 0.3);
 }

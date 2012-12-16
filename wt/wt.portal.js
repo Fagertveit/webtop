@@ -438,6 +438,9 @@ WT.portal = {
 			
 			terminate : function(_this) {
 				//console.log(_this);
+				for(sub in _this.subPortals) {
+					_this.subPortals[sub].terminate(_this.subPortals[sub]);
+				}
 				_this.parent.destroyPortal(_this);
 			},
 			
@@ -454,10 +457,6 @@ WT.portal = {
 						},
 						WT.ANIM_DELAY
 					);
-					//elem.style.width = _this.width + "px";
-					//elem.style.height = _this.height + "px";
-					//elem.style.left = _this.posX + "px";
-					//elem.style.top = _this.posY + "px";
 					_this.toggleResize(true);
 					_this.maximized = false;
 				} else {
@@ -470,10 +469,6 @@ WT.portal = {
 						},
 						WT.ANIM_DELAY
 					);
-					//elem.style.width = (_this.parent.width - 2) + "px";
-					//elem.style.height = (_this.parent.height - 35) + "px";
-					//elem.style.left = "0px";
-					//elem.style.top = "0px";
 					_this.toggleResize(false);
 					_this.maximized = true;
 				}
@@ -514,6 +509,9 @@ WT.portal = {
 						);
 					}
 					_this.minimized = false;
+					for(subportal in _this.subPortals) {
+						_this.subPortals[subportal].show(_this.subPortals[subportal]);
+					}
 				} else {
 					WT.anim.animateElement(elem,
 						{
@@ -525,6 +523,9 @@ WT.portal = {
 						WT.ANIM_DELAY
 					);
 					_this.minimized = true;
+					for(subportal in _this.subPortals) {
+						_this.subPortals[subportal].hide(_this.subPortals[subportal]);
+					}
 				}
 			},
 			
@@ -561,6 +562,7 @@ WT.portal = {
 			footer : false,
 			close : true,
 			hidden : false,
+			killOnClose : false,
 			topPadding : 0,
 			bottomPadding : 0,
 			
@@ -638,10 +640,20 @@ WT.portal = {
 				cont.style.height = height + "px";
 			},
 			
+			setSize : function(width, height) {
+				var cont = document.getElementById("subportal-" + this.id + "-" + this.parent.id);
+				cont.style.width = width + "px";
+				cont.style.height = height + "px";
+			},
+			
 			setPosition : function(x, y) {
 				var cont = document.getElementById("subportal-" + this.id + "-" + this.parent.id);
 				cont.style.top = y + "px";
 				cont.style.left = x + "px";
+			},
+			
+			setOnClose : function(terminate) {
+				this.killOnClose = terminate;
 			},
 			
 			move : function(event, _this) {
@@ -700,9 +712,11 @@ WT.portal = {
 			},
 			
 			hide : function(_this) {
-				console.log("Hiding subportal!");
 				var elem = document.getElementById("subportal-" + _this.id + "-" + _this.parent.id);
 				elem.style.display = "none";
+				if(_this.killOnClose) {
+					_this.terminate(_this);
+				}
 			},
 			
 			show : function(_this) {
@@ -715,5 +729,135 @@ WT.portal = {
 			}
 		};
 		return sub;
+	},
+	
+	Dialog : function() {
+		var dialog = {
+			id : 0,
+			parent : srcParent || null,
+			title : srcTitle || "Untitled",
+			width : 80,
+			height : 120,
+			titleBar : true,
+			close : true,
+			topPadding : 0,
+			bottomPadding : 0,
+				
+			init : function() {
+				var parentElem = this.parent.parent.container;
+				var elem = WT.dom.createDiv(
+					{"id" : "subportal-" + this.id + "-" + this.parent.id,
+					"class" : "subportal"},
+					{"width" : this.width + "px",
+					"height" : this.height + "px"}
+				);
+				if(this.titleBar) {
+					elem.appendChild(this.generateTitle());
+				}
+				elem.appendChild(this.generateContainer());
+					
+				parentElem.appendChild(elem);
+					
+				this.parent.setZIndex(this.parent.zIndex);
+			},
+			
+			generateTitle : function() {
+				var _this = this;
+				var title = WT.dom.createDiv(
+					{"id" : "subportal_title-" + this.id + "-" + this.parent.id,
+					"class" : "subportal_title"}
+				);
+					
+				title.innerHTML = this.title;
+					
+				if(this.close) {
+					var close = WT.dom.createDiv(
+						{"id" : "subportal_title_close-" + this.id + "-" + this.parent.id,
+						"class" : "subportal_title_btn"}
+					);
+						
+					close.innerHTML = "X";
+						
+					close.addEventListener("click", function() {_this.hide(_this);}, true);
+					title.appendChild(close);
+				}
+					
+				title.addEventListener("mousedown", function(event) { _this.move(event, _this); }, true);
+					
+				return title;
+			},
+				
+			generateContainer : function() {
+				var container = WT.dom.createDiv(
+					{"id" : "subportal_container-" + this.id + "-" + this.parent.id,
+					"class" : "subportal_container"}
+				);
+					
+				return container;
+			},
+				
+			setWidth : function(width) {
+				var cont = document.getElementById("subportal-" + this.id + "-" + this.parent.id);
+				cont.style.width = width + "px";
+			},
+				
+			setHeight : function(height) {
+				var cont = document.getElementById("subportal-" + this.id + "-" + this.parent.id);
+				cont.style.height = height + "px";
+			},
+				
+			setPosition : function(x, y) {
+				var cont = document.getElementById("subportal-" + this.id + "-" + this.parent.id);
+				cont.style.top = y + "px";
+				cont.style.left = x + "px";
+			},
+				
+			move : function(event, _this) {
+				var id = _this.id;
+				var parent = _this.parent;
+				var portal = document.getElementById("subportal-" + id + "-" + parent.id);
+
+				var startX = event.clientX;
+				var startY = event.clientY;
+
+				var origX = portal.offsetLeft;
+				var origY = portal.offsetTop;
+
+				var deltaX = startX - origX;
+				var deltaY = startY - origY;
+
+				document.addEventListener("mousemove", moveHandler, true);
+				document.addEventListener("mouseup", upHandler, true);
+
+				event.stopPropagation();
+				event.preventDefault();
+
+				function moveHandler(e) {
+					portal.style.left = (e.clientX - deltaX) + "px";
+						//if(e.clientY - deltaY > 0) {
+					portal.style.top = (e.clientY - deltaY) + "px";
+						//}
+						
+					e.stopPropagation();
+				}
+
+				function upHandler(e) {
+					document.removeEventListener("mouseup", upHandler, true);
+					document.removeEventListener("mousemove", moveHandler, true);
+					e.stopPropagation();
+				}
+			},
+				
+			setZIndex : function(zIndex) {
+				var elem = document.getElementById("subportal-" + this.id + "-" + this.parent.id);
+				this.zIndex = zIndex;
+				elem.style.zIndex = zIndex;
+			},
+				
+			terminate : function(_this) {
+				_this.parent.parent.destroySubPortal(_this);
+			}
+		};
+		return dialog;
 	}
 };
