@@ -56,7 +56,7 @@ WT.app.tilemap = {
 				this.initSubs();
 				this.initTileMap();
 				this.tileset = new WT.app.tilemap.TileSet(this);
-				this.setMode(0);
+				this.setMode(1);
 			},
 			
 			initTileMap : function() {
@@ -137,6 +137,12 @@ WT.app.tilemap = {
 				);
 				cont.appendChild(tileCont);
 			},
+			
+			initTilefo : function() {
+				// Tile GFX
+				// Tile Position
+				// Tile Data
+			},
 		
 			initMenu : function() {
 				var _this = this;
@@ -146,7 +152,8 @@ WT.app.tilemap = {
 				this.portal.addMenu("Tileset");
 				this.portal.addMenu("View");
 				this.portal.addMenu("Help");
-				this.portal.addMenuItem("File", "New");
+				this.portal.addMenuItem("File", "New", _this.newTileMap);
+				this.portal.menu.menus["File"].items["New"].setAttributes({"that" : _this});
 				this.portal.addMenuItem("File", "Open");
 				this.portal.addMenuItem("File", "Save", _this.saveFile);
 				this.portal.menu.menus["File"].items["Save"].setAttributes({"that" : _this});
@@ -167,6 +174,83 @@ WT.app.tilemap = {
 				this.portal.addMenuItem("View", "Tilette", _this.toggleSub);
 				this.portal.menu.menus["View"].items["Tilette"].setAttributes({"src" : "tile", "that" : _this});
 				this.portal.addMenuItem("Help", "About");
+			},
+			
+			/* --------------------------------------------
+			 * Function: newTileMap
+			 * --------------------------------------------
+			 * Params:
+			 *  attr.that: reference to the application.
+			 * --------------------------------------------
+			 * This function is used to display a portal where the user can specify
+			 * a new tilemap, he can either click cancel or the X (close) button and
+			 * which will result in nothing or specify a map that will be generated
+			 * in the application and then ready to edit.
+			 * 
+			 * ToDo:
+			 * * The tilemap will have the following properties
+			 *  * Name(input) - The title of the map
+			 *  * Description(textarea) - A short description of the tilemap
+			 *  * Type(select) - The type of tilemap (Default, Hexagonal, Isometric)
+			 *  * Data type(select) - The type of data each tile will hold, will be presets
+			 *  * Width(input) - The amount of tiles that goes into the width of the map
+			 *  * Height(input) - The amount of tiles that goes into the height of the map
+			 *  * Tile Width(input) - The pixel width of a tile
+			 *  * Tile Height(input) - The pixel height of a tile
+			 */
+			newTileMap : function(attr) {
+				var _this = attr.that;
+				var ntmPortal = _this.portal.addSubPortal("New Tilemap");
+				ntmPortal.setSize(200, 200);
+				ntmPortal.setPosition(40, 40);
+				ntmPortal.setOnClose(true);
+				
+				var cont = document.getElementById("subportal_container-" + ntmPortal.id + "-" + _this.portal.id);
+				/*
+				var name = document.createElement("input");
+				var desc = document.createElement("textarea");
+				var type = document.createElement("select");
+				var dataType = document.createElement("select");
+				var width = document.createElement("input");
+				var height = document.createElement("input");
+				var tileWidth = document.createElement("input");
+				var tileHeight = document.createElement("input");
+				*/
+				var name = WT.dom.createFormElement("input", 
+					{"name" : "name", "id" : "ntm_name", "class" : "medium_input"}
+				);
+				var desc = WT.dom.createFormElement("textarea", 
+					{"name" : "description", "id" : "ntm_desc", "class" : "medium_input"}
+				);
+				var type = WT.dom.createFormElement("select", 
+					{"name" : "type", "id" : "ntm_type"},
+					{"rectangular" : "Rectangular", "hexagonal" : "Hexagonal", "isometric" : "Isometric"}
+				);
+				var dataType = WT.dom.createFormElement("select", 
+					{"name" : "data_type", "id" : "ntm_data_type"},
+					{"default" : "Default", "2" : "2 Datafields"}
+				);
+				var width = WT.dom.createFormElement("input", 
+						{"name" : "width", "id" : "ntm_width", "class" : "small_input"}
+				);
+				var height = WT.dom.createFormElement("input", 
+					{"name" : "height", "id" : "ntm_height", "class" : "small_input"}
+				);
+				var tileWidth = WT.dom.createFormElement("input", 
+					{"name" : "tile_width", "id" : "ntm_tile_width", "class" : "small_input"}
+				);
+				var tileHeight = WT.dom.createFormElement("input", 
+					{"name" : "tile_height", "id" : "ntm_tile_height", "class" : "small_input"}
+				);
+				
+				cont.appendChild(name);
+				cont.appendChild(desc);
+				cont.appendChild(type);
+				cont.appendChild(dataType);
+				cont.appendChild(width);
+				cont.appendChild(height);
+				cont.appendChild(tileWidth);
+				cont.appendChild(tileHeight);
 			},
 			
 			loadTileSet : function(attr) {
@@ -258,7 +342,7 @@ WT.app.tilemap = {
 			},
 			
 			triggerTile : function(id, map) {
-				if(this.mode == 1) {
+				if(this.mode == 1 && this.tileset.image != null) {
 					map.setTile(id, this.tileset.active);
 				}
 			},

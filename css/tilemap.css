@@ -103,3 +103,24 @@ height: 32px;
 .tilette_tile_handle:hover {
 background-color: rgba(0, 100, 255, 0.3);
 }
+
+/* Inputs */
+.small_input {
+width: 32px;	
+}
+
+.medium_input {
+width: 128px;
+}
+
+.large_input {
+width: 512px;	
+}
+
+textarea .small_input {
+height: 32px;	
+}
+
+textarea .medium_input {
+height: 92px;	
+}

@@ -16,5 +16,24 @@ WT.dom = {
 		}
 		
 		return elem;
+	},
+
+	createFormElement : function(type, attributes, options) {
+		var elem = document.createElement(type);
+		
+		for(var key in attributes) {
+			elem.setAttribute(key, attributes[key]);
+		}
+
+		if(options != undefined) {
+			for(var key in options) {
+				var option = document.createElement("option");
+				option.setAttribute("value", key);
+				option.innerHTML = options[key];
+				elem.appendChild(option);
+			}
+		}
+		
+		return elem;
 	}
 };
