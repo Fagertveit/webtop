@@ -104,6 +104,28 @@ height: 32px;
 background-color: rgba(0, 100, 255, 0.3);
 }
 
+/* New Tilemap */
+.label {
+float: left;
+clear: both;
+width: 180px;
+margin: 2px 4px;
+font-size: 12px;
+font-weight: bold;
+}
+
+.ntm_input {
+margin: 2px 4px;
+width: 180px;
+border: 1px solid #aaa;
+}
+
+.ntm_small_input {
+margin: 2px 4px;
+width: 80px;
+border: 1px solid #aaa;
+}
+
 /* Inputs */
 .small_input {
 width: 32px;	

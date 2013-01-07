@@ -85,6 +85,7 @@ var WT = {
 				sec = date.getSeconds();
 				year = date.getFullYear();
 				month = date.getMonth();
+				month += 1;
 				day = date.getDate();
 				
 				timeBar = document.getElementById("wt_tool_time");

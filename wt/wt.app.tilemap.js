@@ -201,7 +201,7 @@ WT.app.tilemap = {
 			newTileMap : function(attr) {
 				var _this = attr.that;
 				var ntmPortal = _this.portal.addSubPortal("New Tilemap");
-				ntmPortal.setSize(200, 200);
+				ntmPortal.setSize(200, 300);
 				ntmPortal.setPosition(40, 40);
 				ntmPortal.setOnClose(true);
 				
@@ -216,39 +216,51 @@ WT.app.tilemap = {
 				var tileWidth = document.createElement("input");
 				var tileHeight = document.createElement("input");
 				*/
+				var nameLabel = WT.dom.createDiv({"class" : "label"});
+				nameLabel.innerHTML = "Map Name:"
 				var name = WT.dom.createFormElement("input", 
-					{"name" : "name", "id" : "ntm_name", "class" : "medium_input"}
+					{"name" : "name", "id" : "ntm_name", "class" : "ntm_input"}
 				);
+				var descLabel = WT.dom.createDiv({"class" : "label"});
+				descLabel.innerHTML = "Description: ";
 				var desc = WT.dom.createFormElement("textarea", 
-					{"name" : "description", "id" : "ntm_desc", "class" : "medium_input"}
+					{"name" : "description", "id" : "ntm_desc", "class" : "ntm_input"}
 				);
 				var type = WT.dom.createFormElement("select", 
 					{"name" : "type", "id" : "ntm_type"},
-					{"rectangular" : "Rectangular", "hexagonal" : "Hexagonal", "isometric" : "Isometric"}
+					{"rectangular" : "Map Type", "rectangular" : "Rectangular", "hexagonal" : "Hexagonal", "isometric" : "Isometric"}
 				);
 				var dataType = WT.dom.createFormElement("select", 
 					{"name" : "data_type", "id" : "ntm_data_type"},
-					{"default" : "Default", "2" : "2 Datafields"}
+					{"default" : "Tile Data Type", "default" : "Default", "2" : "2 Datafields"}
 				);
+				var sizeLabel = WT.dom.createDiv({"class" : "label"});
+				sizeLabel.innerHTML = "Map Size: ";
 				var width = WT.dom.createFormElement("input", 
-						{"name" : "width", "id" : "ntm_width", "class" : "small_input"}
+					{"name" : "width", "id" : "ntm_width", "class" : "ntm_small_input"}
 				);
 				var height = WT.dom.createFormElement("input", 
-					{"name" : "height", "id" : "ntm_height", "class" : "small_input"}
+					{"name" : "height", "id" : "ntm_height", "class" : "ntm_small_input"}
 				);
+				var tileLabel = WT.dom.createDiv({"class" : "label"});
+				tileLabel.innerHTML = "Tile Size:";
 				var tileWidth = WT.dom.createFormElement("input", 
-					{"name" : "tile_width", "id" : "ntm_tile_width", "class" : "small_input"}
+					{"name" : "tile_width", "id" : "ntm_tile_width", "class" : "ntm_small_input"}
 				);
 				var tileHeight = WT.dom.createFormElement("input", 
-					{"name" : "tile_height", "id" : "ntm_tile_height", "class" : "small_input"}
+					{"name" : "tile_height", "id" : "ntm_tile_height", "class" : "ntm_small_input"}
 				);
 				
+				cont.appendChild(nameLabel);
 				cont.appendChild(name);
+				cont.appendChild(descLabel);
 				cont.appendChild(desc);
 				cont.appendChild(type);
 				cont.appendChild(dataType);
+				cont.appendChild(sizeLabel);
 				cont.appendChild(width);
 				cont.appendChild(height);
+				cont.appendChild(tileLabel);
 				cont.appendChild(tileWidth);
 				cont.appendChild(tileHeight);
 			},
