@@ -109,9 +109,8 @@ background-color: rgba(0, 100, 255, 0.3);
 float: left;
 clear: both;
 width: 180px;
-margin: 2px 4px;
+margin: 2px 4px 0px 4px;
 font-size: 12px;
-font-weight: bold;
 }
 
 .ntm_input {
@@ -120,29 +119,33 @@ width: 180px;
 border: 1px solid #aaa;
 }
 
+.small_label {
+float: left;
+clear: both;
+width: 80px;
+margin: 2px 4px 0px 4px;
+font-size: 12px;
+}
+
 .ntm_small_input {
 margin: 2px 4px;
-width: 80px;
+width: 32px;
 border: 1px solid #aaa;
 }
 
-/* Inputs */
-.small_input {
-width: 32px;	
+.btn {
+float: left;
+clear: none;
+font-size: 12px;
+font-weight: bold;
+text-align: center;
+background-color: #aaa;
+margin: 2px 4px;
+padding: 4px 6px;
+border: 1px solid #666;
+cursor: default;
 }
 
-.medium_input {
-width: 128px;
-}
-
-.large_input {
-width: 512px;	
-}
-
-textarea .small_input {
-height: 32px;	
-}
-
-textarea .medium_input {
-height: 92px;	
+.btn:hover {
+background-color: #eee;	
 }

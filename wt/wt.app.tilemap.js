@@ -201,68 +201,114 @@ WT.app.tilemap = {
 			newTileMap : function(attr) {
 				var _this = attr.that;
 				var ntmPortal = _this.portal.addSubPortal("New Tilemap");
-				ntmPortal.setSize(200, 300);
+				ntmPortal.setSize(200, 280);
 				ntmPortal.setPosition(40, 40);
 				ntmPortal.setOnClose(true);
 				
 				var cont = document.getElementById("subportal_container-" + ntmPortal.id + "-" + _this.portal.id);
-				/*
-				var name = document.createElement("input");
-				var desc = document.createElement("textarea");
-				var type = document.createElement("select");
-				var dataType = document.createElement("select");
-				var width = document.createElement("input");
-				var height = document.createElement("input");
-				var tileWidth = document.createElement("input");
-				var tileHeight = document.createElement("input");
-				*/
+				cont.style.maxWidth = "200px";
+				cont.style.height = "100%";
+				cont.style.backgroundColor = "#ddd";
+				
+				cont.parentNode.style.overflow = "hidden";
+
 				var nameLabel = WT.dom.createDiv({"class" : "label"});
-				nameLabel.innerHTML = "Map Name:"
+				nameLabel.innerHTML = "Map Name:";
+				
 				var name = WT.dom.createFormElement("input", 
 					{"name" : "name", "id" : "ntm_name", "class" : "ntm_input"}
 				);
+				
 				var descLabel = WT.dom.createDiv({"class" : "label"});
 				descLabel.innerHTML = "Description: ";
+				
 				var desc = WT.dom.createFormElement("textarea", 
 					{"name" : "description", "id" : "ntm_desc", "class" : "ntm_input"}
 				);
+				
+				var typeLabel = WT.dom.createDiv({"class" : "label"});
+				typeLabel.innerHTML = "Map type: ";
+				
 				var type = WT.dom.createFormElement("select", 
-					{"name" : "type", "id" : "ntm_type"},
+					{"name" : "type", "id" : "ntm_type", "class" : "ntm_input"},
 					{"rectangular" : "Map Type", "rectangular" : "Rectangular", "hexagonal" : "Hexagonal", "isometric" : "Isometric"}
 				);
+				
+				var dataLabel = WT.dom.createDiv({"class" : "label"});
+				dataLabel.innerHTML = "Tile data type: ";
+				
 				var dataType = WT.dom.createFormElement("select", 
-					{"name" : "data_type", "id" : "ntm_data_type"},
+					{"name" : "data_type", "id" : "ntm_data_type", "class" : "ntm_input"},
 					{"default" : "Tile Data Type", "default" : "Default", "2" : "2 Datafields"}
 				);
-				var sizeLabel = WT.dom.createDiv({"class" : "label"});
+				
+				var sizeCont = WT.dom.createDiv(
+					{"class" : "ntm_size_cont"}, 
+					{"margin" : "2px", "float" : "left", "width" : "86px"}
+				);
+				
+				var tileCont = WT.dom.createDiv(
+					{"class" : "ntm_size_cont"}, 
+					{"margin" : "2px", "float" : "right", "width" : "86px"}
+				);
+				
+				var sizeLabel = WT.dom.createDiv({"class" : "small_label"});
 				sizeLabel.innerHTML = "Map Size: ";
+				
 				var width = WT.dom.createFormElement("input", 
 					{"name" : "width", "id" : "ntm_width", "class" : "ntm_small_input"}
 				);
+				
 				var height = WT.dom.createFormElement("input", 
 					{"name" : "height", "id" : "ntm_height", "class" : "ntm_small_input"}
 				);
-				var tileLabel = WT.dom.createDiv({"class" : "label"});
+				
+				var tileLabel = WT.dom.createDiv({"class" : "small_label"});
 				tileLabel.innerHTML = "Tile Size:";
+			
 				var tileWidth = WT.dom.createFormElement("input", 
 					{"name" : "tile_width", "id" : "ntm_tile_width", "class" : "ntm_small_input"}
 				);
+				
 				var tileHeight = WT.dom.createFormElement("input", 
 					{"name" : "tile_height", "id" : "ntm_tile_height", "class" : "ntm_small_input"}
 				);
+				
+				var okBtn = WT.dom.createDiv({"id" : "ntm_ok_btn", "class" : "btn"});
+				okBtn.innerHTML = "Create";
+				okBtn.addEventListener("click", function() {
+					console.log("Create Map!");
+					// Create mapdata and render the new map and close portal!
+				}, true);
+				
+				var cancelBtn = WT.dom.createDiv({"id" : "ntm_cancel_btn", "class" : "btn"});
+				cancelBtn.innerHTML = "Cancel";
+				cancelBtn.addEventListener("click", function() {
+					console.log("Cancel Map!");
+					// Close portal and do nothing.
+				}, true);
+				
+				sizeCont.appendChild(sizeLabel);
+				sizeCont.appendChild(width);
+				sizeCont.appendChild(height);
+				
+				tileCont.appendChild(tileLabel);
+				tileCont.appendChild(tileWidth);
+				tileCont.appendChild(tileHeight);
 				
 				cont.appendChild(nameLabel);
 				cont.appendChild(name);
 				cont.appendChild(descLabel);
 				cont.appendChild(desc);
+				cont.appendChild(typeLabel);
 				cont.appendChild(type);
+				cont.appendChild(dataLabel);
 				cont.appendChild(dataType);
-				cont.appendChild(sizeLabel);
-				cont.appendChild(width);
-				cont.appendChild(height);
-				cont.appendChild(tileLabel);
-				cont.appendChild(tileWidth);
-				cont.appendChild(tileHeight);
+				cont.appendChild(sizeCont);
+				cont.appendChild(tileCont);
+				
+				cont.appendChild(okBtn);
+				cont.appendChild(cancelBtn);
 			},
 			
 			loadTileSet : function(attr) {
