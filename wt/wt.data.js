@@ -7,5 +7,5 @@
  * 
  */
 WT.data = {
-		
+	BLANK_IMG : "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
 };

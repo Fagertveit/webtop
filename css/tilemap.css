@@ -1,3 +1,10 @@
+div, span, label, a, img {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  /* this will work for QtWebKit in future */
+  -webkit-user-drag: none;
+}
+
 .tilemap_container {
 border: 1px solid #aaa;
 background-color: #ddd;

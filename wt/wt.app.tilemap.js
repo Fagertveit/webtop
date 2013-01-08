@@ -48,6 +48,7 @@ WT.app.tilemap = {
 			title : null,
 			tileset : null,
 			documents : new Array(),
+			map : null,
 			mode : 0,
 			
 			init : function() {
@@ -60,9 +61,14 @@ WT.app.tilemap = {
 			},
 			
 			initTileMap : function() {
+				var _this = this;
 				var container = document.getElementById("portal_container-" + this.portal.id);
+				container.addEventListener("mousedown", function(event) {
+					_this.trackMouseMovement(event);
+				}, true);
 				var tilemap = new WT.app.tilemap.TileMap(this, 32, 32, 32, 32, "Test");
 				tilemap.init();
+				this.map = tilemap;
 				container.appendChild(tilemap.generateDivMap());
 			},
 			
@@ -70,6 +76,7 @@ WT.app.tilemap = {
 				var container = document.getElementById("portal_container-" + this.portal.id);
 				var tilemap = new WT.app.tilemap.TileMap(this, params.width, params.height, params.tileWidth, params.tileHeight, params.title, params.description);
 				tilemap.init();
+				this.map = tilemap;
 				container.innerHTML = "";
 				container.appendChild(tilemap.generateDivMap());
 			},
@@ -429,7 +436,30 @@ WT.app.tilemap = {
 				if(this.mode == 1 && this.tileset.image != null) {
 					map.setTile(id, this.tileset.active);
 				} else if(this.mode == 2) {
-					map.setTile(id, null);
+					map.clearTile(id);
+				}
+			},
+			
+			trackMouseMovement : function(event) {
+				if(this.mode != 4) {
+					return;
+				}
+				var _this = this;
+				var startId = this.map.getActiveTile();
+				var endId = this.map.getActiveTile();
+				
+				document.addEventListener("mousemove", moveHandler, true);
+				document.addEventListener("mouseup", upHandler, true);
+				
+				function moveHandler(e) {
+					endId = _this.map.getActiveTile();
+				}
+				
+				function upHandler(e) {
+					document.removeEventListener("mouseup", upHandler, true);
+					document.removeEventListener("mousemove", moveHandler, true);
+					alert("Selected tiles from tile: " + startId + " to tile: " + endId);
+					e.stopPropagation();
 				}
 			},
 			
@@ -480,6 +510,7 @@ WT.app.tilemap = {
 			sizeY : srcSizeY || 32,
 			title : srcTitle || "Unnamed",
 			description : srcDesc || "No description.",
+			activeTile : 0,
 			
 			init : function() {
 				var i, size;
@@ -521,14 +552,17 @@ WT.app.tilemap = {
 				);
 				
 				var tileImg = document.createElement("img");
+				//tileImg.draggable = "false";
 				tileImg.setAttribute("src", "");
 				tileImg.setAttribute("class", "tile_img");
 				
+				//tile.draggable = "false";
+				//tileHandle.draggable = "false";
 				tile.appendChild(tileImg);
 				tile.appendChild(tileHandle);
 				
-				tileHandle.addEventListener("mouseover", function() {_this.parent.setStatusTile(id, _this);}, true);
-				tileHandle.addEventListener("click", function() {_this.parent.triggerTile(id, _this);}, true);
+				tileHandle.addEventListener("mouseover", function(e) {e.preventDefault(); _this.parent.setStatusTile(id, _this); _this.activeTile = id;}, true);
+				tileHandle.addEventListener("click", function(e) {e.preventDefault(); _this.parent.triggerTile(id, _this);}, true);
 				return tile;
 			},
 			
@@ -537,6 +571,17 @@ WT.app.tilemap = {
 				var tile = document.getElementById("tile-" + id);
 				var img = tile.childNodes[0];
 				img.src = this.parent.tileset.tiles[tileId].src;
+			},
+			
+			clearTile : function(id) {
+				console.log("Clearing tile: " + id);
+				var tile = document.getElementById("tile-" + id);
+				var img = tile.childNodes[0];
+				img.src = WT.data.BLANK_IMG;
+			},
+			
+			getActiveTile : function() {
+				return this.activeTile;
 			}
 		};
 		return tilemap;
