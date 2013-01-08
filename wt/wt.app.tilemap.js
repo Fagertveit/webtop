@@ -66,6 +66,14 @@ WT.app.tilemap = {
 				container.appendChild(tilemap.generateDivMap());
 			},
 			
+			generateTileMap : function(params) {
+				var container = document.getElementById("portal_container-" + this.portal.id);
+				var tilemap = new WT.app.tilemap.TileMap(this, params.width, params.height, params.tileWidth, params.tileHeight, params.title, params.description);
+				tilemap.init();
+				container.innerHTML = "";
+				container.appendChild(tilemap.generateDivMap());
+			},
+			
 			initSubs : function() {
 				this.toolbar = this.portal.addSubPortal(" ");
 				this.toolbar.setWidth(36);
@@ -256,22 +264,22 @@ WT.app.tilemap = {
 				sizeLabel.innerHTML = "Map Size: ";
 				
 				var width = WT.dom.createFormElement("input", 
-					{"name" : "width", "id" : "ntm_width", "class" : "ntm_small_input"}
+					{"name" : "width", "id" : "ntm_width", "class" : "ntm_small_input", "value" : "32"}
 				);
 				
 				var height = WT.dom.createFormElement("input", 
-					{"name" : "height", "id" : "ntm_height", "class" : "ntm_small_input"}
+					{"name" : "height", "id" : "ntm_height", "class" : "ntm_small_input", "value" : "32"}
 				);
 				
 				var tileLabel = WT.dom.createDiv({"class" : "small_label"});
 				tileLabel.innerHTML = "Tile Size:";
 			
 				var tileWidth = WT.dom.createFormElement("input", 
-					{"name" : "tile_width", "id" : "ntm_tile_width", "class" : "ntm_small_input"}
+					{"name" : "tile_width", "id" : "ntm_tile_width", "class" : "ntm_small_input", "value" : "32"}
 				);
 				
 				var tileHeight = WT.dom.createFormElement("input", 
-					{"name" : "tile_height", "id" : "ntm_tile_height", "class" : "ntm_small_input"}
+					{"name" : "tile_height", "id" : "ntm_tile_height", "class" : "ntm_small_input", "value" : "32"}
 				);
 				
 				var okBtn = WT.dom.createDiv({"id" : "ntm_ok_btn", "class" : "btn"});
@@ -279,13 +287,22 @@ WT.app.tilemap = {
 				okBtn.addEventListener("click", function() {
 					console.log("Create Map!");
 					// Create mapdata and render the new map and close portal!
+					var params = new Object();
+					params.width = width.value;
+					params.height = height.value;
+					params.tileWidth = tileWidth.value;
+					params.tileHeight = tileHeight.value;
+					params.title = name.value;
+					params.description = desc.value;
+					_this.generateTileMap(params);
+					ntmPortal.terminate(ntmPortal);
 				}, true);
 				
 				var cancelBtn = WT.dom.createDiv({"id" : "ntm_cancel_btn", "class" : "btn"});
 				cancelBtn.innerHTML = "Cancel";
 				cancelBtn.addEventListener("click", function() {
 					console.log("Cancel Map!");
-					// Close portal and do nothing.
+					ntmPortal.terminate(ntmPortal);
 				}, true);
 				
 				sizeCont.appendChild(sizeLabel);
@@ -442,7 +459,7 @@ WT.app.tilemap = {
 		return tilemap;
 	},
 
-	TileMap : function(srcParent, srcWidth, srcHeight, srcSizeX, srcSizeY, srcTitle) {
+	TileMap : function(srcParent, srcWidth, srcHeight, srcSizeX, srcSizeY, srcTitle, srcDesc) {
 		var tilemap = {
 			parent : srcParent,
 			tiles : new Array(),
@@ -451,6 +468,7 @@ WT.app.tilemap = {
 			sizeX : srcSizeX || 32,
 			sizeY : srcSizeY || 32,
 			title : srcTitle || "Unnamed",
+			description : srcDesc || "No description.",
 			
 			init : function() {
 				var i, size;
