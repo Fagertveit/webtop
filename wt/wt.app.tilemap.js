@@ -294,8 +294,17 @@ WT.app.tilemap = {
 					params.tileHeight = tileHeight.value;
 					params.title = name.value;
 					params.description = desc.value;
-					_this.generateTileMap(params);
-					ntmPortal.terminate(ntmPortal);
+					// Check so that all values are set
+					if(WT.util.isNumber(params.width) &&
+					   WT.util.isNumber(params.height) &&
+					   WT.util.isNumber(params.tileWidth) &&
+					   WT.util.isNumber(params.tileHeight)) {
+						_this.generateTileMap(params);
+						ntmPortal.terminate(ntmPortal);
+					} else {
+						alert("Some fields needs to be set");
+					}
+					
 				}, true);
 				
 				var cancelBtn = WT.dom.createDiv({"id" : "ntm_cancel_btn", "class" : "btn"});
@@ -419,6 +428,8 @@ WT.app.tilemap = {
 			triggerTile : function(id, map) {
 				if(this.mode == 1 && this.tileset.image != null) {
 					map.setTile(id, this.tileset.active);
+				} else if(this.mode == 2) {
+					map.setTile(id, null);
 				}
 			},
 			
