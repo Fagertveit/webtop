@@ -32,6 +32,13 @@ top: 0px;
 left: 0px;
 }
 
+.select_box {
+position: absolute;
+top: 0px;
+left: 0px;
+border: 1px solid #000;
+}
+
 .tool_btn {
 position: relative;
 width: 36px;

@@ -49,6 +49,7 @@ WT.app.tilemap = {
 			tileset : null,
 			documents : new Array(),
 			map : null,
+			selection : null,
 			mode : 0,
 			
 			init : function() {
@@ -58,6 +59,11 @@ WT.app.tilemap = {
 				this.initTileMap();
 				this.tileset = new WT.app.tilemap.TileSet(this);
 				this.setMode(1);
+				this.initElements();
+			},
+			
+			initElements : function() {
+				
 			},
 			
 			initTileMap : function() {
@@ -447,6 +453,18 @@ WT.app.tilemap = {
 				var _this = this;
 				var startId = this.map.getActiveTile();
 				var endId = this.map.getActiveTile();
+				var selElem = WT.dom.createDiv(
+					{"id" : "select_box-" + this.id,
+					"class" : "select_box"},
+					{"display" : "block"}
+				);
+				var startTile = document.getElementById("tile_handle-" + startId);
+				startTile.appendChild(selElem);
+				this.setSelection(startId, endId);
+				
+				if(selElem.style.display == "none") {
+					selElem.style.display = "block";
+				}
 				
 				document.addEventListener("mousemove", moveHandler, true);
 				document.addEventListener("mouseup", upHandler, true);
@@ -461,6 +479,22 @@ WT.app.tilemap = {
 					alert("Selected tiles from tile: " + startId + " to tile: " + endId);
 					e.stopPropagation();
 				}
+			},
+			
+			setSelection : function(start, end) {
+				var selElem = document.getElementById("select_box-" + this.id);
+				var startTile = document.getElementById("tile-" + start);
+				var endTile = document.getElementById("tile-" + end);
+				
+				selElem.style.left = startTile.offsetLeft;
+				selElem.style.right = endTile.offsetRight;
+				selElem.style.top = startTile.offsetTop;
+				selElem.style.bottom = endTile.offsetBottom;
+				
+				console.log("Selection x: " + startTile.offsetLeft +
+						" y: " + startTile.offsetTop +
+						" x2: " + endTile.offsetLeft +
+						" y2: " + endTile.offsetTop);
 			},
 			
 			saveFile : function(attr) {
