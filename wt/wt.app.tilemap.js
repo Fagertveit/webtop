@@ -63,7 +63,10 @@ WT.app.tilemap = {
 			},
 			
 			initElements : function() {
-				
+				var container = document.getElementById("portal_container-" + this.portal.id);
+				var selBox = WT.dom.createDiv(
+					{"id" : "select_box-" + this.portal.id, "class" : "select_box"}
+				);
 			},
 			
 			initTileMap : function() {
@@ -451,50 +454,71 @@ WT.app.tilemap = {
 					return;
 				}
 				var _this = this;
+				var startX, endX, startY, endY;
 				var startId = this.map.getActiveTile();
 				var endId = this.map.getActiveTile();
 				var selElem = WT.dom.createDiv(
-					{"id" : "select_box-" + this.id,
+					{"id" : "select_box-" + this.portal.id,
 					"class" : "select_box"},
 					{"display" : "block"}
 				);
 				var startTile = document.getElementById("tile_handle-" + startId);
 				startTile.appendChild(selElem);
-				this.setSelection(startId, endId);
+				this.setSelection(_this, startId, endId);
 				
 				if(selElem.style.display == "none") {
 					selElem.style.display = "block";
 				}
+				
+				startX = startId % _this.map.width;
+				startY = Math.floor(startId / _this.map.width);
 				
 				document.addEventListener("mousemove", moveHandler, true);
 				document.addEventListener("mouseup", upHandler, true);
 				
 				function moveHandler(e) {
 					endId = _this.map.getActiveTile();
+					_this.setSelection(_this, startId, endId)
 				}
 				
 				function upHandler(e) {
 					document.removeEventListener("mouseup", upHandler, true);
 					document.removeEventListener("mousemove", moveHandler, true);
-					alert("Selected tiles from tile: " + startId + " to tile: " + endId);
+					endX = endId % _this.map.width;
+					endY = Math.floor(endId / _this.map.width);
+					_this.setSelection(_this, startId, endId);
+					//alert("Selected tiles from tile: " + startX + ":" + startY +
+					//		" to tile: " + endX + ":" + endY);
 					e.stopPropagation();
 				}
 			},
 			
-			setSelection : function(start, end) {
-				var selElem = document.getElementById("select_box-" + this.id);
+			setSelection : function(_this, start, end) {
+				var startX, endX, startY, endY;
+				
+				startX = start % _this.map.width;
+				startY = Math.floor(start / _this.map.width);
+				
+				endX = end % _this.map.width;
+				endY = Math.floor(end / _this.map.width);
+				
+				var selElem = document.getElementById("select_box-" + _this.portal.id);
+				var cont = document.getElementById("portal-container-" + _this.portal.id);
 				var startTile = document.getElementById("tile-" + start);
 				var endTile = document.getElementById("tile-" + end);
 				
 				selElem.style.left = startTile.offsetLeft;
-				selElem.style.right = endTile.offsetRight;
+				selElem.style.width = _this.map.tileWidth * (endX - startX);
 				selElem.style.top = startTile.offsetTop;
-				selElem.style.bottom = endTile.offsetBottom;
+				selElem.style.height = _this.map.tileHeight * (endY - startY);
+				
+				console.log(selElem);
 				
 				console.log("Selection x: " + startTile.offsetLeft +
 						" y: " + startTile.offsetTop +
 						" x2: " + endTile.offsetLeft +
 						" y2: " + endTile.offsetTop);
+				
 			},
 			
 			saveFile : function(attr) {
