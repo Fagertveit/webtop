@@ -1,3 +1,4 @@
+
 /*---------------------------------------
  * WebTop Application - TileMap Editior
  * --------------------------------------
@@ -59,7 +60,7 @@ WT.app.tilemap = {
 				this.initTileMap();
 				this.tileset = new WT.app.tilemap.TileSet(this);
 				this.setMode(1);
-				this.initElements();
+				//this.initElements();
 			},
 			
 			initElements : function() {
@@ -72,9 +73,11 @@ WT.app.tilemap = {
 			initTileMap : function() {
 				var _this = this;
 				var container = document.getElementById("portal_container-" + this.portal.id);
+				/*
 				container.addEventListener("mousedown", function(event) {
 					_this.trackMouseMovement(event);
 				}, true);
+				*/
 				var tilemap = new WT.app.tilemap.TileMap(this, 32, 32, 32, 32, "Test");
 				tilemap.init();
 				this.map = tilemap;
@@ -178,11 +181,13 @@ WT.app.tilemap = {
 				this.portal.addMenu("Help");
 				this.portal.addMenuItem("File", "New", _this.newTileMap);
 				this.portal.menu.menus["File"].items["New"].setAttributes({"that" : _this});
-				this.portal.addMenuItem("File", "Open");
+				this.portal.addMenuItem("File", "Open", _this.openTileMap);
+				this.portal.menu.menus["File"].items["Open"].setAttributes({"that" : _this});
 				this.portal.addMenuItem("File", "Save", _this.saveFile);
 				this.portal.menu.menus["File"].items["Save"].setAttributes({"that" : _this});
 				this.portal.menu.menus["File"].addDelimiter();
-				this.portal.addMenuItem("File", "Exit");
+				this.portal.addMenuItem("File", "Exit", _this.exitApplication);
+				this.portal.menu.menus["File"].items["Exit"].setAttributes({"that" : _this})
 				this.portal.addMenuItem("Edit", "Copy");
 				this.portal.addMenuItem("Edit", "Paste");
 				this.portal.addMenuItem("Edit", "Clear");
@@ -352,6 +357,50 @@ WT.app.tilemap = {
 				cont.appendChild(okBtn);
 				cont.appendChild(cancelBtn);
 			},
+
+			openTileMap : function(attr) {
+				var _this = attr.that;
+				console.log("Open ze map!");
+				var otmPortal = _this.portal.addSubPortal("Open Tilemap");
+				otmPortal.setSize(200, 60);
+				otmPortal.setOnClose(true);
+
+				var cont = document.getElementById("subportal_container-" + otmPortal.id + "-" + _this.portal.id);
+				var file = document.createElement("input");
+
+				file.setAttribute("type", "file");
+				file.setAttribute("id", "tilemap_file");
+				file.addEventListener("change", loadTileMap, false);
+
+				cont.style.backgroundColor = "#ddd";
+				cont.style.width = "100%";
+				cont.style.height = "100%";
+				cont.parentNode.style.overflow = "hidden";
+
+				cont.appendChild(file);
+
+				function loadTileMap(event) {
+					console.log("Loading file!");
+					var file = event.target.files;
+					var type = file[0].type;
+					var fileName = file[0].name;
+					
+					if(type == "text/xml") {
+						console.log("Excellent!");
+						
+						var reader = new FileReader();
+						reader.addEventListener("load", function(e) {
+							var mapRaw = e.target.result;
+							var xml = (new window.DOMParser()).parseFromString(mapRaw, "text/xml");
+							_this.parseMapData(xml);
+						}, true);
+
+						reader.readAsText(file[0]);
+					} else {
+						console.log("Not a XML Map file!");
+					}
+				}
+			},
 			
 			loadTileSet : function(attr) {
 				var _this = attr.that;
@@ -378,6 +427,7 @@ WT.app.tilemap = {
 					console.log("Loading file!");
 					var file = event.target.files;
 					var type = file[0].type;
+					var fileName = file[0].name;
 					
 					if(type == "image/png" || 
 					   type == "image/gif" || 
@@ -388,7 +438,12 @@ WT.app.tilemap = {
 						var reader = new FileReader();
 						reader.addEventListener("load", function(e) {
 							tsimage.src = e.target.result;
-							tsimage.addEventListener("load", function(){_this.tileset.setImage(tsimage); _this.tileset.generateTiles(32, 32); _this.updateTilette();},true);
+							tsimage.addEventListener("load", function(){
+								_this.tileset.setImage(tsimage);
+								_this.tileset.setFileName(fileName);
+								_this.tileset.generateTiles(_this.map.sizeX, _this.map.sizeY);
+								_this.updateTilette();
+							},true);
 							out.innerHTML = '<img src="' + e.target.result + '" />';
 							
 						}, true);
@@ -450,35 +505,62 @@ WT.app.tilemap = {
 			},
 			
 			trackMouseMovement : function(event) {
+				var selElem = document.getElementById("select_box-" + this.portal.id);
+				if(selElem != undefined && selElem.display == "block") {
+					var parent = selElem.parentNode();
+					parent.removeChild[selElem];
+					selElem.display = "none";
+					return;
+				}
 				if(this.mode != 4) {
 					return;
 				}
 				var _this = this;
-				var startX, endX, startY, endY;
+				var startX, endX, startY, endY, startMX, startMY;
 				var startId = this.map.getActiveTile();
 				var endId = this.map.getActiveTile();
 				var selElem = WT.dom.createDiv(
-					{"id" : "select_box-" + this.portal.id,
+					{"id" : "select_box-" + _this.portal.id,
 					"class" : "select_box"},
-					{"display" : "block"}
+					{"display" : "block",
+					"position" : "absolute"}
 				);
+				var tileCont = document.getElementById("tilemap-Test");
 				var startTile = document.getElementById("tile_handle-" + startId);
-				startTile.appendChild(selElem);
-				this.setSelection(_this, startId, endId);
+				tileCont.appendChild(selElem);
+
+				// Need to get a start offset to calculate the amount of tiles that
+				// the mouse traverses during the selection!
+
+				startMX = event.clientX - tileCont.offsetLeft;
+				startMY = event.clientY - tileCont.offsetTop;
+
+				this.setSelection(startId, endId);
 				
 				if(selElem.style.display == "none") {
 					selElem.style.display = "block";
 				}
 				
-				startX = startId % _this.map.width;
-				startY = Math.floor(startId / _this.map.width);
+				startX = startId % this.map.width;
+				startY = Math.floor(startId / this.map.width);
 				
 				document.addEventListener("mousemove", moveHandler, true);
 				document.addEventListener("mouseup", upHandler, true);
 				
 				function moveHandler(e) {
+					var mX, mY, tileX, tileY;
+					mX = e.clientX - startMX;
+					mY = e.clientY - startMY;
+
+					tileX = Math.floor(mX / _this.map.sizeX);
+					tileY = Math.floor(mY / _this.map.sizeY);
+
+					console.log("End ID: " + (startX + tileX) + ((startY + tileY) * _this.map.width));
+
+					console.log("Active Tile: " + ((startX + tileX) * (startY + tileY)));
+					
 					endId = _this.map.getActiveTile();
-					_this.setSelection(_this, startId, endId)
+					_this.setSelection(startId, (startX + tileX) + ((startY + tileY) * _this.map.width));
 				}
 				
 				function upHandler(e) {
@@ -486,73 +568,244 @@ WT.app.tilemap = {
 					document.removeEventListener("mousemove", moveHandler, true);
 					endX = endId % _this.map.width;
 					endY = Math.floor(endId / _this.map.width);
-					_this.setSelection(_this, startId, endId);
-					//alert("Selected tiles from tile: " + startX + ":" + startY +
-					//		" to tile: " + endX + ":" + endY);
+
+					var mX, mY, tileX, tileY;
+					mX = e.clientX - startMX;
+					mY = e.clientY - startMY;
+
+					tileX = Math.floor(mX / _this.map.sizeX);
+					tileY = Math.floor(mY / _this.map.sizeY);
+
+					_this.setSelection(startId, (startX + tileX) + ((startY + tileY) * _this.map.width));
 					e.stopPropagation();
 				}
 			},
+
+			/* function : setSelection
+			 * ---------------------------
+			 * This function will take data from some event handler and make a selection
+			 * box that fits the metrics from that data
+			 * it will take the start and end tile ID and calculate the width, height and
+			 * start position of the selection box based on that.
+			 */
 			
-			setSelection : function(_this, start, end) {
+			setSelection : function(start, end) {
 				var startX, endX, startY, endY;
 				
-				startX = start % _this.map.width;
-				startY = Math.floor(start / _this.map.width);
+				startX = start % this.map.width;
+				startY = Math.floor(start / this.map.width);
 				
-				endX = end % _this.map.width;
-				endY = Math.floor(end / _this.map.width);
+				endX = end % this.map.width;
+				endY = Math.floor(end / this.map.width);
+				endX++;
+				endY++;
 				
-				var selElem = document.getElementById("select_box-" + _this.portal.id);
-				var cont = document.getElementById("portal-container-" + _this.portal.id);
+				var selElem = document.getElementById("select_box-" + this.portal.id);
+				var cont = document.getElementById("portal-container-" + this.portal.id);
 				var startTile = document.getElementById("tile-" + start);
 				var endTile = document.getElementById("tile-" + end);
 				
-				selElem.style.left = startTile.offsetLeft;
-				selElem.style.width = _this.map.tileWidth * (endX - startX);
-				selElem.style.top = startTile.offsetTop;
-				selElem.style.height = _this.map.tileHeight * (endY - startY);
+				selElem.style.left = (startTile.offsetLeft) + "px";
+				selElem.style.width = (this.map.sizeX * (endX - startX) - 2) + "px";
+				selElem.style.top = (startTile.offsetTop) + "px";
+				selElem.style.height = (this.map.sizeY * (endY - startY) - 2) + "px";
 				
 				console.log(selElem);
 				
 				console.log("Selection x: " + startTile.offsetLeft +
 						" y: " + startTile.offsetTop +
-						" x2: " + endTile.offsetLeft +
-						" y2: " + endTile.offsetTop);
+						" x2: " + this.map.sizeX * (endX - startX) +
+						" y2: " + this.map.sizeY * (endY - startY));
 				
 			},
 			
+			/*
+			* function : saveFile
+			* ---------------------
+			* Need to make a popup that gives the user input options to choose
+			* file title and specify the location of the sprite map.
+			* I also need to keep the JSON generation in the main class as I need
+			* to fetch info from different instances of the application!
+			*/
 			saveFile : function(attr) {
-				var form, iframe, textarea, iframeDoc, parent;
+				var _this = attr.that;
+				var form, data, input, iframe, textarea, iframeDoc, parent;
+				var sp = _this.portal.addSubPortal("Save Map As");
+				sp.setSize(200, 100);
+				sp.setOnClose(true);
+				var saveInput = document.createElement("input");
+				saveInput.style.position = "absolute";
+				saveInput.style.left = "10px";
+				saveInput.style.right = "10px";
+				saveInput.style.top = "6px";
+				saveInput.style.borderStyle = "solid";
+				saveInput.style.borderWidth = "1px";
+				saveInput.style.borderColor = "#666";
+
+				var saveBtn = WT.dom.createDiv(
+					{"id" : "stm_save_btn", "class" : "btn"},
+					{"position" : "absolute",
+					"left" : "10px",
+					"top" : "40px"}
+				);
+				saveBtn.innerHTML = "Save";
+				saveBtn.addEventListener("click", function() {
+					console.log("Save map!");
+					form = document.createElement("form");
+					input = document.createElement("input");
+					iframe = document.createElement("iframe");
+					data = document.createElement("textarea");
 				
-				form = document.createElement("form");
-				iframe = document.createElement("iframe");
-				input = document.createElement("input");
+					iframe.style.display = "none";
 				
-				iframe.style.display = "none";
+					document.body.appendChild(iframe);
+					var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 				
-				document.body.appendChild(iframe);
-				var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+					form.action = "backend/tm.format.xml.php";
+					form.method = "POST";
+
+					data.innerHTML = _this.generateMapData();
+					data.setAttribute("name", "data");
+
+					input.setAttribute("name", "title");
+					input.value = saveInput.value;
+					if(input.value == "") {
+						input.value = "Untitled";
+					}
 				
-				form.action = "backend/tm.format.xml.php";
-				form.method = "POST";
+					form.appendChild(data);
+					form.appendChild(input);
 				
-				input.value = "testing";
-				input.name = "title";
+					(iframeDoc.body || iframeDoc).appendChild(form);
 				
-				form.appendChild(input);
-				
-				(iframeDoc.body || iframeDoc).appendChild(form);
-				
-				form.submit();
-				iframe.addEventListener("load", function() {
-					parent = iframe.parentNode;
-					parent.removeChild(iframe);
+					form.submit();
+					iframe.addEventListener("load", function() {
+						parent = iframe.parentNode;
+						parent.removeChild(iframe);
+					}, true);
+					sp.terminate(sp);
 				}, true);
+
+				var cancelBtn = WT.dom.createDiv(
+					{"id" : "stm_cancel_btn", "class" : "btn"},
+					{"position" : "absolute",
+					"right" : "10px",
+					"top" : "40px"}
+				);
+				cancelBtn.innerHTML = "Cancel";
+
+				cancelBtn.addEventListener("click", function() {
+					console.log("Cancel save!");
+					sp.terminate(sp);
+				}, true);
+
+				var cont = document.getElementById("subportal_container-" + sp.id + "-" + _this.portal.id);
+				cont.style.backgroundColor = "#ddd";
+				cont.style.width = "100%";
+				cont.style.height = "100%";
+				cont.parentNode.style.overflow = "hidden";
+
+				saveInput.setAttribute("name", "title");
+				saveInput.setAttribute("placeholder", "Untitled");
+
+				cont.appendChild(saveInput);
+				cont.appendChild(saveBtn);
+				cont.appendChild(cancelBtn);
 			},
 			
-			fileSaved : function(xhr) {
-				console.log("File Saved!");
-				console.log(xhr.responseText);
+			generateMapData : function() {
+				var mapObject = new Object();
+				mapObject.name = this.map.title;
+				mapObject.description = this.map.description;
+				mapObject.width = this.map.width;
+				mapObject.height = this.map.height;
+				mapObject.tile_width = this.map.sizeX;
+				mapObject.tile_height = this.map.sizeY;
+				mapObject.texture = this.tileset.filename;
+				
+				mapObject.sprites = new Object();
+
+				for(var i = 0; i < this.tileset.tiles.length; i++) {
+					mapObject.sprites[i] = new Object();
+					mapObject.sprites[i].id = i;
+					mapObject.sprites[i].startx = this.tileset.tileData[i].startX;
+					mapObject.sprites[i].starty = this.tileset.tileData[i].startY;
+				}
+
+				mapObject.tiles = new Object();
+
+				for(var i = 0; i < this.map.tiles.length; i++) {
+					mapObject.tiles[i] = new Object();
+					mapObject.tiles[i].id = this.map.tiles[i].id;
+				}
+
+				console.log(JSON.stringify(mapObject));
+
+				return JSON.stringify(mapObject);
+			},
+
+			/* function - parseMapData
+			*--------------------------
+			* This function takes the data that is recived after loading a map
+			* through the "Open" function. I need to do a couple of things to make
+			* this work, first I need to parse the XML file to get all the data needed
+			* then I need to write a special function to load the tileset and reload
+			* the tile images. And push each tile image to it's tile at the map.
+			*/
+			parseMapData : function(data) {
+				console.log(data);
+				var tilemap, sprites, tiles;
+				var width, height, tileWidth, tileHeight, title, description, texture;
+				var tile, sprite;
+
+				tilemap = data.getElementsByTagName("tilemap");
+				sprites = data.getElementsByTagName("sprites");
+				tiles = data.getElementsByTagName("tiles");
+
+				width = tilemap[0].getAttribute("width");
+				height = tilemap[0].getAttribute("height");
+				title = tilemap[0].getAttribute("title");
+				description = tilemap[0].getAttribute("description");
+				texture = tilemap[0].getAttribute("texture");
+
+				tileWidth = sprites[0].getAttribute("width");
+				tileHeight = sprites[0].getAttribute("height");
+
+				this.map = new WT.app.tilemap.TileMap(this, width, height, tileWidth, tileHeight, title, description);
+				this.tileset = new WT.app.tilemap.TileSet(this);
+				this.tileset.fileName = texture;
+				this.tileset.sizeX = tileWidth;
+				this.tileset.sizeY = tileHeight;
+
+				sprite = new Array();
+				for(var i = 0; i < sprites.length; i++) {
+					var sX, sY;
+					sX = sprites[i].getAttribute("startx");
+					sY = sprites[i].getAttribute("starty");
+				}
+
+				tile = new Array();
+				for(var i = 0; i < tiles.length; i++) {
+					var id;
+					id = tiles[i].getAttribute("id");
+
+				}
+
+				// Need to load the texture seperately, need to ask the
+				// user to find the file through a file input action
+				// When we have loaded that we can continue to parse the map
+				// data and load it into the application.
+				this.loadTileSet({"that" : this});
+
+				while(!this.tileset.ready) {
+
+				}
+
+			},
+
+			exitApplication : function(attr) {
+				var _this = attr.that;
+				_this.portal.terminate(_this.portal);
 			}
 		};
 		return tilemap;
@@ -626,6 +879,7 @@ WT.app.tilemap = {
 			
 			setTile : function(id, tileId) {
 				console.log("Setting tile: " + id + " with tile: " + tileId);
+				this.tiles[id].id = tileId;
 				var tile = document.getElementById("tile-" + id);
 				var img = tile.childNodes[0];
 				img.src = this.parent.tileset.tiles[tileId].src;
@@ -640,6 +894,27 @@ WT.app.tilemap = {
 			
 			getActiveTile : function() {
 				return this.activeTile;
+			},
+
+			generateJSON : function() {
+				var mapObject = new Object();
+				mapObject.name = this.title;
+				mapObject.description = this.description;
+				mapObject.width = this.width;
+				mapObject.height = this.height;
+				mapObject.tile_width = this.sizeX;
+				mapObject.tile_height = this.sizeY;
+				mapObject.sprites = new Object();
+				mapObject.tiles = new Object();
+
+				for(var i = 0; i < this.tiles.length; i++) {
+					mapObject.tiles[i] = new Object();
+					mapObject.tiles[i].id = this.tiles[i].id;
+				}
+
+				console.log(JSON.stringify(mapObject));
+
+				return JSON.stringify(mapObject);
 			}
 		};
 		return tilemap;
@@ -684,32 +959,54 @@ WT.app.tilemap = {
 		var tileset = {
 			parent : srcParent,
 			image : null,
+			filename : "",
 			tiles : new Array(),
+			tileData : new Array(),
 			sizeX : 0,
 			sizeY : 0,
+			tilesX : 0,
+			tilesY : 0,
 			active : 0,
+			ready : false,
 			
 			setImage : function(image) {
 				this.image = image;
+			},
+
+			setFileName : function(fn) {
+				this.filename = fn;
+			},
+
+			loadTileset : function() {
+				var _this = this;
+				this.image.src = this.filename;
+				this.image.addEventListener("load", function() {
+					_this.generateTiles(_this.sizeX, _this.sizeY);
+				});
 			},
 			
 			generateTiles : function(sizeX, sizeY) {
 				var xTiles, yTiles, numTiles, i, x, y;
 				this.sizeX = sizeX;
 				this.sizeY = sizeY;
-				xTiles = this.image.width / sizeX;
-				yTiles = this.image.height / sizeY;
-				numTiles = xTiles * yTiles;
-				
+				this.tilesX = this.image.width / sizeX;
+				this.tilesY = this.image.height / sizeY;
+				numTiles = this.tilesX * this.tilesY;
 				for(i = 0; i < numTiles; i++) {
-					x = (i % xTiles) * sizeX;
-					y = Math.floor(i / xTiles) * sizeY;
+					x = (i % this.tilesX) * sizeX;
+					y = Math.floor(i / this.tilesX) * sizeY;
+					this.tileData[i] = new Object();
+					this.tileData[i].startX = x;
+					this.tileData[i].startY = y;
+					console.log("Test 4");
 					this.tiles[i] = new Image();
 					this.tiles[i].src = this.generateTile(sizeX, sizeY, x, y);
 				}
+				this.ready = true;
 			},
 			
 			generateTile : function(sizeX, sizeY, x, y) {
+				console.log("Generating Tile Image Data!");
 				var canvas, context;
 				canvas = document.createElement("canvas");
 				canvas.width = sizeX;
