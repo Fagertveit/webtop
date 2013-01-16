@@ -87,7 +87,6 @@ margin: 1px;
 }
 
 .tilette {
-height: 183px;
 width: 200px;
 overflow-y: scroll;
 }
@@ -116,6 +115,36 @@ height: 32px;
 
 .tilette_tile_handle:hover {
 background-color: rgba(0, 100, 255, 0.3);
+}
+/* About */
+.about_title {
+text-align: center;
+font-size: 18px;
+font-weight: bold;
+margin-top: 5px;
+clear: both;
+}
+
+.about_version {
+text-align: center;
+font-size: 10px;
+margin-top: 4px;
+clear: both;
+}
+
+.about_desc {
+text-align: center;
+font-size: 10px;
+font-weight: bold;
+margin: 5px;
+clear: both;
+}
+
+.about_btn {
+position: absolute;
+left: 10px;
+right: 10px;
+bottom: 20px;
 }
 
 /* New Tilemap */

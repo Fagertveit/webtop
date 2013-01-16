@@ -44,6 +44,7 @@ WT.app.tilemap = {
 			toolbar : null,
 			tilette : null,
 			tilefo : null,
+			about : null,
 			portal : null,
 			icon : null,
 			title : null,
@@ -56,18 +57,10 @@ WT.app.tilemap = {
 			init : function() {
 				this.portal = this.parent.addPortal("Tilemap Editor 0.1", 600, 400);
 				this.initMenu();
-				this.initSubs();
 				this.initTileMap();
 				this.tileset = new WT.app.tilemap.TileSet(this);
+				this.initSubs();
 				this.setMode(1);
-				//this.initElements();
-			},
-			
-			initElements : function() {
-				var container = document.getElementById("portal_container-" + this.portal.id);
-				var selBox = WT.dom.createDiv(
-					{"id" : "select_box-" + this.portal.id, "class" : "select_box"}
-				);
 			},
 			
 			initTileMap : function() {
@@ -105,8 +98,14 @@ WT.app.tilemap = {
 				this.tilette.setPosition(350, 170);
 				this.initTilette();
 				this.tilefo = this.portal.addSubPortal("Tilefo");
-				this.tilefo.setSize(200, 100);
+				this.tilefo.setSize(120, 90);
 				this.tilefo.setPosition(350, 50);
+				this.initTilefo();
+				this.about = this.portal.addSubPortal("About");
+				this.about.setSize(200, 250);
+				this.about.setPosition(200, 100);
+				this.initAbout();
+				this.about.toggle();
 			},
 			
 			initToolbar : function() {
@@ -157,18 +156,182 @@ WT.app.tilemap = {
 			},
 			
 			initTilette : function() {
+
+				var _this = this;
 				var cont = document.getElementById("subportal_container-" + this.tilette.id + "-" + this.portal.id);
+				cont.style.height = "100%";
+				cont.style.width = "100%";
+				cont.style.backgroundColor = "#ddd";
+				cont.parentNode.style.overflow = "hidden";
+
+				var selectedTile = WT.dom.createDiv(
+					{"id" : "tilette_active",
+					"class" : "tilette_active"},
+					{"position" : "absolute",
+					"top" : "4px",
+					"left" : "0px",
+					"right" : "0px",
+					"height" : (_this.map.sizeY + 6) + "px",
+					"borderBottomStyle" : "dotted",
+					"borderBottomWidth" : "1px",
+					"borderBottomColor" : "#666"}
+				);
+				//selectedTile.innerHTML = "Selected Tile!";
+
+				var tilePrev = WT.dom.createDiv(
+					{"id" : "tilette_tile_prev",},
+					{"position" : "absolute",
+					"top" : "2px",
+					"left" : "2px",
+					"width" : (_this.map.sizeX) + "px",
+					"height" : (_this.map.sizeY) + "px",
+					"borderStyle" : "solid",
+					"borderWidth" : "1px",
+					"borderColor" : "#666",
+					"backgroundColor" : "#fff"
+					}
+				);
+
+				var tilePrevImg = document.createElement("img");
+				tilePrevImg.setAttribute("src", WT.data.BLANK_IMG);
+				tilePrev.appendChild(tilePrevImg);
+
+				var activeInput = document.createElement("input");
+				activeInput.style.width = "32px";
+				activeInput.style.borderStyle = "solid";
+				activeInput.style.borderColor = "#666";
+				activeInput.style.borderWidth = "1px";
+				activeInput.style.position = "absolute";
+				activeInput.style.left = (_this.map.sizeX + 12) + "px";
+				activeInput.style.top = "14px";
+				activeInput.value = 1;
+
+				activeInput.addEventListener("change", function() {
+					_this.tileset.activeId = parseInt(activeInput.value);
+				}, true);
+
+				var activeIdLabel = WT.dom.createDiv(
+					{"id" : "tilette_id_label"},
+					{"position" : "absolute",
+					"top" : "2px",
+					"left" : (_this.map.sizeX + 12) + "px",
+					"fontSize" : "10px"
+				}
+				);
+				activeIdLabel.innerHTML = "ActiveID"
+
+				selectedTile.appendChild(tilePrev);
+				selectedTile.appendChild(activeInput);
+				selectedTile.appendChild(activeIdLabel);
+
+				cont.appendChild(selectedTile);
+
 				var tileCont = WT.dom.createDiv(
 					{"id" : "tilette",
-					"class" : "tilette"}
+					"class" : "tilette"},
+					{"position" : "absolute",
+					"top" : (_this.map.sizeY + 12) + "px",
+					"left" : "0px",
+					"right" : "0px",
+					"bottom" : "0px",
+					"width" : "100%",
+					"height" : (176 - (_this.map.sizeY + 6)) + "px",
+					"backgroundColor" : "#fff"
+					}
 				);
+
 				cont.appendChild(tileCont);
 			},
 			
 			initTilefo : function() {
-				// Tile GFX
-				// Tile Position
-				// Tile Data
+				var _this = this;
+				var cont = document.getElementById("subportal_container-" + this.tilefo.id + "-" + this.portal.id);
+				cont.style.width = "100%";
+				cont.style.height = "100%";
+				cont.style.backgroundColor = "#ddd";
+				cont.parentNode.style.overflow = "hidden";
+
+				var tileSprite = WT.dom.createDiv(
+					{"id" : "tilefo_sprite",
+					"class" : "tilefo_sprite"},
+					{"width" : (this.map.sizeX + 4) + "px",
+					"height" : (this.map.sizeY + 4) + "px",
+					"backgroundColor" : "#fff",
+					"borderStyle" : "solid",
+					"borderWidth" : "1px",
+					"borderColor" : "#666",
+					"position" : "absolute",
+					"top" : "24px",
+					"left" : "4px"
+				});
+
+				var data = document.createElement("input");
+				data.style.width = "32px";
+				data.style.borderStyle = "solid";
+				data.style.borderWidth = "1px";
+				data.style.borderColor = "#666";
+				data.style.position = "absolute";
+				data.style.left = (_this.map.sizeX + 16) + "px";
+				data.style.top = "40px";
+
+
+				data.addEventListener("change", function() {
+					_this.map.setDataId(_this.activeTile, data.value);
+				}, true);
+
+				var dataLabel = WT.dom.createDiv(
+					{"class" : "tilefo_datalabel"},
+					{"position" : "absolute",
+					"left" : (_this.map.sizeX + 16) + "px",
+					"top" : "24px",
+					"fontSize" : "12px"
+				});
+
+				dataLabel.innerHTML = "Data ID";
+
+				var tileInfo = WT.dom.createDiv(
+					{"id" : "tilefo_tileinfo",
+					"class" : "tilefo_tilefo"},
+					{"position" : "absolute",
+					"left" : "4px",
+					"top" : "4px",
+					"fontSize" : "12px",
+					"fontWeight" : "bold"
+					});
+
+				tileInfo.innerHTML = "Tile: 1-1, ID: 0";
+
+				cont.appendChild(tileSprite);
+				cont.appendChild(data);
+				cont.appendChild(dataLabel);
+				cont.appendChild(tileInfo);
+			},
+
+			initAbout : function() {
+				var _this = this;
+				var title, version, description, closeBtn, cont;
+				cont = document.getElementById("subportal_container-" + this.about.id + "-" + this.portal.id);
+				cont.style.backgroundColor = "#ddd";
+				cont.style.width = "100%";
+				cont.style.height = "100%";
+				cont.parentNode.style.overflow = "hidden";
+
+				title = WT.dom.createDiv({"id" : "about-" + this.about.id, "class" : "about_title"});
+				title.innerHTML = "WebTop Tilemap Editor";
+				version = WT.dom.createDiv({"id" : "about_version-" + this.about.id, "class" : "about_version"});
+				version.innerHTML = "Version: 0.1a";
+				description = WT.dom.createDiv({"id" : "about_desc-" + this.about.id, "class" : "about_desc"});
+				description.innerHTML = "WebTop Tilemap Editor was created by Glenn Fagertveit as a tool for his infernal game development projects, this tool will continue to evolve till the day Glenn dies, or finds a better platform to develop with. This editor is planed to work as a online tool for other developers as well who needs to get a fast and simple tilemap editor to work against. Now Glenn needs beer, or tea.";
+				closeBtn = WT.dom.createDiv({"id" : "about_close-" + this.about.id + "-" + this.portal.id, "class" : "btn about_btn"});
+				closeBtn.innerHTML = "Close"
+				closeBtn.addEventListener("click", function() {
+					_this.toggleSub({"sub" : "about", "that" : _this});
+				});
+
+				cont.appendChild(title);
+				cont.appendChild(version);
+				cont.appendChild(description);
+				cont.appendChild(closeBtn);
 			},
 		
 			initMenu : function() {
@@ -202,7 +365,8 @@ WT.app.tilemap = {
 				this.portal.menu.menus["View"].items["Tilefo"].setAttributes({"src" : "info", "that" : _this});
 				this.portal.addMenuItem("View", "Tilette", _this.toggleSub);
 				this.portal.menu.menus["View"].items["Tilette"].setAttributes({"src" : "tile", "that" : _this});
-				this.portal.addMenuItem("Help", "About");
+				this.portal.addMenuItem("Help", "About", _this.toggleSub);
+				this.portal.menu.menus["Help"].items["About"].setAttributes({"src" : "about", "that" : _this});
 			},
 			
 			/* --------------------------------------------
@@ -358,6 +522,11 @@ WT.app.tilemap = {
 				cont.appendChild(cancelBtn);
 			},
 
+			/* function - openTileMap
+			* ------------------------
+			* Need to load the tileset first so that the graphics are present
+			* when I start to parse the tile data.
+			*/
 			openTileMap : function(attr) {
 				var _this = attr.that;
 				console.log("Open ze map!");
@@ -370,6 +539,8 @@ WT.app.tilemap = {
 
 				file.setAttribute("type", "file");
 				file.setAttribute("id", "tilemap_file");
+				file.style.top = "10px";
+				file.style.left = "10px";
 				file.addEventListener("change", loadTileMap, false);
 
 				cont.style.backgroundColor = "#ddd";
@@ -396,32 +567,43 @@ WT.app.tilemap = {
 						}, true);
 
 						reader.readAsText(file[0]);
+						otmPortal.terminate(otmPortal);
 					} else {
 						console.log("Not a XML Map file!");
 					}
 				}
 			},
 			
+			/* function - loadTileSet
+			* -------------------------
+			* this function opens a portal that prompts the user to find the image
+			* file that holds the tileset that will be used for the map.
+			* the application will then generate individual tiles from the image map
+			* and populate the tilette with the different sprites.
+			*/
 			loadTileSet : function(attr) {
 				var _this = attr.that;
 				var tsPortal = _this.portal.addSubPortal("Load Tileset");
 				tsimage = new Image();
-				tsPortal.setSize(300, 300);
+				tsPortal.setSize(230, 60);
 				tsPortal.setPosition(40, 40);
 				tsPortal.setOnClose(true);
 				
 				var cont = document.getElementById("subportal_container-" + tsPortal.id + "-" + _this.portal.id);
+				cont.style.backgroundColor = "#ddd";
+				cont.style.width = "100%";
+				cont.style.height = "100%";
+				cont.parentNode.style.overflow = "hidden";
+
 				var file = document.createElement("input");
-				var out = WT.dom.createDiv(
-					{"id" : "tileset_output",
-					"class" : "tileset_output"}
-				);
+
 				file.setAttribute("type", "file");
 				file.setAttribute("id", "tileset_file");
+				file.style.marginLeft = "10px";
+				file.style.marginTop = "10px";
 				file.addEventListener("change", loadFile, false);
 				
 				cont.appendChild(file);
-				cont.appendChild(out);
 				
 				function loadFile(event) {
 					console.log("Loading file!");
@@ -444,22 +626,35 @@ WT.app.tilemap = {
 								_this.tileset.generateTiles(_this.map.sizeX, _this.map.sizeY);
 								_this.updateTilette();
 							},true);
-							out.innerHTML = '<img src="' + e.target.result + '" />';
-							
 						}, true);
 						
 						reader.readAsDataURL(file[0]);
+						tsPortal.terminate(tsPortal);
+						return true;
 					} else {
 						console.log("Not a Image file!");
+						return false;
 					}
 				}
 			},
 			
+			/* function - updateTilette
+			* --------------------------
+			* this function is used to fetch the individual tiles from the imagemap
+			* that have been loaded for the purpose.
+			*/
 			updateTilette : function() {
 				var cont = document.getElementById("subportal_container-" + this.tilette.id + "-" + this.portal.id);
-				var child = cont.childNodes[0];
+				var child = cont.childNodes[1];
 				console.log(this.tileset);
 				cont.replaceChild(this.tileset.renderTileSet(), child);
+			},
+
+			setActiveTile : function() {
+				var prevTile = document.getElementById("tilette_tile_prev");
+				var dataId = document.getElementById("");
+				prevTile.childNodes[0].src = this.tileset.tiles[this.tileset.active].src;
+
 			},
 			
 			toggleSub : function(attr) {
@@ -467,8 +662,10 @@ WT.app.tilemap = {
 					attr.that.toolbar.toggle();
 				} else if(attr.src == "tile") {
 					attr.that.tilette.toggle();
-				} else {
+				} else if(attr.src == "info") {
 					attr.that.tilefo.toggle();
+				} else {
+					attr.that.about.toggle();
 				}
 			},
 			
@@ -497,7 +694,9 @@ WT.app.tilemap = {
 			},
 			
 			triggerTile : function(id, map) {
-				if(this.mode == 1 && this.tileset.image != null) {
+				if(this.mode == 0) {
+					this.setTilefo(id);
+				} else if(this.mode == 1 && this.tileset.image != null) {
 					map.setTile(id, this.tileset.active);
 				} else if(this.mode == 2) {
 					map.clearTile(id);
@@ -753,14 +952,14 @@ WT.app.tilemap = {
 			* the tile images. And push each tile image to it's tile at the map.
 			*/
 			parseMapData : function(data) {
-				console.log(data);
+				//console.log(data);
 				var tilemap, sprites, tiles;
 				var width, height, tileWidth, tileHeight, title, description, texture;
 				var tile, sprite;
 
 				tilemap = data.getElementsByTagName("tilemap");
 				sprites = data.getElementsByTagName("sprites");
-				tiles = data.getElementsByTagName("tiles");
+				tiles = data.getElementsByTagName("tile");
 
 				width = tilemap[0].getAttribute("width");
 				height = tilemap[0].getAttribute("height");
@@ -771,7 +970,16 @@ WT.app.tilemap = {
 				tileWidth = sprites[0].getAttribute("width");
 				tileHeight = sprites[0].getAttribute("height");
 
-				this.map = new WT.app.tilemap.TileMap(this, width, height, tileWidth, tileHeight, title, description);
+				var params = new Object();
+					
+				params.width = width;
+				params.height = height;
+				params.tileWidth = tileWidth;
+				params.tileHeight = tileHeight;
+				params.title = title;
+				params.description = description;
+				this.generateTileMap(params);
+
 				this.tileset = new WT.app.tilemap.TileSet(this);
 				this.tileset.fileName = texture;
 				this.tileset.sizeX = tileWidth;
@@ -784,23 +992,16 @@ WT.app.tilemap = {
 					sY = sprites[i].getAttribute("starty");
 				}
 
-				tile = new Array();
-				for(var i = 0; i < tiles.length; i++) {
-					var id;
-					id = tiles[i].getAttribute("id");
-
-				}
-
-				// Need to load the texture seperately, need to ask the
-				// user to find the file through a file input action
-				// When we have loaded that we can continue to parse the map
-				// data and load it into the application.
 				this.loadTileSet({"that" : this});
+				this.tileset.loadMap = true;
 
-				while(!this.tileset.ready) {
-
+				for(var i = 0; i < tiles.length; i++) {
+					this.map.tiles[i].id = tiles[i].getAttribute("id");
 				}
+			},
 
+			loadMap : function() {
+				this.map.loadTiles();
 			},
 
 			exitApplication : function(attr) {
@@ -884,6 +1085,10 @@ WT.app.tilemap = {
 				var img = tile.childNodes[0];
 				img.src = this.parent.tileset.tiles[tileId].src;
 			},
+
+			setDataId : function(id, dataId) {
+				this.tiles[id].data["id"] = id;
+			},
 			
 			clearTile : function(id) {
 				console.log("Clearing tile: " + id);
@@ -896,25 +1101,10 @@ WT.app.tilemap = {
 				return this.activeTile;
 			},
 
-			generateJSON : function() {
-				var mapObject = new Object();
-				mapObject.name = this.title;
-				mapObject.description = this.description;
-				mapObject.width = this.width;
-				mapObject.height = this.height;
-				mapObject.tile_width = this.sizeX;
-				mapObject.tile_height = this.sizeY;
-				mapObject.sprites = new Object();
-				mapObject.tiles = new Object();
-
+			loadTiles : function() {
 				for(var i = 0; i < this.tiles.length; i++) {
-					mapObject.tiles[i] = new Object();
-					mapObject.tiles[i].id = this.tiles[i].id;
+					this.setTile(i, this.tiles[i].id);
 				}
-
-				console.log(JSON.stringify(mapObject));
-
-				return JSON.stringify(mapObject);
 			}
 		};
 		return tilemap;
@@ -923,27 +1113,7 @@ WT.app.tilemap = {
 	Tile : function() {
 		var tile = {
 			id : 0,
-			data : new Object(),
-			
-			init : function() {
-				
-			},
-		
-			generateDiv : function() {
-				/*
-				var _this = this;
-				var tile = WT.dom.createDiv(
-					{"id" : "tile-" + id,
-					"class" : "tile"},
-					{"width" : (this.sizeX - 1) + "px",
-					"height" : (this.sizeY - 1)+ "px",
-					"backgroundImage" : "url('../webtop/img/open01.png')"}
-				);
-				
-				tile.addEventListener("mouseover", function() {_this.parent.setStatusTile(id);},true);
-				return tile;
-				*/
-			}
+			data : new Object()
 		};
 		return tile;
 	},
@@ -967,7 +1137,9 @@ WT.app.tilemap = {
 			tilesX : 0,
 			tilesY : 0,
 			active : 0,
+			activeId : 0,
 			ready : false,
+			loadMap : false,
 			
 			setImage : function(image) {
 				this.image = image;
@@ -1003,6 +1175,9 @@ WT.app.tilemap = {
 					this.tiles[i].src = this.generateTile(sizeX, sizeY, x, y);
 				}
 				this.ready = true;
+				if(this.loadMap) {
+					this.parent.loadMap();
+				}
 			},
 			
 			generateTile : function(sizeX, sizeY, x, y) {
@@ -1021,10 +1196,7 @@ WT.app.tilemap = {
 			renderTileSet : function() {
 				var _this = this;
 				var tempImg, tileCont, tileHandle, i, tileLen;
-				var cont = WT.dom.createDiv(
-					{"id" : "tilette",
-					"class" : "tilette"}
-				);
+				var cont = document.getElementById("tilette");
 				tileLen = this.tiles.length;
 				
 				for(i = 0; i < tileLen; i++) {
@@ -1062,6 +1234,7 @@ WT.app.tilemap = {
 				var id = event.target.getAttribute("ref");
 				console.log("New tile ID: " + id);
 				this.active = id;
+				this.parent.setActiveTile();
 			}
 		};
 		return tileset;
