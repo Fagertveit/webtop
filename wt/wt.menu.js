@@ -115,6 +115,10 @@ WT.menu = {
 				this.items[title] = item;
 				item.generateMenuItem();
 			},
+
+			addSubMenu : function(title) {
+				var subMenu = new WT.menu.Menu(this, title);
+			},
 			
 			addDelimiter : function() {
 				var cont = document.getElementById("menu_container_" + this.title + "-" + this.parent.parent.id);
@@ -141,7 +145,6 @@ WT.menu = {
 			},
 			
 			hideMenu : function() {
-				//console.log(this.title + " - " + this.parent.parent.id);
 				var elem = document.getElementById("menu_container_" + this.title + "-" + this.parent.parent.id);
 				elem.style.display = "none";
 			},
@@ -150,8 +153,6 @@ WT.menu = {
 				var _this = this;
 				var elem = document.getElementById("menu_container_" + this.title + "-" + this.parent.parent.id);
 				elem.style.display = "block";
-				
-				//document.addEventListener("click", checkActiveMenu, true);
 				
 				function checkActiveMenu(event) {
 					var evtElem = event.target.getAttribute("id");

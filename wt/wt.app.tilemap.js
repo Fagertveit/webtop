@@ -348,6 +348,8 @@ WT.app.tilemap = {
 				this.portal.menu.menus["File"].items["Open"].setAttributes({"that" : _this});
 				this.portal.addMenuItem("File", "Save", _this.saveFile);
 				this.portal.menu.menus["File"].items["Save"].setAttributes({"that" : _this});
+				this.portal.addMenuItem("File", "Export", _this.exportMap);
+				this.portal.menu.menus["File"].items["Export"].setAttributes({"that" : _this});
 				this.portal.menu.menus["File"].addDelimiter();
 				this.portal.addMenuItem("File", "Exit", _this.exitApplication);
 				this.portal.menu.menus["File"].items["Exit"].setAttributes({"that" : _this})
