@@ -176,10 +176,9 @@ WT.app.tilemap = {
 					"borderBottomWidth" : "1px",
 					"borderBottomColor" : "#666"}
 				);
-				//selectedTile.innerHTML = "Selected Tile!";
 
 				var tilePrev = WT.dom.createDiv(
-					{"id" : "tilette_tile_prev",},
+					{"id" : "tilette_tile_prev"},
 					{"position" : "absolute",
 					"top" : "2px",
 					"left" : "2px",
@@ -218,7 +217,7 @@ WT.app.tilemap = {
 					"fontSize" : "10px"
 				}
 				);
-				activeIdLabel.innerHTML = "ActiveID"
+				activeIdLabel.innerHTML = "ActiveID";
 
 				selectedTile.appendChild(tilePrev);
 				selectedTile.appendChild(activeInput);
@@ -256,7 +255,7 @@ WT.app.tilemap = {
 					"class" : "tilefo_sprite"},
 					{"width" : (this.map.sizeX + 4) + "px",
 					"height" : (this.map.sizeY + 4) + "px",
-					"backgroundColor" : "#fff",
+					"backgroundColor" : "#000",
 					"borderStyle" : "solid",
 					"borderWidth" : "1px",
 					"borderColor" : "#666",
@@ -324,7 +323,7 @@ WT.app.tilemap = {
 				description = WT.dom.createDiv({"id" : "about_desc-" + this.about.id, "class" : "about_desc"});
 				description.innerHTML = "WebTop Tilemap Editor was created by Glenn Fagertveit as a tool for his infernal game development projects, this tool will continue to evolve till the day Glenn dies, or finds a better platform to develop with. This editor is planed to work as a online tool for other developers as well who needs to get a fast and simple tilemap editor to work against. Now Glenn needs beer, or tea.";
 				closeBtn = WT.dom.createDiv({"id" : "about_close-" + this.about.id + "-" + this.portal.id, "class" : "btn about_btn"});
-				closeBtn.innerHTML = "Close"
+				closeBtn.innerHTML = "Close";
 				closeBtn.addEventListener("click", function() {
 					_this.toggleSub({"sub" : "about", "that" : _this});
 				});
@@ -353,7 +352,7 @@ WT.app.tilemap = {
 				this.portal.menu.menus["File"].items["Export"].setAttributes({"that" : _this});
 				this.portal.menu.menus["File"].addDelimiter();
 				this.portal.addMenuItem("File", "Exit", _this.exitApplication);
-				this.portal.menu.menus["File"].items["Exit"].setAttributes({"that" : _this})
+				this.portal.menu.menus["File"].items["Exit"].setAttributes({"that" : _this});
 				this.portal.addMenuItem("Edit", "Copy");
 				this.portal.addMenuItem("Edit", "Paste");
 				this.portal.addMenuItem("Edit", "Clear");
@@ -602,6 +601,7 @@ WT.app.tilemap = {
 
 				file.setAttribute("type", "file");
 				file.setAttribute("id", "tileset_file");
+				file.setAttribute("pattern", "combattiles01.png");
 				file.style.marginLeft = "10px";
 				file.style.marginTop = "10px";
 				file.addEventListener("change", loadFile, false);
@@ -661,15 +661,18 @@ WT.app.tilemap = {
 			},
 
 			setTilefo : function() {
-				var tile = this.map.tiles[this.map.activeTile];
+				var id = this.map.activeTile;
+				var tile = this.map.tiles[id];
 				var tileImg = document.getElementById("tile-" + id).childNodes[0];
 				var tilefoInput = document.getElementById("tilefo_input");
 				var tilefoText = document.getElementById("tilefo_tileinfo");
 				var tilefoSprite = document.getElementById("tilefo_sprite");
-
+				var x, y;
+				x = id % this.map.width;
+				y = Math.floor(id / this.map.width);
 				tilefoInput.value = tile.data["id"];
-				tilefoSprite.innerHTML = '<img src="' + tileImg.src + '" />';
-				tilefoText.innerHTML = 'Tile: ' + this.map.activeTile;
+				tilefoSprite.innerHTML = '<img src="' + tileImg.src + '" style="margin: 2px;"/>';
+				tilefoText.innerHTML = 'Tile: ' + x + '-' + y + ' ID: ' + id;
 			},
 			
 			toggleSub : function(attr) {
@@ -1118,7 +1121,7 @@ WT.app.tilemap = {
 			},
 
 			setDataId : function(id, dataId) {
-				this.tiles[id].data["id"] = id;
+				this.tiles[id].data["id"] = dataId;
 			},
 			
 			clearTile : function(id) {
