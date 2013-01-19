@@ -266,6 +266,7 @@ WT.app.tilemap = {
 				});
 
 				var data = document.createElement("input");
+				data.setAttribute("id", "tilefo_input");
 				data.style.width = "32px";
 				data.style.borderStyle = "solid";
 				data.style.borderWidth = "1px";
@@ -541,8 +542,8 @@ WT.app.tilemap = {
 
 				file.setAttribute("type", "file");
 				file.setAttribute("id", "tilemap_file");
-				file.style.top = "10px";
-				file.style.left = "10px";
+				file.style.marginTop = "10px";
+				file.style.marginLeft = "10px";
 				file.addEventListener("change", loadTileMap, false);
 
 				cont.style.backgroundColor = "#ddd";
@@ -658,6 +659,18 @@ WT.app.tilemap = {
 				prevTile.childNodes[0].src = this.tileset.tiles[this.tileset.active].src;
 
 			},
+
+			setTilefo : function() {
+				var tile = this.map.tiles[this.map.activeTile];
+				var tileImg = document.getElementById("tile-" + id).childNodes[0];
+				var tilefoInput = document.getElementById("tilefo_input");
+				var tilefoText = document.getElementById("tilefo_tileinfo");
+				var tilefoSprite = document.getElementById("tilefo_sprite");
+
+				tilefoInput.value = tile.data["id"];
+				tilefoSprite.innerHTML = '<img src="' + tileImg.src + '" />';
+				tilefoText.innerHTML = 'Tile: ' + this.map.activeTile;
+			},
 			
 			toggleSub : function(attr) {
 				if(attr.src == "tool") {
@@ -700,6 +713,7 @@ WT.app.tilemap = {
 					this.setTilefo(id);
 				} else if(this.mode == 1 && this.tileset.image != null) {
 					map.setTile(id, this.tileset.active);
+					map.setDataId(id, this.tileset.activeId);
 				} else if(this.mode == 2) {
 					map.clearTile(id);
 				}
@@ -1035,12 +1049,27 @@ WT.app.tilemap = {
 			},
 		
 			generateDivMap : function() {
+				var _this = this;
 				var cont = WT.dom.createDiv(
 					{"id" : "tilemap-" + this.title,
 					"class" : "tilemap_container"},
 					{"width" : (this.width * this.sizeX) + "px",
 					"height" : (this.height * this.sizeY) + "px"}
 				);
+
+				cont.addEventListener("mouseover", function(e) {
+					e.preventDefault(); 
+					id = e.target.getAttribute("data-id");
+					_this.parent.setStatusTile(id, _this);
+					_this.activeTile = id;
+				}, true);
+
+				cont.addEventListener("click", function(e) {
+					e.preventDefault();
+					id = e.target.getAttribute("data-id");
+					_this.parent.triggerTile(id, _this);
+				}, true);
+				
 				var tileLen = this.tiles.length;
 				var i;
 				for(i = 0; i < tileLen; i++) {
@@ -1053,21 +1082,23 @@ WT.app.tilemap = {
 				var _this = this;
 				var tile = WT.dom.createDiv(
 					{"id" : "tile-" + id,
-					"class" : "tile"},
+					"class" : "tile",
+					"data-id" : id},
 					{"width" : (this.sizeX) + "px",
 					"height" : (this.sizeY)+ "px"}
 				);
 				
 				var tileHandle = WT.dom.createDiv(
 					{"id" : "tile_handle-" + id,
-					"class" : "tile_handle"},
+					"class" : "tile_handle",
+					"data-id" : id},
 					{"width" : (this.sizeX) + "px",
 					"height" : (this.sizeY)+ "px"}
 				);
 				
 				var tileImg = document.createElement("img");
 				//tileImg.draggable = "false";
-				tileImg.setAttribute("src", "");
+				tileImg.setAttribute("src", WT.data.BLANK_IMG);
 				tileImg.setAttribute("class", "tile_img");
 				
 				//tile.draggable = "false";
@@ -1075,8 +1106,6 @@ WT.app.tilemap = {
 				tile.appendChild(tileImg);
 				tile.appendChild(tileHandle);
 				
-				tileHandle.addEventListener("mouseover", function(e) {e.preventDefault(); _this.parent.setStatusTile(id, _this); _this.activeTile = id;}, true);
-				tileHandle.addEventListener("click", function(e) {e.preventDefault(); _this.parent.triggerTile(id, _this);}, true);
 				return tile;
 			},
 			
