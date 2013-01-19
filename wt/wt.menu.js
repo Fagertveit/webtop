@@ -115,6 +115,18 @@ WT.menu = {
 				this.items[title] = item;
 				item.generateMenuItem();
 			},
+
+			addSubMenu : function(title) {
+				var subMenu = new WT.menu.Menu(this, title);
+			},
+			
+			addDelimiter : function() {
+				var cont = document.getElementById("menu_container_" + this.title + "-" + this.parent.parent.id);
+				var delimiter = WT.dom.createDiv(
+					{"class" : "menu_delimiter"}
+				);
+				cont.appendChild(delimiter);
+			},
 			
 			removeItem : function() {
 				
@@ -122,6 +134,7 @@ WT.menu = {
 			
 			toogleMenu : function(event, _this) {
 				var hidden = _this.isHidden();
+
 				_this.parent.hideAll();
 				
 				if(hidden) {
@@ -132,7 +145,6 @@ WT.menu = {
 			},
 			
 			hideMenu : function() {
-				//console.log(this.title + " - " + this.parent.parent.id);
 				var elem = document.getElementById("menu_container_" + this.title + "-" + this.parent.parent.id);
 				elem.style.display = "none";
 			},
@@ -140,13 +152,21 @@ WT.menu = {
 			showMenu : function() {
 				var _this = this;
 				var elem = document.getElementById("menu_container_" + this.title + "-" + this.parent.parent.id);
-				var portal = document.getElementById("portal-" + this.parent.parent.id);
 				elem.style.display = "block";
-				portal.addEventListener("click", function(event) {
-					if(event.target.getAttribute("id") != "menu_container_" + _this.title + "-" + _this.parent.parent.id) {
+				
+				function checkActiveMenu(event) {
+					var evtElem = event.target.getAttribute("id");
+					console.log(evtElem);
+					if(evtElem != "menu_container_" + _this.title + "-" + _this.parent.id ||
+						evtElem != "menu_" + _this.title + "-" + _this.parent.parent.id) {
 						_this.hideMenu();
 					}
-				}, true);
+					
+					document.removeEventListener("click", checkActiveMenu, true);
+					
+					event.preventDefault();
+					event.stopPropagation();
+				}
 			},
 			
 			isHidden : function() {

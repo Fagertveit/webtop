@@ -1,0 +1,194 @@
+div, span, label, a, img {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  /* this will work for QtWebKit in future */
+  -webkit-user-drag: none;
+}
+
+.tilemap_container {
+border: 1px solid #aaa;
+background-color: #ddd;
+}
+
+.tile {
+position: relative;
+margin-left: -2px;
+margin-top: -2px;
+float: left;
+clear: none;
+border: 1px dotted #aaa;
+background-color: #ddd;
+}
+
+.tile_img {
+position: relative;
+top: 0px;
+left: 0px;
+}
+
+.tile_handle {
+position: absolute;
+top: 0px;
+left: 0px;
+}
+
+.select_box {
+position: absolute;
+top: 0px;
+left: 0px;
+border: 1px solid #000;
+}
+
+.tool_btn {
+position: relative;
+width: 36px;
+height: 36px;
+clear: both;
+background-position: center;
+background-repeat: no-repeat;
+background-color: #ddd;
+}
+
+.tool_btn:hover {
+background-color: #eee;
+}
+
+.tool_active {
+background-color: #fff;	
+}
+
+.btn_info {
+background-image: url("../img/tmedit/icon_info.png");	
+}
+
+.btn_add {
+background-image: url("../img/tmedit/icon_add.png");
+}
+
+.btn_remove {
+background-image: url("../img/tmedit/icon_remove.png");	
+}
+
+.btn_fill {
+background-image: url("../img/tmedit/icon_fill.png");
+}
+
+.btn_mark {
+background-image: url("../img/tmedit/icon_mark.png");	
+}
+
+.tileset_output {
+width: 296px;
+height: 252px;
+overflow: auto;
+background-color: #ddd;
+border: 1px solid #aaa;
+margin: 1px;
+}
+
+.tilette {
+width: 200px;
+overflow-y: scroll;
+}
+
+.tilette_tile_container {
+position: relative;
+margin-top: 1px;
+margin-left: 1px;
+padding: 0px;
+float: left;
+clear: none;
+border: 1px dotted #aaa;
+background-color: #ddd;
+}
+
+.tilette_tile {
+}
+
+.tilette_tile_handle {
+position: absolute;
+top: 0px;
+left: 0px;
+width: 32px;
+height: 32px;
+}
+
+.tilette_tile_handle:hover {
+background-color: rgba(0, 100, 255, 0.3);
+}
+/* About */
+.about_title {
+text-align: center;
+font-size: 18px;
+font-weight: bold;
+margin-top: 5px;
+clear: both;
+}
+
+.about_version {
+text-align: center;
+font-size: 10px;
+margin-top: 4px;
+clear: both;
+}
+
+.about_desc {
+text-align: center;
+font-size: 10px;
+font-weight: bold;
+margin: 5px;
+clear: both;
+}
+
+.about_btn {
+position: absolute;
+left: 10px;
+right: 10px;
+bottom: 20px;
+}
+
+/* New Tilemap */
+.label {
+float: left;
+clear: both;
+width: 180px;
+margin: 2px 4px 0px 4px;
+font-size: 12px;
+}
+
+.ntm_input {
+margin: 2px 4px;
+width: 180px;
+border: 1px solid #aaa;
+}
+
+.small_label {
+float: left;
+clear: both;
+width: 80px;
+margin: 2px 4px 0px 4px;
+font-size: 12px;
+}
+
+.ntm_small_input {
+margin: 2px 4px;
+width: 32px;
+border: 1px solid #aaa;
+}
+
+.btn {
+float: left;
+clear: none;
+font-size: 12px;
+font-weight: bold;
+text-align: center;
+background-color: #aaa;
+margin: 2px 4px;
+padding: 4px 6px;
+border: 1px solid #666;
+cursor: default;
+}
+
+.btn:hover {
+background-color: #eee;	
+}

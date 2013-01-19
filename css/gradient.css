@@ -1,0 +1,200 @@
+.gradient {
+width: 100%;
+position: absolute;
+top: 0px;
+left: 0px;
+}
+
+.gradient>.preview {
+height: 32px;
+position: absolute;
+top: 6px;
+left: 6px;
+right: 6px;
+border: 1px solid #000;
+}
+
+.gradient>.select-bar {
+height: 18px;
+position: absolute;
+top: 40px;
+left: 6px;
+right: 6px;
+border-bottom: 1px dotted #555;
+}
+
+.select-bar>.color-stop {
+height: 16px;
+width: 10px;
+position: absolute;
+background-repeat: no-repeat;
+cursor: pointer;
+}
+
+.color-stop>.color-box {
+height: 8px;
+width: 8px;
+top: 6px;
+position: absolute;
+border: 1px solid #000;
+}
+
+.gradient>.active-color {
+height: 128px;
+position: absolute;
+left: 2px;
+right: 2px;
+top: 64px;
+}
+
+.active-color>.color-map {
+width: 128px;
+height: 128px;
+border: 1px solid black;
+position: absolute;
+top: 4px;
+left: 4px;	
+}
+
+.color-map>.light-map {
+width: 128px;
+height: 128px;
+position: absolute;
+top: 0px;
+left: 0px;
+background-image: url(../img/gradient-light.png);
+}
+
+.color-map>.sat-map {
+width: 128px;
+height: 128px;
+position: absolute;
+top: 0px;
+left: 0px;
+background-image: url(../img/gradient-saturation.png);
+}
+
+.color-map>.color-ind {
+width: 10px;
+height: 10px;
+position: absolute;
+top: 10px;
+left: 10px;
+background-image: url(../img/gradient-color-indicator.png);
+cursor: pointer;
+}
+
+.active-color>.hue-bar {
+width: 16px;
+height: 128px;
+border: 1px solid black;
+position: absolute;
+top: 4px;
+left: 148px;
+background-image: url(../img/gradient-hue.png);
+}
+
+.hue-bar>.hue-ind {
+width: 28px;
+height: 10px;
+position: absolute;
+top: 10px;
+left: -6px;
+background-image: url(../img/gradient-hue-indicator.png);
+cursor: pointer;
+}
+
+.active-color>.color-preview {
+width: 64px;
+height: 32px;
+border: 1px solid black;
+position: absolute;
+top: 4px;
+left: 180px;
+}
+
+.active-color>.color-form {
+position: absolute;
+top: 40px;
+left: 2px;
+}
+
+.color-form>.color-entry {
+position: relative;
+float: left;
+width: 42px;
+height: 38px;
+}
+
+.color-entry>.label {
+position: absolute;
+top: 0;
+left: 0;
+width: 42px;
+height: 14px;
+text-align: center;
+font-size: 12px;
+}
+
+.color-entry>.input {
+width: 36px;
+height: 14px;
+text-align: center;
+position: absolute;
+top: 16px;
+left: 2px;
+}
+
+.active-color>.pos-form {
+position: absolute;
+top: 78px;
+left: 0px;
+}
+
+.pos-form>.pos-entry {
+position: relative;
+float: left;
+width: 64px;
+height: 36px;
+text-align: center;
+}
+
+.pos-entry>.input {
+width: 32px;
+height: 14px;
+text-align: center;
+position: absolute;
+top: 18px;
+left: 4px;
+}
+
+.pos-entry>.label {
+width: 64px;
+height: 16px;
+text-align: center;
+font-size: 12px;
+position: absolute;
+top: 2px;
+left: 0px;
+}
+
+.color-add {
+width: 48px;
+position: absolute;
+top:50px;
+left: 180px;
+}
+
+.color-del {
+width: 48px;
+position: absolute;
+top:80px;
+left: 180px;
+}
+
+.color-export {
+width: 48px;
+position: absolute;
+top:110px;
+left: 180px;
+}

@@ -1,11 +1,57 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-<title>WebTop - A browser based desktop environment.</title>
-<body>
-<h1>WebTop Pages</h1>
-<p>Testing this stuff out!</p>
-<a href="current.html">Current version</a>
-</body>
+<meta http-equiv='Content-Type' content='text/html;charset=ISO-8859-1' />
+<title>WebTop - A Webbased desktop environment!</title>
+
+<link rel='stylesheet' type='text/css' href='css/wt.css' />
+<link rel='stylesheet' type='text/css' href='css/tilemap.css' />
+
+<script type='text/javascript' src='wt/wt.js'></script>
+<script type='text/javascript' src='wt/wt.util.js'></script>
+<script type='text/javascript' src='wt/wt.data.js'></script>
+<script type='text/javascript' src='wt/wt.portal.js'></script>
+<script type='text/javascript' src='wt/wt.dom.js'></script>
+<script type='text/javascript' src='wt/wt.menu.js'></script>
+<script type='text/javascript' src='wt/wt.anim.js'></script>
+<script type='text/javascript' src='wt/wt.app.js'></script>
+<script type='text/javascript' src='wt/wt.ajax.js'></script>
+<script type='text/javascript' src='wt/wt.app.tilemap.js'></script>
+
 </head>
+<body onload="">
+
+</body>
+<script>
+var desktop = new WT.Desktop(800, 600);
+desktop.init();
+var tmedit = new WT.app.tilemap.App(desktop);
+tmedit.init();
+/*
+desktop.addPortal("Awesome");
+desktop.portals[0].addMenuBar();
+desktop.portals[0].addMenu("File");
+desktop.portals[0].addMenu("Edit");
+desktop.portals[0].addMenu("Help");
+desktop.portals[0].addMenuItem("File", "Open");
+desktop.portals[0].menu.menus["File"].items["Open"].setAttributes("Open");
+desktop.portals[0].addMenuItem("File", "Save");
+desktop.portals[0].menu.menus["File"].items["Save"].setAttributes("Save");
+desktop.portals[0].addMenuItem("File", "Exit", desktop.portals[0].terminate);
+desktop.portals[0].menu.menus["File"].items["Exit"].setAttributes(desktop.portals[0]);
+desktop.portals[0].setStatus("Testing status bar text!");
+desktop.portals[0].addSubPortal("Subportal");
+/*
+WT.anim.animateElement(document.getElementById("portal-" + desktop.portals[0].id),
+	{
+		"width" : {"start" : desktop.portals[0].width, "end" : (desktop.width - 2)},
+		"height" : {"start" : desktop.portals[0].height, "end" : (desktop.height - 35)},
+		"top" : {"start" : desktop.portals[0].posY, "end" : 0},
+		"left" : {"start" : desktop.portals[0].posX, "end" : 0}
+	},
+	250
+);
+*/
+</script>
 </html>
+
