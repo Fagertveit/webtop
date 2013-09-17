@@ -1,0 +1,122 @@
+.desktop {
+	position: relative;
+	border: 1px solid rgba(0, 0, 0, .33);
+	background-color: rgb(240, 240, 240);
+	overflow: hidden;
+
+	.quickbar {
+		position: absolute;
+		left: 0px;
+		right: 0px;
+		height: 32px;
+		border-top: 1px solid rgba(0, 0, 0, .33);
+		background: -webkit-linear-gradient(top,  rgba(246,248,249,1) 0%,rgba(229,235,238,1) 50%,rgba(215,222,227,1) 51%,rgba(245,247,249,1) 100%);
+		z-index: 9999;
+		opacity: .8;
+
+		.quickbar-start {
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			bottom: 0px;
+			width: 80px;
+			text-align: center;
+			font-family: Verdana;
+			font-size: 16px;
+			font-weight: bold;
+			color: rgba(0, 0, 0, .66);
+			text-shadow: 1px 1px 1px rgba(255, 255, 255, 1);
+			line-height: 32px;
+			border-right: 1px solid rgba(0, 0, 0, .33);
+			cursor: default;
+
+			.quickbar-start-container {
+				position: absolute;
+				bottom: 33px;
+				left: 0px;
+				min-width: 100px;
+				min-height: 32px;
+				border-top: 1px solid rgba(0, 0, 0, .33);
+				border-right: 1px solid rgba(0, 0, 0, .33);
+				border-top-right-radius: 10px;
+				background: -webkit-linear-gradient(top,  rgba(246,248,249,1) 0%,rgba(229,235,238,1) 50%,rgba(215,222,227,1) 51%,rgba(245,247,249,1) 100%);
+
+				.quickbar-start-menu {
+					position: relative;
+					float: left;
+					height: 40px;
+					line-height: 40px;
+					font-size: 14px;
+					padding: 0 10px;
+					text-indent: 40px;
+
+					&:first-child {
+						margin-top: 10px;
+					}
+
+					&:last-child {
+						margin-bottom: 10px;
+					}
+
+					.quickbar-icon {
+						position: absolute;
+						left: 4px;
+						top: 4px;
+						width: 32px;
+						height: 32px;
+						border: 1px solid rgba(0, 0, 0, .66);
+						border-radius: 5px;
+					}
+				}
+			}
+		}
+
+		.quickbar-portal-container {
+			position: absolute;
+			left: 100px;
+			right: 80px;
+			top: 0px;
+			bottom: 0px;
+
+			.quickbar-portal-handle {
+				float: left;
+				position: relative;
+				border: 1px solid rgba(0, 0, 0, .33);
+				border-radius: 3px;
+				box-shadow: 1px 1px 1px rgba(255, 255, 255, 1) inset;
+				margin: 2px 0px 2px 2px;
+				height: 26px;
+				text-indent: 24px;
+				line-height: 26px;
+				color: rgba(0, 0, 0, .8);
+				text-shadow: 1px 1px 1px rgba(255, 255, 255, .66);
+				background: -webkit-linear-gradient(top,  rgba(242,246,248,1) 0%,rgba(216,225,231,1) 50%,rgba(181,198,208,1) 51%,rgba(224,239,249,1) 100%);
+				padding: 0 4px;
+				cursor: default;
+
+				&:hover {
+					box-shadow: 1px 1px 10px rgba(0, 0, 0, .33) inset;
+				}
+			}
+		}
+
+		.quickbar-time {
+			position: absolute;
+			right: 0px;
+			top: 0px;
+			bottom: 0px;
+			width: 80px;
+			text-align: center;
+			font-family: Verdana;
+			font-size: 9px;
+			font-weight: normal;
+			line-height: 16px;
+			border-left: 1px solid rgba(0, 0, 0, .33);
+		}
+
+		.quickbar-time:hover {
+			box-shadow: 0px 0px 5px rgba(255, 255, 255, 1);
+			background-color: rgba(255, 255, 255, .33);
+		}
+	}
+}

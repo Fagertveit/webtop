@@ -1,0 +1,90 @@
+.wt-label {
+	float: left;
+}
+
+.wt-button {
+	position: relative;
+	padding: 4px 12px;
+	border: 1px solid rgba(0, 0, 0, .5);
+	border-radius: 3px;
+	box-shadow: 1px 1px 1px rgb(255, 255, 255) inset;
+	font-size: 14px;
+	color: rgba(0, 0, 0, .6);
+	text-align: center;
+	text-shadow: 1px 1px 1px rgba(255, 255, 255, .5);
+	background: -webkit-linear-gradient(top,  rgba(246,248,249,1) 0%,rgba(229,235,238,1) 50%,rgba(215,222,227,1) 51%,rgba(245,247,249,1) 100%);
+
+	&:hover {
+		box-shadow: 1px 1px 5px rgba(0, 0, 0, .33) inset;
+		cursor: default;
+	}
+}
+
+.wt-checkbox {
+	position: relative;
+	width: 12px;
+	height: 12px;
+	border: 1px solid rgba(0, 0, 0, .5);
+	border-radius: 2px;
+	box-shadow: 1px 1px 3px rgba(0, 0, 0, .33) inset;
+	color: rgba(0, 0, 0, .0);
+	font-size: 10px;
+	font-weight: bold;
+	text-align: center;
+	line-height: 12px;
+	cursor: default;
+
+	&.checked {
+		color: rgba(0, 0, 0, .8);
+
+		&:hover {
+			color: rgba(0, 0, 0, .4);
+		}
+	}
+
+	&:hover {
+		color: rgba(0, 0, 0, .2);
+	}
+}
+
+.wt-radio-button {
+	float: left;
+	position: relative;
+	width: 12px;
+	height: 12px;
+	margin: 2px 4px;
+	border: 1px solid rgba(0, 0, 0, .5);
+	border-radius: 10px;
+	box-shadow: 1px 1px 3px rgba(0, 0, 0, .33) inset;
+	cursor: default;
+
+	.inset {
+		margin: 2px;
+		width: 6px;
+		height: 6px;
+		border-radius: 6px;
+		border: 1px solid rgba(0, 0, 0, 1);
+		box-shadow: 1px 1px 1px rgba(255, 255, 255, .33) inset;
+		background-color: rgba(0, 0, 0, .8);
+		display: none;
+	}
+
+	&.checked {
+		.inset {
+			display: block;
+		}
+
+		&:hover {
+			.inset {
+				opacity: .6;
+			}
+		}
+	}
+
+	&:hover {
+		.inset {
+			display: block;
+			opacity: .2;
+		}
+	}
+}

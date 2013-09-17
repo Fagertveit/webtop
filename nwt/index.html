@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>New Webtop</title>
+	<script src="js/vendor/jquery-2.0.2.js"></script>
+
+	<link rel="stylesheet/less" type="text/css" href="css/default.less" />
+	<link rel="stylesheet/less" type="text/css" href="css/desktop.less" />
+	<link rel="stylesheet/less" type="text/css" href="css/portal.less" />
+	<link rel="stylesheet/less" type="text/css" href="css/ui.less" />
+	<link rel="stylesheet/less" type="text/css" href="css/container.less" />
+
+	
+	<script src="js/vendor/less.js"></script>
+	<script src="js/vendor/gsaw.min.js"></script>
+
+	<script src="js/wt.js"></script>
+	<script src="js/wt.util.js"></script>
+	<script src="js/wt.portal.js"></script>
+	<script src="js/wt.ui.js"></script>
+	<script src="js/wt.ui.slider.js"></script>
+	<script src="js/wt.menu.js"></script>
+	<script src="js/wt.container.js"></script>
+	<script src="js/wt.image.js"></script>
+	<script src="js/wt.color.js"></script>
+	<script src="js/wt.dialog.js"></script>
+	<script src="js/wt.module.js"></script>
+	<script src="js/wt.app.js"></script>
+	<script src="js/module.colorpick.js"></script>
+	<script src="js/app.gradient.js"></script>
+	<script src="js/app.gswebgl.js"></script>
+</head>
+<body>
+
+<div class="container">
+	
+</div>
+
+<script>
+var desk = new WTDesktop({
+	width: 800, 
+	height: 500, 
+	parent: $(".container"),
+	settingsFile: "wt.settings.json"
+});
+/*
+desk.addPortal({title: "Photoshop CS6", width: 200, height: 200, pos: {x: 10, y: 10}});
+desk.addPortal({title: "Sublime Text 2", width: 200, height: 200, pos: {x: 300, y: 10}});
+desk.addPortal({title: "Inkscape", width: 200, height: 200, pos: {x: 10, y: 250}});
+desk.addPortal({title: "Settings", width: 200, height: 200, pos: {x: 300, y: 250}});
+*/
+//desk.addApplication("gradient", {});
+//desk.addApplication("gswebgl", {});
+</script>
+</body>
+</html>

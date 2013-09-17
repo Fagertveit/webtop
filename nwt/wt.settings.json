@@ -1,0 +1,40 @@
+{
+	"applications" : {
+		"colorpicker" : {
+			"title" : "Colorpicker",
+			"description" : "A Standard photoshopisque colorpicker for WebTop.",
+			"url" : "app/app.colorpick.js",
+			"icon" : "icon/icon-placeholder.png",
+			"section" : "Utilities"
+		},
+		"webgltest" : {
+			"title" : "WebGL Tests",
+			"description" : "A test application for WebGL.",
+			"url" : "app/app.gswebgl.js",
+			"icon" : "icon/icon-placeholder.png",
+			"section" : "Applications"
+		}
+	},
+	"sections" : {
+		"settings" : {
+			"title" : "Settings",
+			"description" : "General settings within the WebTop environment.",
+			"icon" : "icon/icon-placeholder.png"
+		},
+		"applications" : {
+			"title" : "Applications",
+			"description" : "Useful applications for WebTop.",
+			"icon" : "icon/icon-placeholder.png"
+		},
+		"utilities" : {
+			"title" : "Utilities",
+			"description" : "Good to have utility applications",
+			"icon" : "icon/icon-placeholder.png"
+		},
+		"games" : {
+			"title" : "Games",
+			"description" : "Fun games to waste time with!",
+			"icon" : "icon/icon-placeholder.png"
+		}
+	}
+}
